@@ -5,223 +5,319 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pam Ventures | Innovation & Hospitality</title>
     
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
-    
     <style>
-        /* --- CSS VARIABLES (Easy to change colors) --- */
+        /* --- APPLE DESIGN SYSTEM --- */
         :root {
-            --primary-dark: #0f172a;  /* Deep Navy */
-            --gold: #d4af37;          /* Luxury Gold */
-            --light-gray: #f8fafc;
-            --text-dark: #334155;
+            --bg-color: #f5f5f7; /* Classic Apple Off-White */
+            --text-black: #1d1d1f;
+            --text-grey: #86868b;
+            --apple-blue: #0066cc;
+            --card-bg: #ffffff;
+            --card-radius: 28px;
+            --nav-height: 48px;
         }
 
-        /* --- GLOBAL STYLES --- */
-        body {
+        /* RESET & TYPOGRAPHY */
+        * {
+            box-sizing: border-box;
             margin: 0;
             padding: 0;
-            font-family: 'Poppins', sans-serif; /* Modern Font */
-            background-color: var(--light-gray);
-            color: var(--text-dark);
-            line-height: 1.6;
         }
 
-        /* --- NAVIGATION BAR --- */
+        body {
+            /* This font stack triggers San Francisco on Mac, Segoe on Windows, Roboto on Android */
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-black);
+            -webkit-font-smoothing: antialiased;
+            overflow-x: hidden;
+        }
+
+        /* --- GLOBAL ANIMATIONS --- */
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .animate-load {
+            animation: fadeUp 1s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+            opacity: 0; /* Start hidden */
+        }
+        
+        .delay-1 { animation-delay: 0.1s; }
+        .delay-2 { animation-delay: 0.3s; }
+        .delay-3 { animation-delay: 0.5s; }
+
+        /* --- GLASSMORPHISM NAVBAR --- */
         .navbar {
-            background-color: white;
-            padding: 20px 50px;
+            position: fixed;
+            top: 0;
+            width: 100%;
+            height: var(--nav-height);
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: saturate(180%) blur(20px); /* The Glass Effect */
+            -webkit-backdrop-filter: saturate(180%) blur(20px);
+            z-index: 999;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+        }
+
+        .nav-content {
+            width: 100%;
+            max-width: 980px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-            position: sticky;
-            top: 0;
-            z-index: 100;
+            padding: 0 20px;
         }
 
         .logo {
-            font-family: 'Playfair Display', serif; /* Luxury Font */
-            font-size: 24px;
-            font-weight: 700;
-            color: var(--primary-dark);
-            letter-spacing: 1px;
+            font-weight: 600;
+            font-size: 19px;
+            color: var(--text-black);
             text-decoration: none;
+            letter-spacing: -0.5px;
         }
 
         .nav-links a {
+            font-size: 12px;
+            color: var(--text-black);
             text-decoration: none;
-            color: var(--text-dark);
-            margin-left: 30px;
-            font-weight: 500;
-            font-size: 14px;
-            transition: color 0.3s;
+            margin-left: 24px;
+            opacity: 0.8;
+            transition: opacity 0.3s;
         }
 
         .nav-links a:hover {
-            color: var(--gold);
+            opacity: 1;
+            color: var(--apple-blue);
         }
 
-        /* --- HERO SECTION (The Big Banner) --- */
+        /* --- HERO SECTION --- */
         .hero {
-            background: linear-gradient(135deg, var(--primary-dark) 0%, #1e293b 100%);
-            color: white;
-            padding: 100px 20px;
+            padding: 160px 20px 100px;
             text-align: center;
+            max-width: 800px;
+            margin: 0 auto;
         }
 
         .hero h1 {
-            font-family: 'Playfair Display', serif;
-            font-size: 3.5rem; /* Big Text */
+            font-size: 56px;
+            line-height: 1.07;
+            font-weight: 700;
+            letter-spacing: -0.005em;
             margin-bottom: 20px;
         }
 
         .hero p {
-            font-size: 1.2rem;
-            opacity: 0.8;
-            max-width: 600px;
-            margin: 0 auto;
+            font-size: 24px;
+            line-height: 1.4;
+            font-weight: 400;
+            color: var(--text-black);
+            margin-bottom: 0;
         }
 
-        /* --- VENTURES GRID (The Cards) --- */
-        .container {
-            max-width: 1000px;
-            margin: -50px auto 50px; /* Pulls it up into the banner */
+        /* --- BENTO GRID SYSTEM --- */
+        .grid-container {
+            max-width: 1200px; /* Wider for that Apple feel */
+            margin: 0 auto 100px;
             padding: 0 20px;
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 30px;
+            grid-template-columns: repeat(2, 1fr); /* Two large columns */
+            gap: 24px;
         }
 
         .card {
-            background: white;
-            padding: 40px;
-            border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
-            text-align: center;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            background: var(--card-bg);
+            border-radius: var(--card-radius);
+            padding: 0; /* Apple cards usually have full bleed images */
             position: relative;
             overflow: hidden;
+            height: 550px; /* Tall cards */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            text-align: center;
+            transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
+            box-shadow: 2px 4px 12px rgba(0,0,0,0.02);
+            cursor: pointer;
         }
 
-        /* Hover Effect: Card floats up */
         .card:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 20px 40px rgba(0,0,0,0.12);
+            transform: scale(1.02);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
         }
 
-        .card-icon {
-            font-size: 50px;
-            margin-bottom: 20px;
-            display: inline-block;
+        /* Card Content Area */
+        .card-content {
+            padding: 50px 40px 0;
+            z-index: 2;
         }
 
         .card h2 {
-            font-family: 'Playfair Display', serif;
-            color: var(--primary-dark);
+            font-size: 40px;
+            font-weight: 700;
+            margin-bottom: 10px;
+            letter-spacing: -0.5px;
+        }
+
+        .card p {
+            font-size: 19px;
+            color: var(--text-black);
+            line-height: 1.4;
+            margin-bottom: 20px;
+        }
+
+        /* Apple Style Links */
+        .cta-link {
+            font-size: 17px;
+            color: var(--apple-blue);
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            margin-top: 5px;
+        }
+
+        .cta-link:hover {
+            text-decoration: underline;
+        }
+        
+        .cta-link::after {
+            content: '›';
+            font-size: 22px;
+            margin-left: 6px;
+            margin-top: -2px;
+        }
+
+        /* Abstract Backgrounds mimicking images */
+        .card-image-placeholder {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 1;
+            background-size: cover;
+            background-position: center;
+            transition: transform 0.6s ease;
+        }
+
+        .card:hover .card-image-placeholder {
+            transform: scale(1.05); /* Subtle zoom on hover */
+        }
+
+        /* Specific Card Styles */
+        .hotel-bg {
+            /* Gradient mimicking a warm luxury interior */
+            background: radial-gradient(circle at center, #fdfbf7 0%, #e8e4dc 100%);
+        }
+        
+        .fintech-bg {
+            /* Gradient mimicking dark tech sleekness */
+            background: radial-gradient(circle at top, #1c1c1e 0%, #000000 100%);
+        }
+
+        .card.dark-mode {
+            color: white;
+        }
+        
+        .card.dark-mode p {
+            color: #d2d2d7;
+        }
+        
+        .card.dark-mode .cta-link {
+            color: #2997ff; /* Lighter blue for dark backgrounds */
+        }
+
+        .logo-icon {
+            font-size: 40px;
             margin-bottom: 15px;
-        }
-
-        .status-badge {
-            display: inline-block;
-            padding: 5px 12px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: 600;
-            margin-top: 15px;
-            text-transform: uppercase;
-        }
-
-        .status-open {
-            background-color: #dcfce7;
-            color: #166534;
-        }
-
-        .status-dev {
-            background-color: #fff7ed;
-            color: #c2410c;
+            display: block;
         }
 
         /* --- FOOTER --- */
         .footer {
-            text-align: center;
-            padding: 40px;
-            background-color: white;
-            color: #64748b;
-            font-size: 14px;
-            border-top: 1px solid #eee;
+            background-color: #f5f5f7;
+            padding: 40px 20px;
+            font-size: 12px;
+            color: var(--text-grey);
+            border-top: 1px solid #d2d2d7;
+            max-width: 980px;
+            margin: 0 auto;
         }
 
-        /* --- CONTACT BUTTON --- */
-        .contact-btn {
-            display: inline-block;
-            margin-top: 20px;
-            padding: 12px 30px;
-            background-color: var(--gold);
-            color: white;
-            text-decoration: none;
-            border-radius: 50px;
-            font-weight: 600;
-            transition: background 0.3s;
-        }
-        
-        .contact-btn:hover {
-            background-color: #b5952f;
+        .footer-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
 
-        /* Mobile adjustments */
-        @media (max-width: 600px) {
-            .hero h1 { font-size: 2.5rem; }
-            .navbar { flex-direction: column; gap: 10px; }
-            .nav-links { margin-top: 10px; }
+        /* --- RESPONSIVE --- */
+        @media (max-width: 768px) {
+            .grid-container {
+                grid-template-columns: 1fr; /* Stack cards */
+            }
+            .hero h1 { font-size: 40px; }
+            .hero p { font-size: 19px; }
+            .card { height: 480px; }
+            .nav-links { display: none; /* Hide links on mobile for simplicity */ }
         }
     </style>
 </head>
 <body>
 
     <nav class="navbar">
-        <a href="#" class="logo">PAM VENTURES</a>
-        <div class="nav-links">
-            <a href="#">About</a>
-            <a href="#">Ventures</a>
-            <a href="mailto:md@pamventures.in">Contact</a>
+        <div class="nav-content">
+            <a href="#" class="logo"> Pam Ventures</a>
+            <div class="nav-links">
+                <a href="#">About</a>
+                <a href="#">Hospitality</a>
+                <a href="#">Fintech</a>
+                <a href="#">Contact</a>
+            </div>
         </div>
     </nav>
 
     <section class="hero">
-        <h1>Building the Future</h1>
-        <p>A diversified holding company bridging the gap between premium hospitality and financial technology.</p>
-        <br><br><br> </section>
+        <h1 class="animate-load delay-1">Innovation. Hospitality.<br>Together.</h1>
+        <p class="animate-load delay-2">Bridging the gap between premium experiences and financial technology.</p>
+    </section>
 
-    <div class="container">
+    <div class="container grid-container animate-load delay-3">
         
         <div class="card">
-            <div class="card-icon">🏨</div>
-            <h2>Pam Premium</h2>
-            <p>Our flagship hospitality brand. Delivering world-class comfort and luxury experiences to travelers.</p>
-            <span class="status-badge status-open">● Operational</span>
-            <br>
-            <a href="#" class="contact-btn">Visit Hotel</a>
+            <div class="card-image-placeholder hotel-bg"></div> <div class="card-content">
+                <span class="logo-icon">🏨</span>
+                <h2>Pam Premium</h2>
+                <p>World-class comfort designed for the modern traveler. Experience luxury redefined.</p>
+                <div class="links">
+                    <a href="#" class="cta-link">Book a reservation</a>
+                </div>
+            </div>
         </div>
 
-        <div class="card">
-            <div class="card-icon">💻</div>
-            <h2>Pam Finserv</h2>
-            <p>Developing next-generation financial tools. Secure digital wallets and expense management systems.</p>
-            <span class="status-badge status-dev">● In Development</span>
-            <br>
-            <a href="#" class="contact-btn" style="background-color: var(--primary-dark);">Learn More</a>
+        <div class="card dark-mode">
+            <div class="card-image-placeholder fintech-bg"></div> <div class="card-content">
+                <span class="logo-icon">💳</span>
+                <h2>Pam Finserv</h2>
+                <p>The future of expense management. Secure, fast, and effortlessly simple.</p>
+                <div class="links">
+                    <a href="#" class="cta-link">Learn about Wallet</a>
+                </div>
+            </div>
         </div>
 
     </div>
 
     <footer class="footer">
-        <p>&copy; 2026 Pam Ventures Group. All Rights Reserved.</p>
-        <p>Vadodara, India</p>
+        <div class="footer-content">
+            <p>Copyright © 2026 Pam Ventures Group. All rights reserved.</p>
+            <p>Vadodara, India</p>
+        </div>
     </footer>
 
 </body>
 </html>
-
-      
-
-
