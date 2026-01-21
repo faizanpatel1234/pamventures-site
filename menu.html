@@ -12,10 +12,10 @@
         :root {
             /* Branding Colors */
             --brand-gold: #C5A059; 
-            --brand-gold-light: #e6d3a3;
+            --brand-gold-dark: #9e7f43;
             --brand-black: #1a1a1a;
             --brand-dark-gray: #333333;
-            --bg-cream: #faf9f6;
+            --bg-cream: #fdfbf7;
         }
 
         body {
@@ -38,54 +38,71 @@
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             font-family: 'Playfair Display', serif;
             letter-spacing: 0.5px;
-            border: 1px solid transparent;
+            border: 1px solid #e5e7eb;
+            background: white;
         }
         .category-btn.active {
-            background-color: var(--brand-black);
+            background: linear-gradient(135deg, var(--brand-black) 0%, #333 100%);
             color: var(--brand-gold);
             border-color: var(--brand-black);
-            transform: scale(1.05);
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
         }
 
-        /* Food Type Icons (Veg/Non-Veg) */
-        .food-icon {
+        /* Food Type Icons (Veg/Non-Veg) Standardized */
+        .veg-icon-box {
+            border: 1px solid #16a34a;
+            padding: 2px;
             width: 14px; height: 14px;
-            border: 1px solid;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 8px;
-            flex-shrink: 0;
-            margin-top: 4px;
+            display: flex; align-items: center; justify-content: center;
             border-radius: 2px;
         }
-        .veg { border-color: #16a34a; color: #16a34a; }
-        .non-veg { border-color: #dc2626; color: #dc2626; }
-        .egg { border-color: #ca8a04; color: #ca8a04; }
+        .veg-dot { width: 6px; height: 6px; background-color: #16a34a; border-radius: 50%; }
+
+        .nonveg-icon-box {
+            border: 1px solid #dc2626;
+            padding: 2px;
+            width: 14px; height: 14px;
+            display: flex; align-items: center; justify-content: center;
+            border-radius: 2px;
+        }
+        .nonveg-dot { width: 6px; height: 6px; background-color: #dc2626; border-radius: 50%; }
+
+        .egg-icon-box {
+            border: 1px solid #ca8a04;
+            padding: 2px;
+            width: 14px; height: 14px;
+            display: flex; align-items: center; justify-content: center;
+            border-radius: 2px;
+        }
+        .egg-dot { width: 6px; height: 6px; background-color: #ca8a04; border-radius: 50%; }
+
 
         /* Card Styling */
         .menu-card {
             background: white;
-            border: 1px solid #e5e7eb;
+            border: 1px solid rgba(0,0,0,0.03);
             transition: all 0.2s ease;
-            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+            border-radius: 16px;
         }
         .menu-card:active {
             transform: scale(0.98);
-            background-color: #fcfcfc;
+            background-color: #fafafa;
         }
 
         .kcal-badge {
             font-size: 0.65rem;
-            background-color: #f3f4f6;
-            color: #6b7280;
-            padding: 2px 6px;
-            border-radius: 4px;
+            background-color: #fff7ed;
+            color: #c2410c;
+            padding: 2px 8px;
+            border-radius: 12px;
             display: inline-flex;
             align-items: center;
-            gap: 3px;
-            margin-top: 4px;
+            gap: 4px;
+            margin-top: 6px;
+            font-weight: 600;
+            border: 1px solid #ffedd5;
         }
         
         /* Fade Animation for menu items */
@@ -96,52 +113,65 @@
             from { opacity: 0; transform: translateY(10px); }
             to { opacity: 1; transform: translateY(0); }
         }
+
+        /* Gold Gradient Text */
+        .text-gold-gradient {
+            background: linear-gradient(to right, #C5A059, #e6d3a3, #C5A059);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-size: 200% auto;
+            animation: shine 3s linear infinite;
+        }
+        @keyframes shine {
+            to { background-position: 200% center; }
+        }
     </style>
 </head>
 <body class="antialiased min-h-screen flex flex-col">
 
-    <!-- Premium Header -->
-    <header class="bg-[#1a1a1a] text-white pt-8 pb-6 rounded-b-[2.5rem] shadow-xl relative z-30 flex-shrink-0">
+    <!-- Premium Compact Header -->
+    <header class="bg-gradient-to-br from-gray-900 via-[#1a1a1a] to-gray-800 text-white pt-5 pb-5 rounded-b-[2rem] shadow-2xl relative z-30 flex-shrink-0 border-b border-[#333]">
         <div class="px-6 text-center">
-            <div class="inline-block border-b border-[#C5A059] pb-1 mb-2">
-                <p class="text-[10px] tracking-[0.3em] uppercase text-[#C5A059] font-semibold">PAM Premium Hotel</p>
+            <div class="inline-block border-b border-[#C5A059] pb-0.5 mb-1.5 opacity-90">
+                <p class="text-[9px] tracking-[0.3em] uppercase text-[#C5A059] font-bold">PAM Premium Hotel</p>
             </div>
-            <h1 class="text-4xl font-bold font-serif text-white tracking-wide">Arab Ino</h1>
-            <p class="text-xs text-gray-400 mt-1 italic font-serif">Fine Dining Restaurant</p>
+            <h1 class="text-3xl font-bold font-serif text-white tracking-wide mb-0.5 text-gold-gradient">Arab Ino</h1>
+            <p class="text-[11px] text-gray-400 italic font-serif tracking-wide">Fine Dining Restaurant</p>
         </div>
         
         <!-- Search Bar with Clear Button -->
-        <div class="px-6 mt-6">
+        <div class="px-5 mt-4">
             <div class="relative group">
                 <span class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                    <i class="fas fa-search text-gray-500 text-sm group-focus-within:text-[#C5A059] transition-colors"></i>
+                    <i class="fas fa-search text-gray-400 text-xs group-focus-within:text-[#C5A059] transition-colors"></i>
                 </span>
-                <input type="text" id="searchInput" placeholder="Search for dishes..." 
-                    class="w-full pl-11 pr-10 py-3.5 rounded-2xl bg-[#2a2a2a] border border-[#333] text-white placeholder-gray-500 focus:outline-none focus:ring-1 focus:ring-[#C5A059] text-base transition-all shadow-inner">
+                <input type="text" id="searchInput" placeholder="Find your favorite dish..." 
+                    class="w-full pl-10 pr-10 py-3 rounded-xl bg-white/10 backdrop-blur-sm border border-white/10 text-white placeholder-gray-400 focus:outline-none focus:ring-1 focus:ring-[#C5A059] focus:bg-white/15 text-sm transition-all shadow-inner">
                 
                 <!-- Clear Button (Hidden by default) -->
-                <button id="clearSearch" class="absolute inset-y-0 right-0 pr-4 flex items-center text-gray-500 hover:text-white hidden">
-                    <i class="fas fa-times-circle"></i>
+                <button id="clearSearch" class="absolute inset-y-0 right-0 pr-4 flex items-center text-gray-400 hover:text-white hidden transition-colors">
+                    <i class="fas fa-times-circle text-sm"></i>
                 </button>
             </div>
         </div>
     </header>
 
     <!-- Category Navigation (Sticky) -->
-    <nav class="sticky top-0 z-40 bg-[#faf9f6]/95 backdrop-blur-md pt-3 pb-3 border-b border-gray-200 shadow-sm">
+    <nav class="sticky top-0 z-40 bg-[#fdfbf7]/95 backdrop-blur-md pt-3 pb-3 border-b border-gray-100 shadow-sm">
         <div class="flex overflow-x-auto gap-2 px-4 no-scrollbar items-center" id="categoryNav">
             <!-- Categories Injected Here -->
         </div>
     </nav>
 
     <!-- Menu List Container -->
-    <main id="menuContainer" class="px-4 py-6 space-y-6 max-w-md mx-auto flex-grow">
+    <main id="menuContainer" class="px-4 py-5 space-y-5 max-w-md mx-auto flex-grow">
         <!-- Menu Items Injected Here -->
     </main>
 
     <!-- Footer Space (For aesthetics) -->
-    <div class="py-4 text-center">
-        <p class="text-[10px] text-gray-300 uppercase tracking-widest">Taste of Luxury</p>
+    <div class="py-6 text-center opacity-60">
+        <i class="fas fa-crown text-[#C5A059] text-xs mb-2 block"></i>
+        <p class="text-[10px] text-gray-400 uppercase tracking-[0.2em] font-serif">Taste of Luxury</p>
     </div>
 
     <script>
@@ -149,7 +179,7 @@
         const categories = [
             { id: 'all', name: 'All Menu' },
             { id: 'breakfast', name: 'Breakfast' },
-            { id: 'sandwiches', name: 'Sandwiches' },
+            { id: 'sandwiches', name: 'Sandwiches & Burgers' },
             { id: 'starters', name: 'Starters' },
             { id: 'soup', name: 'Soup & Salad' },
             { id: 'main-indian', name: 'Indian Mains' },
@@ -160,116 +190,116 @@
             { id: 'midnight', name: 'Midnight Meal' }
         ];
 
-        // Extracted Data (Fixed Typos)
+        // Extracted Data (Fixed Grammar & Typos)
         const menuData = [
             // === BREAKFAST ===
-            { category: 'breakfast', name: "Cereals with Milk", desc: "Choice: Corn Flakes/Choco Flakes/Muesli; Served with hot or cold milk", price: 225, kcal: 214, type: 'veg' },
+            { category: 'breakfast', name: "Cereals with Milk", desc: "Choice of Corn Flakes, Choco Flakes, or Muesli. Served with hot or cold milk", price: 225, kcal: 214, type: 'veg' },
             { category: 'breakfast', name: "Toast Butter & Preserves", desc: "2 slices of toasted bread served with butter and marmalade", price: 225, kcal: 234, type: 'veg' },
-            { category: 'breakfast', name: "Egg White Scrambled", desc: "4 Eggs White. Accompanied by slice of bread and butter", price: 325, kcal: 218, type: 'egg' },
-            { category: 'breakfast', name: "Egg White Omelette", desc: "4 Eggs White. Masala or Plain served with grilled tomato", price: 325, kcal: 123, type: 'egg' },
-            { category: 'breakfast', name: "Omelette (2 Eggs)", desc: "Masala/Plain/Cheese/Mushroom accompanied by tomato grill", price: 275, kcal: 197, type: 'egg' },
-            { category: 'breakfast', name: "Bread Omelette", desc: "Bread covered with masala/plain omelette served with tomato grill", price: 275, kcal: 317, type: 'egg' },
-            { category: 'breakfast', name: "Fried Egg", desc: "Sunny side up/both side fried. Accompanied by 2 slice toast", price: 275, kcal: 289, type: 'egg' },
-            { category: 'breakfast', name: "Puri with Bhaji", desc: "Home style potato and peas curry served with 3 pieces of puri", price: 275, kcal: 1055, type: 'veg' },
-            { category: 'breakfast', name: "Chole Bhature", desc: "Delhi Street style chole served with 2 pieces of bhatura", price: 275, kcal: 1295, type: 'veg' },
-            { category: 'breakfast', name: "Stuffed Tawa Paratha", desc: "Potato / Paneer / Cauliflower. Served with curd and pickle", price: 275, kcal: 574, type: 'veg' },
-            { category: 'breakfast', name: "Dosa", desc: "Masala/Plain/Mysore/Ghee Served with Sambhar & Chutney", price: 275, kcal: 458, type: 'veg' },
-            { category: 'breakfast', name: "Uttapam", desc: "Plain/Masala served with sambhar & chutney", price: 225, kcal: 317, type: 'veg' },
-            { category: 'breakfast', name: "Idli", desc: "Steamed rice dumplings, served with sambhar & chutney", price: 265, kcal: 265, type: 'veg' },
-            { category: 'breakfast', name: "Upma", desc: "Tomato/Vegetable/Dry Fruit, served with chutney", price: 275, kcal: 275, type: 'veg' },
-            { category: 'breakfast', name: "Poha", desc: "Beaten paddy tempered with mustard seeds, curry leaves", price: 275, kcal: 578, type: 'veg' },
+            { category: 'breakfast', name: "Egg White Scrambled", desc: "4 Egg Whites. Accompanied by a slice of bread and butter", price: 325, kcal: 218, type: 'egg' },
+            { category: 'breakfast', name: "Egg White Omelette", desc: "4 Egg Whites. Masala or Plain, served with grilled tomato", price: 325, kcal: 123, type: 'egg' },
+            { category: 'breakfast', name: "Omelette (2 Eggs)", desc: "Masala, Plain, Cheese, or Mushroom. Served with grilled tomato", price: 275, kcal: 197, type: 'egg' },
+            { category: 'breakfast', name: "Bread Omelette", desc: "Bread coated with masala or plain omelette, served with grilled tomato", price: 275, kcal: 317, type: 'egg' },
+            { category: 'breakfast', name: "Fried Egg", desc: "Sunny side up or Over Easy. Accompanied by 2 slices of toast", price: 275, kcal: 289, type: 'egg' },
+            { category: 'breakfast', name: "Puri with Bhaji", desc: "Homestyle potato and green pea curry served with 3 puris", price: 275, kcal: 1055, type: 'veg' },
+            { category: 'breakfast', name: "Chole Bhature", desc: "Delhi-style chickpea curry served with 2 bhaturas", price: 275, kcal: 1295, type: 'veg' },
+            { category: 'breakfast', name: "Stuffed Tawa Paratha", desc: "Choice of Potato, Paneer, or Cauliflower. Served with yogurt and pickle", price: 275, kcal: 574, type: 'veg' },
+            { category: 'breakfast', name: "Dosa", desc: "Masala, Plain, Mysore, or Ghee. Served with Sambhar & Chutney", price: 275, kcal: 458, type: 'veg' },
+            { category: 'breakfast', name: "Uttapam", desc: "Plain or Masala, served with Sambhar & Chutney", price: 225, kcal: 317, type: 'veg' },
+            { category: 'breakfast', name: "Idli", desc: "Steamed rice dumplings, served with Sambhar & Chutney", price: 265, kcal: 265, type: 'veg' },
+            { category: 'breakfast', name: "Upma", desc: "Tomato, Vegetable, or Dry Fruit. Served with chutney", price: 275, kcal: 275, type: 'veg' },
+            { category: 'breakfast', name: "Poha", desc: "Flattened rice tempered with mustard seeds and curry leaves", price: 275, kcal: 578, type: 'veg' },
             { category: 'breakfast', name: "Continental Breakfast", desc: "Juice/Shake, 2 Eggs, Grilled Tomato, Toast, Preserves", price: 375, kcal: 790, type: 'egg' },
             { category: 'breakfast', name: "South Indian Breakfast", desc: "Juice/Lassi, 2 Idli, 1 Vada, 1 Uttapam, Sambhar, Chutney", price: 375, kcal: 902, type: 'veg' },
             { category: 'breakfast', name: "North Indian Breakfast", desc: "Juice/Lassi, 2 Puri Bhaji, Poha, 1 Aloo Paratha, Curd", price: 375, kcal: 1104, type: 'veg' },
 
             // === SANDWICHES & BURGERS ===
-            { category: 'sandwiches', name: "Classic Sandwich Veg", desc: "Coleslaw/Chutney/Veg. Served with french fries", price: 275, kcal: 795, type: 'veg' },
-            { category: 'sandwiches', name: "Classic Sandwich Veg Grilled", desc: "Served with french fries and tomato ketchup", price: 275, kcal: 795, type: 'veg' },
-            { category: 'sandwiches', name: "PAM Premium Club House Veg", desc: "Double layer, lettuce, cheese & veg. Served with fries", price: 375, kcal: 1086, type: 'veg' },
-            { category: 'sandwiches', name: "Kolkata Kathi Roll Veg/Paneer", desc: "Roomali roti stuffed with paneer, vegetable & tandoori masala", price: 325, kcal: 694, type: 'veg' },
-            { category: 'sandwiches', name: "Veg Burger", desc: "Veg pattice stuffed burger served with french fries", price: 325, kcal: 507, type: 'veg' },
-            { category: 'sandwiches', name: "Chicken Kasundi Sandwich", desc: "Stuffed with chicken kasundi, served with french fries", price: 375, kcal: 665, type: 'non-veg' },
-            { category: 'sandwiches', name: "Classic Sandwich Non-Veg Grilled", desc: "Chicken/Egg stuffing. Served with french fries", price: 375, kcal: 795, type: 'non-veg' },
-            { category: 'sandwiches', name: "Chicken Burger", desc: "Burger made of chicken pattice, served with french fries", price: 375, kcal: 607, type: 'non-veg' },
+            { category: 'sandwiches', name: "Classic Sandwich Veg", desc: "Coleslaw, Chutney, or Veg. Served with french fries", price: 275, kcal: 795, type: 'veg' },
+            { category: 'sandwiches', name: "Classic Sandwich Veg Grilled", desc: "Grilled veg sandwich served with french fries and ketchup", price: 275, kcal: 795, type: 'veg' },
+            { category: 'sandwiches', name: "PAM Premium Club House Veg", desc: "Double layer with lettuce, cheese & veg. Served with fries", price: 375, kcal: 1086, type: 'veg' },
+            { category: 'sandwiches', name: "Kolkata Kathi Roll Veg/Paneer", desc: "Roomali roti stuffed with paneer, vegetables & tandoori spices", price: 325, kcal: 694, type: 'veg' },
+            { category: 'sandwiches', name: "Veg Burger", desc: "Veg patty burger served with french fries", price: 325, kcal: 507, type: 'veg' },
+            { category: 'sandwiches', name: "Chicken Kasundi Sandwich", desc: "Stuffed with chicken in mustard sauce, served with french fries", price: 375, kcal: 665, type: 'non-veg' },
+            { category: 'sandwiches', name: "Classic Sandwich Non-Veg Grilled", desc: "Chicken or Egg stuffing. Served with french fries", price: 375, kcal: 795, type: 'non-veg' },
+            { category: 'sandwiches', name: "Chicken Burger", desc: "Chicken patty burger served with french fries", price: 375, kcal: 607, type: 'non-veg' },
             { category: 'sandwiches', name: "Kolkata Kathi Roll Non-Veg", desc: "Roomali roti stuffed with tandoori chicken", price: 375, kcal: 686, type: 'non-veg' },
-            { category: 'sandwiches', name: "Club House Non-Veg", desc: "Triple layer, egg, chicken coleslaw. Served with fries", price: 475, kcal: 911, type: 'non-veg' },
+            { category: 'sandwiches', name: "Club House Non-Veg", desc: "Triple layer with egg, chicken coleslaw. Served with fries", price: 475, kcal: 911, type: 'non-veg' },
 
             // === STARTERS ===
-            { category: 'starters', name: "French Fries", desc: "Classic / Plain / Peri Peri. Served with dip", price: 225, kcal: 1164, type: 'veg' },
-            { category: 'starters', name: "Pakora", desc: "Onion / Potato / Mix Veg. Served with pudina chutney", price: 275, kcal: 943, type: 'veg' },
-            { category: 'starters', name: "Vegetable Cutlets", desc: "Minced vegetable sauteed and deep fried", price: 275, kcal: 701, type: 'veg' },
-            { category: 'starters', name: "Jalapeno Cheese Ball", desc: "Deep fried, stuffed with jalapeno", price: 325, kcal: 1244, type: 'veg' },
-            { category: 'starters', name: "Cheese & 3 Peppers on Toast", desc: "Cheese chilli toast with bell peppers", price: 325, kcal: 782, type: 'veg' },
+            { category: 'starters', name: "French Fries", desc: "Classic, Plain, or Peri Peri. Served with dip", price: 225, kcal: 1164, type: 'veg' },
+            { category: 'starters', name: "Pakora", desc: "Onion, Potato, or Mix Veg. Served with mint chutney", price: 275, kcal: 943, type: 'veg' },
+            { category: 'starters', name: "Vegetable Cutlets", desc: "Minced vegetable patties, crumbed and deep fried", price: 275, kcal: 701, type: 'veg' },
+            { category: 'starters', name: "Jalapeno Cheese Ball", desc: "Deep fried cheese balls stuffed with jalapeno", price: 325, kcal: 1244, type: 'veg' },
+            { category: 'starters', name: "Cheese & 3 Peppers on Toast", desc: "Cheese chilli toast topped with bell peppers", price: 325, kcal: 782, type: 'veg' },
             { category: 'starters', name: "Veg Spring Rolls", desc: "Vegetable stuffed rolls served with hot garlic sauce", price: 325, kcal: 251, type: 'veg' },
-            { category: 'starters', name: "Honey Yogurt Ke Kebab", desc: "Awadhi style yogurt pattie. Served with pudina chutney", price: 375, kcal: 800, type: 'veg' },
-            { category: 'starters', name: "Paneer Angara/Tikka", desc: "Marinated cottage cheese chargrilled", price: 425, kcal: 535, type: 'veg' },
-            { category: 'starters', name: "Vegetable Kebab Platter", desc: "Paneer tikka, Veg seekh, Tandoori aloo, Mushroom", price: 575, kcal: 1072, type: 'veg' },
-            { category: 'starters', name: "Honey Chilli Potatoes", desc: "Tossed in sweet and spicy sauce", price: 225, kcal: null, type: 'veg' },
-            { category: 'starters', name: "Schezwan Crispy Veg", desc: "Crispy fried vegetables tossed with green chilli", price: 225, kcal: 673, type: 'veg' },
+            { category: 'starters', name: "Honey Yogurt Ke Kebab", desc: "Awadhi style yogurt patty. Served with mint chutney", price: 375, kcal: 800, type: 'veg' },
+            { category: 'starters', name: "Paneer Angara/Tikka", desc: "Marinated cottage cheese, chargrilled", price: 425, kcal: 535, type: 'veg' },
+            { category: 'starters', name: "Vegetable Kebab Platter", desc: "Assortment of Paneer tikka, Veg seekh, Tandoori aloo, Mushroom", price: 575, kcal: 1072, type: 'veg' },
+            { category: 'starters', name: "Honey Chilli Potatoes", desc: "Crispy potatoes tossed in sweet and spicy sauce", price: 225, kcal: null, type: 'veg' },
+            { category: 'starters', name: "Schezwan Crispy Veg", desc: "Crispy fried vegetables tossed with green chillies", price: 225, kcal: 673, type: 'veg' },
             // Non Veg Starters
-            { category: 'starters', name: "Chicken Nuggets", desc: "Breaded chicken deep fried", price: 425, kcal: 607, type: 'non-veg' },
+            { category: 'starters', name: "Chicken Nuggets", desc: "Breaded chicken bites, deep fried", price: 425, kcal: 607, type: 'non-veg' },
             { category: 'starters', name: "Fish N Chips", desc: "Marinated fish fillet coated with crumbs & fried", price: 425, kcal: 907, type: 'non-veg' },
-            { category: 'starters', name: "Bhatti Da Murgh (Half)", desc: "Char grilled chicken (leg & breast) with chutney", price: 350, kcal: 1306, type: 'non-veg' },
-            { category: 'starters', name: "Murgh Malai Tikka", desc: "Chicken in yogurt, cardamom, shahi jeera", price: 425, kcal: 723, type: 'non-veg' },
-            { category: 'starters', name: "Bharwan Tangdi Kebab", desc: "Chicken legs marinated with cheese & yogurt", price: 475, kcal: 599, type: 'non-veg' },
+            { category: 'starters', name: "Bhatti Da Murgh (Half)", desc: "Chargrilled chicken (leg & breast) with chutney", price: 350, kcal: 1306, type: 'non-veg' },
+            { category: 'starters', name: "Murgh Malai Tikka", desc: "Chicken marinated in yogurt, cardamom, and shahi jeera", price: 425, kcal: 723, type: 'non-veg' },
+            { category: 'starters', name: "Bharwan Tangdi Kebab", desc: "Chicken legs stuffed with cheese & yogurt", price: 475, kcal: 599, type: 'non-veg' },
             { category: 'starters', name: "Gosht Ronake Seekh Kebab", desc: "Minced mutton marinated and chargrilled", price: 475, kcal: 465, type: 'non-veg' },
-            { category: 'starters', name: "Tandoori Prawns", desc: "Prawns marinated with ajwain & yogurt", price: 600, kcal: 600, type: 'non-veg' },
-            { category: 'starters', name: "Fish Finger", desc: "Crispy fried fish with tartar sauce", price: 350, kcal: 582, type: 'non-veg' },
-            { category: 'starters', name: "Golden Fried Prawns", desc: "Batter fried prawns with tartar sauce", price: 600, kcal: 572, type: 'non-veg' },
+            { category: 'starters', name: "Tandoori Prawns", desc: "Prawns marinated with carom seeds (ajwain) & yogurt", price: 600, kcal: 600, type: 'non-veg' },
+            { category: 'starters', name: "Fish Finger", desc: "Crispy fried fish fingers with tartar sauce", price: 350, kcal: 582, type: 'non-veg' },
+            { category: 'starters', name: "Golden Fried Prawns", desc: "Batter fried prawns served with tartar sauce", price: 600, kcal: 572, type: 'non-veg' },
 
             // === SOUP & SALAD ===
-            { category: 'soup', name: "Fresh Green Garden Salad", desc: "Slice cut green served on a bed of lettuce", price: 225, kcal: 49, type: 'veg' },
+            { category: 'soup', name: "Fresh Green Garden Salad", desc: "Sliced fresh greens served on a bed of lettuce", price: 225, kcal: 49, type: 'veg' },
             { category: 'soup', name: "Fresh Farm Greek Salad", desc: "Crispy veggies, garlic vinaigrette, feta crumble", price: 225, kcal: 105, type: 'veg' },
-            { category: 'soup', name: "Healthy Protein 3 Beans Salad", desc: "Beans sprouts tossed in choice of dressing", price: 225, kcal: 356, type: 'veg' },
-            { category: 'soup', name: "Chicken Smoked Salad", desc: "Smoked chicken tossed with bell pepper", price: 300, kcal: 301, type: 'non-veg' },
-            { category: 'soup', name: "Classical Caesar Salad", desc: "Lettuce, croutons, parmesan, olive oil", price: 250, kcal: 476, type: 'veg' },
+            { category: 'soup', name: "Healthy Protein 3 Bean Salad", desc: "Bean sprouts tossed in choice of dressing", price: 225, kcal: 356, type: 'veg' },
+            { category: 'soup', name: "Chicken Smoked Salad", desc: "Smoked chicken tossed with bell peppers", price: 300, kcal: 301, type: 'non-veg' },
+            { category: 'soup', name: "Classic Caesar Salad", desc: "Lettuce, croutons, parmesan, olive oil", price: 250, kcal: 476, type: 'veg' },
             { category: 'soup', name: "Cream of Tomato Basil Soup", desc: "Creamy soup of plum tomatoes with croutons", price: 225, kcal: 147, type: 'veg' },
-            { category: 'soup', name: "Cream of Broccoli/Almond", desc: "Creamy soup with vegetable stock", price: 250, kcal: 291, type: 'veg' },
+            { category: 'soup', name: "Cream of Broccoli/Almond", desc: "Rich creamy soup with vegetable stock", price: 250, kcal: 291, type: 'veg' },
             { category: 'soup', name: "Minestrone Soup", desc: "Tomato base Italian soup with macaroni", price: 225, kcal: 175, type: 'veg' },
-            { category: 'soup', name: "Veg Lemon Coriander Soup", desc: "Refreshing soup with cilantro and lemon", price: 225, kcal: 90, type: 'veg' },
-            { category: 'soup', name: "Veg Manchow Soup", desc: "Indo chinese spicy soup with fried noodles", price: 225, kcal: 102, type: 'veg' },
-            { category: 'soup', name: "Cream of Chicken Soup", desc: "Creamy soup made of chicken stock", price: 275, kcal: 210, type: 'non-veg' },
+            { category: 'soup', name: "Veg Lemon Coriander Soup", desc: "Refreshing soup with coriander and lemon", price: 225, kcal: 90, type: 'veg' },
+            { category: 'soup', name: "Veg Manchow Soup", desc: "Indo-Chinese spicy soup topped with fried noodles", price: 225, kcal: 102, type: 'veg' },
+            { category: 'soup', name: "Cream of Chicken Soup", desc: "Creamy soup made from rich chicken stock", price: 275, kcal: 210, type: 'non-veg' },
             { category: 'soup', name: "Chicken Thukpa Soup", desc: "Traditional spicy Tibetan noodle soup", price: 275, kcal: 493, type: 'non-veg' },
-            { category: 'soup', name: "Chicken Manchow Soup", desc: "Spicy chicken soup with fried noodles", price: 275, kcal: 511, type: 'non-veg' },
+            { category: 'soup', name: "Chicken Manchow Soup", desc: "Spicy chicken soup topped with fried noodles", price: 275, kcal: 511, type: 'non-veg' },
 
             // === INDIAN MAINS ===
-            { category: 'main-indian', name: "Bhindi Do Pyaza/Masala", desc: "Lady finger cooked with lots of onion & spices", price: 275, kcal: 604, type: 'veg' },
-            { category: 'main-indian', name: "Kaju Curry", desc: "Golden fried cashew nut cooked in rich gravy", price: 375, kcal: 1336, type: 'veg' },
-            { category: 'main-indian', name: "Methi Malai Mutter", desc: "Fenugreek and peas in rich, mild creamy gravy", price: 275, kcal: 1217, type: 'veg' },
+            { category: 'main-indian', name: "Bhindi Do Pyaza/Masala", desc: "Okra cooked with plenty of onions & spices", price: 275, kcal: 604, type: 'veg' },
+            { category: 'main-indian', name: "Kaju Curry", desc: "Golden fried cashew nuts cooked in rich gravy", price: 375, kcal: 1336, type: 'veg' },
+            { category: 'main-indian', name: "Methi Malai Mutter", desc: "Fenugreek and green peas in rich, mild creamy gravy", price: 275, kcal: 1217, type: 'veg' },
             { category: 'main-indian', name: "Subz Birbal Ki Handi", desc: "Mix veg in rich onion gravy with special spices", price: 275, kcal: 413, type: 'veg' },
-            { category: 'main-indian', name: "Kashmiri Dum Aloo", desc: "Baby potato simmered in rich Kashmiri gravy", price: 275, kcal: 564, type: 'veg' },
-            { category: 'main-indian', name: "Cheesy Mushroom Mutter", desc: "Mushroom and green peas in cheesy gravy", price: 325, kcal: 509, type: 'veg' },
-            { category: 'main-indian', name: "Paneer Tikka Masala", desc: "Char grilled cottage cheese in spicy gravy", price: 325, kcal: 718, type: 'veg' },
-            { category: 'main-indian', name: "Paneer Lababdar", desc: "Rich, tangy slightly sweet gravy", price: 325, kcal: 422, type: 'veg' },
-            { category: 'main-indian', name: "Chana Masala", desc: "Soft boiled chick peas cooked in Indian spices", price: 275, kcal: 569, type: 'veg' },
-            { category: 'main-indian', name: "Gosht Delhi Ka Korma", desc: "Lamb chunks in slow cooked onion gravy", price: 575, kcal: 570, type: 'non-veg' },
+            { category: 'main-indian', name: "Kashmiri Dum Aloo", desc: "Baby potatoes simmered in rich Kashmiri gravy", price: 275, kcal: 564, type: 'veg' },
+            { category: 'main-indian', name: "Cheesy Mushroom Mutter", desc: "Mushrooms and green peas in cheesy gravy", price: 325, kcal: 509, type: 'veg' },
+            { category: 'main-indian', name: "Paneer Tikka Masala", desc: "Chargrilled cottage cheese in spicy gravy", price: 325, kcal: 718, type: 'veg' },
+            { category: 'main-indian', name: "Paneer Lababdar", desc: "Rich, tangy, slightly sweet gravy", price: 325, kcal: 422, type: 'veg' },
+            { category: 'main-indian', name: "Chana Masala", desc: "Soft boiled chickpeas cooked in Indian spices", price: 275, kcal: 569, type: 'veg' },
+            { category: 'main-indian', name: "Gosht Delhi Ka Korma", desc: "Lamb chunks in slow-cooked onion gravy", price: 575, kcal: 570, type: 'non-veg' },
             { category: 'main-indian', name: "Mutton Rogan Josh", desc: "Traditional Kashmiri spiced mutton curry", price: 575, kcal: 570, type: 'non-veg' },
             { category: 'main-indian', name: "Murgh Lazeez Saag Wala", desc: "Chicken in aromatic spinach gravy", price: 375, kcal: 484, type: 'non-veg' },
-            { category: 'main-indian', name: "Murgh Shahi Korma", desc: "Chicken in special chef blend gravy", price: 375, kcal: null, type: 'non-veg' },
+            { category: 'main-indian', name: "Murgh Shahi Korma", desc: "Chicken in special chef's blend gravy", price: 375, kcal: null, type: 'non-veg' },
             { category: 'main-indian', name: "Murgh Do Pyaza", desc: "Chicken with rich gravy, cashews & vegetables", price: 375, kcal: 1002, type: 'non-veg' },
             { category: 'main-indian', name: "Butter Chicken", desc: "Boneless chicken in traditional buttery tomato gravy", price: 400, kcal: 610, type: 'non-veg' },
             { category: 'main-indian', name: "Dum Ki Machhi", desc: "Fish simmered in brown onion gravy (Dum method)", price: 375, kcal: 255, type: 'non-veg' },
 
             // === GLOBAL MAINS ===
-            { category: 'main-intl', name: "Exotic Veg Thai Curry", desc: "Green/Red/Yellow curry with coconut milk", price: 375, kcal: 183, type: 'veg' },
-            { category: 'main-intl', name: "Stir Fried Medley of Veg", desc: "Seasonal vegetables stir fried to perfection", price: 325, kcal: 516, type: 'veg' },
-            { category: 'main-intl', name: "Chilli Paneer Gravy", desc: "Fried paneer in sweet, spicy, sour sauce", price: 325, kcal: 870, type: 'veg' },
+            { category: 'main-intl', name: "Exotic Veg Thai Curry", desc: "Green, Red, or Yellow curry with coconut milk", price: 375, kcal: 183, type: 'veg' },
+            { category: 'main-intl', name: "Stir Fried Medley of Veg", desc: "Seasonal vegetables stir-fried to perfection", price: 325, kcal: 516, type: 'veg' },
+            { category: 'main-intl', name: "Chilli Paneer Gravy", desc: "Fried paneer in sweet, spicy, and sour sauce", price: 325, kcal: 870, type: 'veg' },
             { category: 'main-intl', name: "Penne Alfredo", desc: "Pasta in creamy parmesan sauce with garlic bread", price: 375, kcal: 706, type: 'veg' },
-            { category: 'main-intl', name: "Penne Arrabiata", desc: "Tomato, garlic, red chilli sauce with garlic bread", price: 375, kcal: 709, type: 'veg' },
+            { category: 'main-intl', name: "Penne Arrabiata", desc: "Tomato, garlic, and red chilli sauce with garlic bread", price: 375, kcal: 709, type: 'veg' },
             { category: 'main-intl', name: "Baked Veg", desc: "Exotic veg cooked with cheese sauce", price: 375, kcal: 375, type: 'veg' },
-            { category: 'main-intl', name: "Chicken Thai Curry", desc: "Red/Green/Yellow curry with coconut milk", price: 425, kcal: 743, type: 'non-veg' },
-            { category: 'main-intl', name: "Oriental Chicken", desc: "Hot garlic / Schezwan / Black pepper sauce", price: 475, kcal: 555, type: 'non-veg' },
+            { category: 'main-intl', name: "Chicken Thai Curry", desc: "Red, Green, or Yellow curry with coconut milk", price: 425, kcal: 743, type: 'non-veg' },
+            { category: 'main-intl', name: "Oriental Chicken", desc: "Hot Garlic, Schezwan, or Black Pepper sauce", price: 475, kcal: 555, type: 'non-veg' },
             { category: 'main-intl', name: "Grilled Fish Lemon Butter", desc: "Grilled fish with lemon butter & veggies", price: 475, kcal: 446, type: 'non-veg' },
 
             // === RICE & BREADS ===
-            { category: 'rice-bread', name: "Dal Tadka", desc: "Pigeon peas tempered with cumin and garlic", price: 225, kcal: 684, type: 'veg' },
-            { category: 'rice-bread', name: "Dal Makhani", desc: "Black lentil & kidney beans with butter & cream", price: 325, kcal: 794, type: 'veg' },
+            { category: 'rice-bread', name: "Dal Tadka", desc: "Yellow lentils tempered with cumin and garlic", price: 225, kcal: 684, type: 'veg' },
+            { category: 'rice-bread', name: "Dal Makhani", desc: "Black lentils & kidney beans with butter & cream", price: 325, kcal: 794, type: 'veg' },
             { category: 'rice-bread', name: "Subz Dum Pukht Biryani", desc: "Vegetable Hyderabadi biryani with raita", price: 300, kcal: 1089, type: 'veg' },
             { category: 'rice-bread', name: "Jeera Rice", desc: "Steamed rice tempered with cumin seeds", price: 225, kcal: 523, type: 'veg' },
             { category: 'rice-bread', name: "Hyderabadi Murgh Biryani", desc: "Chicken Dum Biryani served with raita", price: 375, kcal: 1391, type: 'non-veg' },
             { category: 'rice-bread', name: "Gosht Dum Biryani", desc: "Mutton Dum Biryani served with raita", price: 475, kcal: 674, type: 'non-veg' },
-            { category: 'rice-bread', name: "Fried Rice (Veg)", desc: "Rice stirred in Chinese style", price: 225, kcal: 991, type: 'veg' },
-            { category: 'rice-bread', name: "Veg Hakka Noodles", desc: "Noodles stirred in Chinese style", price: 225, kcal: 1005, type: 'veg' },
+            { category: 'rice-bread', name: "Fried Rice (Veg)", desc: "Rice stir-fried Chinese style", price: 225, kcal: 991, type: 'veg' },
+            { category: 'rice-bread', name: "Veg Hakka Noodles", desc: "Noodles stir-fried Chinese style", price: 225, kcal: 1005, type: 'veg' },
             { category: 'rice-bread', name: "Tandoori Roti", desc: "Whole wheat flour bread (Plain/Butter)", price: 50, kcal: 126, type: 'veg' },
             { category: 'rice-bread', name: "Naan", desc: "Refined flour bread (Plain/Butter)", price: 50, kcal: 268, type: 'veg' },
             { category: 'rice-bread', name: "Garlic Naan", desc: "Refined flour bread with chopped garlic", price: 110, kcal: 269, type: 'veg' },
@@ -278,30 +308,30 @@
             { category: 'rice-bread', name: "Roomali Roti", desc: "Thin and soft handkerchief bread", price: 175, kcal: 270, type: 'veg' },
 
             // === DESSERT ===
-            { category: 'dessert', name: "Gulab Jamun", desc: "Deep fried mawa dumplings in chasni (3 pcs)", price: 125, kcal: 668, type: 'veg' },
+            { category: 'dessert', name: "Gulab Jamun", desc: "Deep fried mawa dumplings in syrup (3 pcs)", price: 125, kcal: 668, type: 'veg' },
             { category: 'dessert', name: "Dry Fruit Moong Dal Halwa", desc: "Moong dal cooked in ghee with dry fruits", price: 150, kcal: 960, type: 'veg' },
             { category: 'dessert', name: "Kesar Rasmalai", desc: "Saffron flavoured milk dumplings (3 pcs)", price: 225, kcal: 511, type: 'veg' },
-            { category: 'dessert', name: "Rasgulla", desc: "Fresh chenna dumplings in chasni (3 pcs)", price: 275, kcal: 219, type: 'veg' },
+            { category: 'dessert', name: "Rasgulla", desc: "Fresh cottage cheese dumplings in syrup (3 pcs)", price: 275, kcal: 219, type: 'veg' },
             { category: 'dessert', name: "Fruit Salad", desc: "Seasoned fruits with honey lemon dressing", price: 275, kcal: 171, type: 'veg' },
             { category: 'dessert', name: "Ice Cream", desc: "2 Scoops (Chocolate, Vanilla, Strawberry, etc)", price: 150, kcal: 62, type: 'veg' },
 
             // === BEVERAGES ===
-            { category: 'beverages', name: "Tea", desc: "Masala / Plain / Ginger", price: 100, kcal: 100, type: 'veg' },
-            { category: 'beverages', name: "Coffee", desc: "Espresso / Cappuccino / Latte", price: 125, kcal: 125, type: 'veg' },
+            { category: 'beverages', name: "Tea", desc: "Masala, Plain, or Ginger", price: 100, kcal: 100, type: 'veg' },
+            { category: 'beverages', name: "Coffee", desc: "Espresso, Cappuccino, or Latte", price: 125, kcal: 125, type: 'veg' },
             { category: 'beverages', name: "Cold Coffee", desc: "Chilled coffee with ice cream & chocolate", price: 175, kcal: 175, type: 'veg' },
-            { category: 'beverages', name: "Milk Shake", desc: "Chocolate / Strawberry / Vanilla / Banana", price: 175, kcal: 175, type: 'veg' },
-            { category: 'beverages', name: "Mango Smoothie", desc: "Frozen mango crush, sweet curd, dry fruits", price: 175, kcal: 175, type: 'veg' },
-            { category: 'beverages', name: "Lassi", desc: "Sweet / Salted creamy yogurt drink", price: 150, kcal: 150, type: 'veg' },
-            { category: 'beverages', name: "Fresh Juice", desc: "Orange / Water Melon / Pineapple", price: 175, kcal: 175, type: 'veg' },
-            { category: 'beverages', name: "Aerated Drinks", desc: "Pepsi / 7Up / Mirinda", price: 75, kcal: 75, type: 'veg' },
+            { category: 'beverages', name: "Milk Shake", desc: "Chocolate, Strawberry, Vanilla, or Banana", price: 175, kcal: 175, type: 'veg' },
+            { category: 'beverages', name: "Mango Smoothie", desc: "Frozen mango crush, sweet yogurt, dry fruits", price: 175, kcal: 175, type: 'veg' },
+            { category: 'beverages', name: "Lassi", desc: "Sweet or Salted creamy yogurt drink", price: 150, kcal: 150, type: 'veg' },
+            { category: 'beverages', name: "Fresh Juice", desc: "Orange, Watermelon, or Pineapple", price: 175, kcal: 175, type: 'veg' },
+            { category: 'beverages', name: "Aerated Drinks", desc: "Pepsi, 7Up, or Mirinda", price: 75, kcal: 75, type: 'veg' },
             { category: 'beverages', name: "Red Bull", desc: "Energy Drink", price: 125, kcal: 125, type: 'veg' },
 
             // === MIDNIGHT MEAL ===
             { category: 'midnight', name: "Veg Grilled Sandwich", desc: "With fries, side salad and ketchup", price: 225, kcal: 681, type: 'veg' },
             { category: 'midnight', name: "Dal Tadka With Rice", desc: "Half dal, half rice, papad, salad", price: 325, kcal: 882, type: 'veg' },
-            { category: 'midnight', name: "Dal Makhani & Paratha", desc: "Half dal makhani, 2 tawa paratha, salad", price: 375, kcal: 917, type: 'veg' },
+            { category: 'midnight', name: "Dal Makhani & Paratha", desc: "Half dal makhani, 2 tawa parathas, salad", price: 375, kcal: 917, type: 'veg' },
             { category: 'midnight', name: "Paneer Butter Masala & Pulao", desc: "Half paneer, half veg pulao, phulka, salad", price: 425, kcal: 1136, type: 'veg' },
-            { category: 'midnight', name: "Mutton Rogan Josh & Paratha", desc: "Half mutton masala, 2 paratha, salad", price: 475, kcal: 982, type: 'non-veg' },
+            { category: 'midnight', name: "Mutton Rogan Josh & Paratha", desc: "Half mutton masala, 2 parathas, salad", price: 475, kcal: 982, type: 'non-veg' },
             { category: 'midnight', name: "Murgh Makhani With Rice", desc: "Half chicken curry, steamed rice, salad", price: 425, kcal: 1067, type: 'non-veg' }
         ];
 
@@ -322,7 +352,7 @@
             categoryNav.innerHTML = '';
             categories.forEach((cat, index) => {
                 const btn = document.createElement('button');
-                btn.className = `category-btn whitespace-nowrap px-5 py-2.5 rounded-full border bg-white text-gray-700 text-sm font-semibold shadow-sm mx-1 ${index === 0 ? 'active' : ''}`;
+                btn.className = `category-btn whitespace-nowrap px-5 py-2.5 rounded-full text-gray-700 text-sm font-semibold shadow-sm mx-1 ${index === 0 ? 'active' : ''}`;
                 btn.innerText = cat.name;
                 btn.onclick = (e) => {
                     handleCategoryClick(e.target, cat.id);
@@ -377,7 +407,7 @@
             categories.forEach(cat => {
                 if (groups[cat.id]) {
                     const sectionTitle = filter === 'all' 
-                        ? `<div class="sticky top-[72px] bg-[#faf9f6] z-20 py-3 mb-2 border-b border-[#C5A059] inline-block w-full">
+                        ? `<div class="sticky top-[72px] bg-[#fdfbf7] z-20 py-3 mb-2 border-b border-[#C5A059] inline-block w-full">
                              <h2 class="text-xl font-serif font-bold text-[#1a1a1a] pr-4">${cat.name}</h2>
                            </div>` 
                         : '';
@@ -393,20 +423,26 @@
         }
 
         function createCard(item) {
-            const iconClass = item.type === 'veg' ? 'veg' : (item.type === 'egg' ? 'egg' : 'non-veg');
-            const kcalDisplay = item.kcal ? `<span class="kcal-badge"><i class="fas fa-fire-alt text-orange-400 text-[10px]"></i> ${item.kcal} kcal</span>` : '';
+            let iconHtml = '';
+            if (item.type === 'veg') {
+                iconHtml = `<div class="veg-icon-box"><div class="veg-dot"></div></div>`;
+            } else if (item.type === 'egg') {
+                iconHtml = `<div class="egg-icon-box"><div class="egg-dot"></div></div>`;
+            } else {
+                iconHtml = `<div class="nonveg-icon-box"><div class="nonveg-dot"></div></div>`;
+            }
+
+            const kcalDisplay = item.kcal ? `<span class="kcal-badge"><i class="fas fa-fire-alt text-[10px]"></i> ${item.kcal} kcal</span>` : '';
 
             return `
-                <div class="menu-card rounded-xl p-4 relative overflow-hidden">
+                <div class="menu-card p-4 relative overflow-hidden">
                     <div class="flex justify-between items-start gap-3">
                         <div class="flex-1">
                             <div class="flex items-center gap-2 mb-1">
-                                <span class="food-icon ${iconClass}">
-                                    <i class="fas fa-circle" style="font-size: 6px;"></i>
-                                </span>
+                                ${iconHtml}
                                 <h3 class="font-bold text-gray-800 text-lg font-serif leading-tight">${item.name}</h3>
                             </div>
-                            <p class="text-xs text-gray-600 leading-relaxed mb-2 line-clamp-2">${item.desc}</p>
+                            <p class="text-xs text-gray-500 leading-relaxed mb-2 line-clamp-3">${item.desc}</p>
                             ${kcalDisplay}
                         </div>
                         <div class="flex flex-col items-end pl-2">
