@@ -7,15 +7,15 @@
     <style>
         /* --- CSS VARIABLES & RESET --- */
         :root {
-            /* LUXURY PALETTE */
-            --bg-color: #050505;       /* Deepest Black */
-            --card-bg: #111111;        /* Soft Charcoal */
-            --text-primary: #ffffff;   /* Pure White */
-            --text-secondary: #a1a1a1; /* Silver Gray */
+            /* LUXURY GRAPHITE PALETTE (Not Pitch Black) */
+            --bg-color: #121212;       /* Deep Graphite (Material Dark) */
+            --card-bg: #1e1e1e;        /* Lighter Grey for contrast */
+            --text-primary: #f0f0f0;   /* Soft White */
+            --text-secondary: #b0b0b0; /* Light Silver */
             
             /* BRAND GOLD */
-            --accent-color: #C5A059;   
-            --accent-glow: rgba(197, 160, 89, 0.3);
+            --accent-color: #d4af37;   /* Classic Gold */
+            --accent-glow: rgba(212, 175, 55, 0.2);
 
             --section-spacing: 120px;
         }
@@ -33,6 +33,8 @@
 
         body {
             background-color: var(--bg-color);
+            /* Subtle gradient to make it feel expensive, not flat */
+            background-image: linear-gradient(135deg, #121212 0%, #1a1a1a 100%);
             color: var(--text-primary);
             line-height: 1.6;
             overflow-x: hidden;
@@ -52,20 +54,20 @@
         .delay-2 { animation-delay: 0.4s; }
         .delay-3 { animation-delay: 0.6s; }
 
-        /* --- NAVIGATION (Dark Glass) --- */
+        /* --- NAVIGATION (Frosted Charcoal) --- */
         nav {
             display: flex;
             justify-content: space-between;
             align-items: center;
             padding: 20px 5%;
-            background-color: rgba(5, 5, 5, 0.85); /* Dark see-through */
-            backdrop-filter: blur(15px);
-            -webkit-backdrop-filter: blur(15px);
+            background-color: rgba(18, 18, 18, 0.85);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
             position: fixed;
             width: 100%;
             top: 0;
             z-index: 1000;
-            border-bottom: 1px solid rgba(197, 160, 89, 0.1);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
         }
 
         .logo {
@@ -104,7 +106,6 @@
             align-items: center;
             text-align: center;
             padding: 150px 20px 0 20px;
-            background: radial-gradient(circle at center, #1a1a1a 0%, #050505 70%);
         }
 
         .hero h1 {
@@ -112,14 +113,12 @@
             font-weight: 800;
             line-height: 1.1;
             margin-bottom: 25px;
-            background: linear-gradient(to right, #fff, #a1a1a1);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+            color: white;
         }
         
         .hero h1 span {
             /* Gold Gradient Text */
-            background: linear-gradient(to right, #C5A059, #e6d3a3);
+            background: linear-gradient(to right, #d4af37, #f3e5ab);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
@@ -132,25 +131,26 @@
             font-weight: 300;
         }
 
-        /* Gold Button */
+        /* Gold Outline Button (Classy) */
         .btn {
-            background: linear-gradient(45deg, #b88a44, #e6d3a3);
-            color: #000; /* Black text on Gold */
-            padding: 16px 45px;
+            background: transparent;
+            color: var(--accent-color);
+            padding: 15px 40px;
             text-decoration: none;
-            border-radius: 2px; /* Sharper corners for luxury feel */
+            border: 2px solid var(--accent-color);
+            border-radius: 2px;
             font-size: 1rem;
             font-weight: 700;
             letter-spacing: 1px;
             text-transform: uppercase;
-            transition: transform 0.3s, box-shadow 0.3s;
-            border: none;
+            transition: all 0.3s;
             cursor: pointer;
             display: inline-block;
         }
 
         .btn:hover {
-            transform: translateY(-2px);
+            background: var(--accent-color);
+            color: #000;
             box-shadow: 0 0 20px var(--accent-glow);
         }
 
@@ -168,8 +168,7 @@
         .section-header h2 {
             font-size: 2.5rem;
             margin-bottom: 15px;
-            color: var(--accent-color);
-            font-family: 'Playfair Display', serif; /* Optional Serif feel */
+            color: white;
         }
 
         .section-header p {
@@ -183,18 +182,19 @@
             gap: 30px;
         }
 
-        /* --- DARK CARDS --- */
+        /* --- GRAPHITE CARDS --- */
         .card {
-            background: var(--card-bg);
+            background: var(--card-bg); /* Lighter grey, not black */
             padding: 40px;
-            border: 1px solid #222;
+            border-radius: 8px; /* Slightly rounded for modern look */
+            border: 1px solid rgba(255, 255, 255, 0.05);
             transition: all 0.4s ease;
         }
 
         .card:hover {
             transform: translateY(-5px);
             border-color: var(--accent-color);
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            background: #252525; /* Lightens on hover */
         }
 
         .card h3 {
@@ -214,8 +214,9 @@
         input, textarea {
             width: 100%;
             padding: 18px;
-            background: #0a0a0a;
+            background: var(--card-bg);
             border: 1px solid #333;
+            border-radius: 6px;
             color: white;
             font-size: 1rem;
             outline: none;
@@ -226,15 +227,32 @@
         input:focus, textarea:focus {
             border-color: var(--accent-color);
         }
+        
+        button[type="submit"] {
+            background: var(--accent-color);
+            color: black;
+            border: none;
+            border-radius: 2px;
+            padding: 16px;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        
+        button[type="submit"]:hover {
+            background: #f3e5ab;
+        }
 
         /* Footer */
         footer {
             text-align: center;
             padding: 60px;
-            background-color: #000;
-            color: #555;
+            background-color: #0e0e0e;
+            color: #666;
             font-size: 0.8rem;
-            border-top: 1px solid #111;
+            border-top: 1px solid #222;
             text-transform: uppercase;
             letter-spacing: 2px;
         }
@@ -291,7 +309,7 @@
         </div>
     </section>
 
-    <section class="section" id="work" style="background-color: #0a0a0a;">
+    <section class="section" id="work" style="background-color: #0e0e0e;">
         <div class="section-header">
             <h2>Selected Works</h2>
             <p>Recent prototypes and live deployments.</p>
@@ -335,7 +353,7 @@
                 <input type="text" name="name" placeholder="Name / Company" required>
                 <input type="email" name="email" placeholder="Email Address" required>
                 <textarea name="message" placeholder="Project Details..." rows="5" required></textarea>
-                <button type="submit" class="btn" style="width: 100%;">Send Inquiry</button>
+                <button type="submit">Send Inquiry</button>
             </form>
         </div>
     </section>
