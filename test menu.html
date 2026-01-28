@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Arab Ino Restaurant - PAM Premium</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.css"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
+    
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Lato:wght@300;400;700&display=swap');
+
+        :root {
+            --brand-gold: #C5A059; 
+            --brand-gold-light: #e6d3a3;
+            --brand-black: #1a1a1a;
+            --bg-cream: #faf9f6;
+        }
+
+        body {
+            font-family: 'Lato', sans-serif;
+            background-color: var(--bg-cream);
+            color: #333;
+            padding-bottom: env(safe-area-inset-bottom, 40px); 
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .font-serif { font-family: 'Playfair Display', serif; }
+
+        /* Hide Scrollbar */
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+        /* Category Buttons */
+        .category-btn {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            font-family: 'Playfair Display', serif;
+            letter-spacing: 0.5px;
+            border: 1px solid transparent;
+        }
+        .category-btn.active {
+            background-color: var(--brand-black);
+            color: var(--brand-gold);
+            border-color: var(--brand-black);
+            transform: scale(1.05);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Food Icons */
+        .food-icon {
+            width: 14px; height: 14px;
+            border: 1px solid;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 8px; flex-shrink: 0; margin-top: 4px; border-radius: 2px;
+        }
+        .veg { border-color: #16a34a; color: #16a34a; }
+        .non-veg { border-color: #dc2626; color: #dc2626; }
+        .egg { border-color: #ca8a04; color: #ca8a04; }
+
+        /* Cards */
+        .menu-card {
+            background: white;
+            border: 1px solid #e5e7eb;
+            transition: all 0.2s ease;
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05);
+        }
+        .kcal-badge {
+            font-size: 0.65rem; background-color: #f3f4f6; color: #6b7280;
+            padding: 2px 6px; border-radius: 4px; display: inline-flex;
+            align-items: center; gap: 3px; margin-top: 4px;
+        }
+        
+        .fade-in { animation: fadeIn 0.4s ease-in-out; }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        /* Loading Spinner */
+        .loader {
+            border: 3px solid #f3f3f3; border-radius: 50%;
+            border-top: 3px solid var(--brand-gold);
+            width: 30px; height: 30px;
+            -webkit-animation: spin 1s linear infinite; /* Safari */
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    </style>
+</head>
+<body class="antialiased min-h-screen flex flex-col">
+
+    <header class="bg-[#1a1a1a] text-white pt-8 pb-6 rounded-b-[2.5rem] shadow-xl relative z-30 flex-shrink-0">
+        <div class="px-6 text-center">
+            <div class="inline-block border-b border-[#C5A059] pb-1 mb-2">
+                <p class="text-[10px] tracking-[0.3em] uppercase text-[#C5A059] font-semibold">PAM Premium Hotel</p>
+            </div>
+            <h1 class="text-4xl font-bold font-serif text-white tracking-wide">Arab Ino</h1>
+            <p class="text-xs text-gray-400 mt-1 italic font-serif">Fine Dining Restaurant</p>
+        </div>
+        
+        <div class="px-6 mt-6">
+            <div class="relative group">
+                <span class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                    <i class="fas fa-search text-gray-500 text-sm group-focus-within:text-[#C5A059] transition-colors"></i>
+                </span>
+                <input type="text" id="searchInput" placeholder="Search menu..." 
+                    class="w-full pl-11 pr-10 py-3.5 rounded-2xl bg-[#2a2a2a] border border-[#333] text-white placeholder-gray-500 focus:outline-none focus:ring-1 focus:ring-[#C5A059] text-base transition-all shadow-inner">
+                <button id="clearSearch" class="absolute inset-y-0 right-0 pr-4 flex items-center text-gray-500 hover:text-white hidden">
+                    <i class="fas fa-times-circle"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <nav class="sticky top-0 z-40 bg-[#faf9f6]/95 backdrop-blur-md pt-3 pb-3 border-b border-gray-200 shadow-sm">
+        <div class="flex overflow-x-auto gap-2 px-4 no-scrollbar items-center" id="categoryNav">
+            </div>
+    </nav>
+
+    <main id="menuContainer" class="px-4 py-6 space-y-6 max-w-md mx-auto flex-grow">
+        <div id="loading" class="text-center py-10">
+            <div class="loader"></div>
+            <p class="text-gray-400 text-sm mt-2">Loading Menu from Sheet...</p>
+        </div>
+    </main>
+
+    <div class="py-4 text-center">
+        <p class="text-[10px] text-gray-300 uppercase tracking-widest">Powered by Pam Ventures</p>
+    </div>
+
+    <script>
+        // --- 1. CONFIGURATION ---
+        const categories = [
+            { id: 'all', name: 'All Menu' },
+            { id: 'breakfast', name: 'Breakfast' },
+            { id: 'sandwiches', name: 'Sandwiches' },
+            { id: 'starters', name: 'Starters' },
+            { id: 'soup', name: 'Soup & Salad' },
+            { id: 'main-indian', name: 'Indian Mains' },
+            { id: 'main-intl', name: 'Global Mains' },
+            { id: 'rice-bread', name: 'Rice & Breads' },
+            { id: 'dessert', name: 'Desserts' },
+            { id: 'beverages', name: 'Beverages' },
+            { id: 'midnight', name: 'Midnight Meal' }
+        ];
+
+        let menuData = []; // Will be filled from Google Sheets
+
+        // --- 2. YOUR GOOGLE SHEET LINK IS HERE ---
+        const GOOGLE_SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQ1GZYIUvAfNfuFYWSYqSEvnhVM4CgveANS4auXxJ0BM04keg1JyGzcGv2wC172HmfQKSfRrX2BaRNu/pub?output=csv"; 
+        
+        // --- 3. LOGIC ---
+        const categoryNav = document.getElementById('categoryNav');
+        const container = document.getElementById('menuContainer');
+        const searchInput = document.getElementById('searchInput');
+        const clearBtn = document.getElementById('clearSearch');
+        const loadingDiv = document.getElementById('loading');
+
+        function init() {
+            renderCategories();
+            
+            // Fetch Data from Google Sheets
+            Papa.parse(GOOGLE_SHEET_CSV_URL, {
+                download: true,
+                header: true,
+                complete: function(results) {
+                    console.log("Data Loaded:", results.data); // Debugging
+                    menuData = results.data;
+                    loadingDiv.style.display = 'none';
+                    renderMenu('all');
+                },
+                error: function(err) {
+                    loadingDiv.innerHTML = "<p style='color:red'>Error loading menu. Check CSV link.</p>";
+                    console.error(err);
+                }
+            });
+        }
+
+        function renderCategories() {
+            categoryNav.innerHTML = '';
+            categories.forEach((cat, index) => {
+                const btn = document.createElement('button');
+                btn.className = `category-btn whitespace-nowrap px-5 py-2.5 rounded-full border bg-white text-gray-700 text-sm font-semibold shadow-sm mx-1 ${index === 0 ? 'active' : ''}`;
+                btn.innerText = cat.name;
+                btn.onclick = (e) => handleCategoryClick(e.target, cat.id);
+                categoryNav.appendChild(btn);
+            });
+        }
+
+        function handleCategoryClick(btn, categoryId) {
+            document.querySelectorAll('.category-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            searchInput.value = '';
+            toggleClearBtn(false);
+            renderMenu(categoryId);
+            window.scrollTo({ top: 0, behavior: "smooth" });
+        }
+
+        function renderMenu(filter) {
+            container.innerHTML = '';
+            
+            // Filter empty rows and ensure name exists
+            let filteredItems = menuData.filter(item => item.name && item.name.trim().length > 0);
+
+            if (filter !== 'all') {
+                filteredItems = filteredItems.filter(item => item.category === filter);
+            }
+
+            if (filteredItems.length === 0) {
+                container.innerHTML = `<div class="text-center py-16 text-gray-400 fade-in"><p>No items found.</p></div>`;
+                return;
+            }
+
+            const groups = filter === 'all' ? groupBy(filteredItems, 'category') : { [filter]: filteredItems };
+
+            categories.forEach(cat => {
+                if (groups[cat.id]) {
+                    const sectionTitle = filter === 'all' 
+                        ? `<div class="sticky top-[72px] bg-[#faf9f6] z-20 py-3 mb-2 border-b border-[#C5A059] inline-block w-full">
+                             <h2 class="text-xl font-serif font-bold text-[#1a1a1a] pr-4">${cat.name}</h2>
+                           </div>` 
+                        : '';
+                    const itemsHtml = groups[cat.id].map(item => createCard(item)).join('');
+                    const section = document.createElement('div');
+                    section.className = 'mb-8 fade-in';
+                    section.innerHTML = `${sectionTitle}<div class="space-y-4 pt-2">${itemsHtml}</div>`;
+                    container.appendChild(section);
+                }
+            });
+        }
+
+        function createCard(item) {
+            const iconClass = item.type === 'veg' ? 'veg' : (item.type === 'egg' ? 'egg' : 'non-veg');
+            const kcalDisplay = item.kcal ? `<span class="kcal-badge"><i class="fas fa-fire-alt text-orange-400 text-[10px]"></i> ${item.kcal} kcal</span>` : '';
+
+            return `
+                <div class="menu-card rounded-xl p-4 relative overflow-hidden">
+                    <div class="flex justify-between items-start gap-3">
+                        <div class="flex-1">
+                            <div class="flex items-center gap-2 mb-1">
+                                <span class="food-icon ${iconClass}"><i class="fas fa-circle" style="font-size: 6px;"></i></span>
+                                <h3 class="font-bold text-gray-800 text-lg font-serif leading-tight">${item.name}</h3>
+                            </div>
+                            <p class="text-xs text-gray-600 leading-relaxed mb-2 line-clamp-2">${item.desc}</p>
+                            ${kcalDisplay}
+                        </div>
+                        <div class="flex flex-col items-end pl-2">
+                            <span class="text-lg font-bold text-[#C5A059] whitespace-nowrap">₹${item.price}</span>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function groupBy(xs, key) {
+            return xs.reduce(function(rv, x) {
+                (rv[x[key]] = rv[x[key]] || []).push(x);
+                return rv;
+            }, {});
+        }
+
+        function toggleClearBtn(show) {
+            if(show) clearBtn.classList.remove('hidden');
+            else clearBtn.classList.add('hidden');
+        }
+
+        searchInput.addEventListener('input', (e) => {
+            const term = e.target.value.toLowerCase();
+            document.querySelectorAll('.category-btn').forEach(b => b.classList.remove('active'));
+            toggleClearBtn(term.length > 0);
+            
+            if (!term) {
+                document.querySelector('.category-btn').classList.add('active');
+                renderMenu('all');
+                return;
+            }
+
+            container.innerHTML = '';
+            const matches = menuData.filter(item => 
+                (item.name && item.name.toLowerCase().includes(term)) || 
+                (item.desc && item.desc.toLowerCase().includes(term))
+            );
+
+            if (matches.length === 0) {
+                container.innerHTML = `<div class="text-center py-12 text-gray-400 fade-in"><p>No results</p></div>`;
+                return;
+            }
+            container.innerHTML = `<div class="space-y-4 fade-in">${matches.map(item => createCard(item)).join('')}</div>`;
+        });
+
+        clearBtn.addEventListener('click', () => {
+            searchInput.value = '';
+            toggleClearBtn(false);
+            document.querySelector('.category-btn').click();
+        });
+
+        init();
+    </script>
+</body>
+</html>
