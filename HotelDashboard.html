@@ -272,6 +272,7 @@
 
 <script>
     // --- CONFIGURATION ---
+    // User provided URL (auto-converted to CSV format for default)
     const DEFAULT_SHEET_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQhYL-hk8dYhYUZO3DZ502SGhXgYyXOpQwmOmrxghMfI7BcV4Nm4qAsD1byPxF3mZ2onw5HhwPV_JR8/pub?output=csv";
 
     // --- DEFAULT DATA (Fallback) ---
@@ -341,7 +342,19 @@
     }
 
     async function syncData() {
-        const url = localStorage.getItem('sheet_url') || DEFAULT_SHEET_URL;
+        let url = localStorage.getItem('sheet_url') || DEFAULT_SHEET_URL;
+
+        // Auto-fix URL if user pastes the "pubhtml" or browser link instead of CSV link
+        if (url.includes('docs.google.com') && !url.includes('output=csv')) {
+            // Replace /pubhtml or just append output=csv if missing
+            if (url.includes('/pubhtml')) {
+                url = url.replace('/pubhtml', '/pub?output=csv');
+            } else if (url.includes('/pub')) {
+                url = url.replace('/pub', '/pub?output=csv');
+            }
+            // Save the fixed URL for next time
+            localStorage.setItem('sheet_url', url);
+        }
 
         const btn = document.querySelector('.sync-btn');
         const icon = btn.querySelector('i');
