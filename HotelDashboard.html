@@ -10,7 +10,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <!-- SheetJS for Excel Import -->
+    <!-- SheetJS for CSV parsing -->
     <script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>
 
     <style>
@@ -65,12 +65,20 @@
         .nav-item:hover { color: white; background: rgba(255, 255, 255, 0.05); }
         .nav-item.active { background: rgba(59, 130, 246, 0.15); color: var(--primary); border-color: rgba(59, 130, 246, 0.3); }
 
-        .import-btn {
+        .action-group { display: flex; align-items: center; gap: 10px; }
+
+        .sync-btn {
             background: var(--success); color: white; border: none; padding: 8px 16px;
             border-radius: 6px; cursor: pointer; font-weight: 600; display: flex; align-items: center; gap: 8px;
             transition: transform 0.2s, box-shadow 0.2s;
         }
-        .import-btn:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4); }
+        .sync-btn:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4); }
+
+        .settings-btn {
+            background: rgba(255,255,255,0.1); color: var(--text-muted); border: none; padding: 8px;
+            border-radius: 6px; cursor: pointer; transition: 0.2s;
+        }
+        .settings-btn:hover { background: rgba(255,255,255,0.2); color: white; }
 
         /* --- LAYOUT --- */
         .container { max-width: 1400px; margin: 0 auto; padding: 2rem; animation: fadeIn 0.8s ease-out; }
@@ -111,6 +119,28 @@
         .text-danger { color: var(--danger); }
         .text-muted { color: var(--text-muted); }
 
+        /* --- MODAL --- */
+        .modal {
+            display: none; position: fixed; z-index: 2000; left: 0; top: 0; width: 100%; height: 100%;
+            background-color: rgba(0,0,0,0.7); backdrop-filter: blur(5px);
+        }
+        .modal-content {
+            background-color: var(--bg-panel); margin: 10% auto; padding: 2rem; border: 1px solid var(--border);
+            width: 90%; max-width: 500px; border-radius: 12px; box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+            animation: slideUp 0.3s ease-out;
+        }
+        .modal h2 { margin-top: 0; color: white; }
+        .modal p { color: var(--text-muted); font-size: 0.95rem; line-height: 1.5; }
+        .input-group { margin: 1.5rem 0; }
+        .input-group input {
+            width: 100%; padding: 12px; border-radius: 6px; border: 1px solid var(--border);
+            background: rgba(0,0,0,0.2); color: white; font-family: inherit; box-sizing: border-box;
+        }
+        .modal-actions { display: flex; justify-content: flex-end; gap: 10px; }
+        .btn { padding: 10px 20px; border-radius: 6px; border: none; cursor: pointer; font-weight: 600; }
+        .btn-primary { background: var(--primary); color: white; }
+        .btn-cancel { background: transparent; color: var(--text-muted); border: 1px solid var(--border); }
+
         /* --- UTILS --- */
         .flex-chart { display: grid; grid-template-columns: 2fr 1fr; gap: 1.5rem; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
@@ -137,14 +167,36 @@
             <div class="nav-item" onclick="switchTab('trends', this)"><i class="fas fa-chart-line"></i> Trends</div>
         </div>
 
-        <div>
-            <input type="file" id="excelInput" accept=".xlsx, .xls, .csv" style="display:none;" onchange="handleFileUpload(this)">
-            <button class="import-btn" onclick="document.getElementById('excelInput').click()">
-                <i class="fas fa-file-import"></i> Import Excel
+        <div class="action-group">
+            <button class="settings-btn" onclick="openSettings()" title="Sheet Settings"><i class="fas fa-cog"></i></button>
+            <button class="sync-btn" onclick="syncData()">
+                <i class="fas fa-sync-alt"></i> Sync Data
             </button>
-            <div id="lastUpdated" style="font-size:0.7rem; color:var(--text-muted); text-align:right; margin-top:5px;">Using default data</div>
+            <div id="lastUpdated" style="font-size:0.7rem; color:var(--text-muted); text-align:right; margin-top:5px; display:none;">Updated just now</div>
         </div>
     </nav>
+
+    <!-- SETTINGS MODAL -->
+    <div id="settingsModal" class="modal">
+        <div class="modal-content">
+            <h2>Connect Google Sheet</h2>
+            <p>To connect your Excel/Sheet, you must <strong>Publish to Web</strong> as CSV.</p>
+            <ol style="color:var(--text-muted); padding-left:20px; margin-bottom:20px;">
+                <li>Open your Google Sheet.</li>
+                <li>Go to <strong>File > Share > Publish to web</strong>.</li>
+                <li>Change "Web page" to <strong>Comma-separated values (.csv)</strong>.</li>
+                <li>Click <strong>Publish</strong> and copy the link generated.</li>
+                <li>Paste the link below.</li>
+            </ol>
+            <div class="input-group">
+                <input type="text" id="sheetUrlInput" placeholder="https://docs.google.com/spreadsheets/.../pub?output=csv">
+            </div>
+            <div class="modal-actions">
+                <button class="btn btn-cancel" onclick="closeSettings()">Cancel</button>
+                <button class="btn btn-primary" onclick="saveSettings()">Save Connection</button>
+            </div>
+        </div>
+    </div>
 
     <div class="container">
         <!-- OVERVIEW -->
@@ -235,7 +287,14 @@
 
     // --- MAIN INIT ---
     document.addEventListener('DOMContentLoaded', () => {
-        refreshDashboard();
+        // Check if URL is saved
+        const savedUrl = localStorage.getItem('sheet_url');
+        if(savedUrl) {
+            syncData(); // Auto sync if url exists
+        } else {
+            refreshDashboard(); // Load default
+            setTimeout(() => { if(!savedUrl) openSettings(); }, 1000); // Prompt user if no sheet connected
+        }
     });
 
     function refreshDashboard() {
@@ -252,7 +311,6 @@
             paidOut: acc.paidOut + (curr.paidOut || 0)
         }), { room: 0, coll: 0, allowance: 0, paidOut: 0 });
 
-        // Update Cards
         updateCard('totalRoom', totals.room);
         updateCard('totalColl', totals.coll);
         updateCard('totalPaidOut', totals.paidOut);
@@ -264,53 +322,103 @@
         if(el) el.innerText = formatCurrency(value);
     }
 
-    // --- EXCEL HANDLER ---
-    function handleFileUpload(input) {
-        const file = input.files[0];
-        if(!file) return;
+    // --- GOOGLE SHEET SYNC LOGIC ---
+    function openSettings() {
+        document.getElementById('settingsModal').style.display = 'block';
+        document.getElementById('sheetUrlInput').value = localStorage.getItem('sheet_url') || '';
+    }
 
-        const reader = new FileReader();
-        reader.onload = (e) => {
-            const data = new Uint8Array(e.target.result);
-            const workbook = XLSX.read(data, { type: 'array' });
+    function closeSettings() {
+        document.getElementById('settingsModal').style.display = 'none';
+    }
+
+    function saveSettings() {
+        const url = document.getElementById('sheetUrlInput').value.trim();
+        if(url) {
+            localStorage.setItem('sheet_url', url);
+            closeSettings();
+            syncData();
+        } else {
+            alert("Please enter a valid URL");
+        }
+    }
+
+    async function syncData() {
+        const url = localStorage.getItem('sheet_url');
+        if(!url) {
+            openSettings();
+            return;
+        }
+
+        // Validate basic format
+        if(!url.includes('docs.google.com') || !url.includes('output=csv')) {
+            alert("Warning: URL does not look like a 'Publish to Web' CSV link. It should end with 'output=csv'.");
+        }
+
+        const btn = document.querySelector('.sync-btn');
+        const icon = btn.querySelector('i');
+        
+        // Animation
+        icon.classList.remove('fa-sync-alt');
+        icon.classList.add('fa-spinner', 'fa-spin');
+        btn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> Syncing...`;
+        btn.style.opacity = '0.7';
+
+        try {
+            // Attempt 1: Direct Fetch (works if browser allows, usually fails CORS in strict modes)
+            let response;
+            try {
+                response = await fetch(url);
+                if (!response.ok) throw new Error('Direct fetch failed');
+            } catch (e) {
+                console.warn("Direct fetch blocked by CORS, switching to proxy...");
+                // Attempt 2: CORS Proxy (Bypasses the "Load failed" error)
+                response = await fetch(`https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`);
+            }
             
-            // Assume first sheet is "Daily_Night_Report" or similar
-            const firstSheetName = workbook.SheetNames[0]; 
+            if (!response.ok) throw new Error('Network response was not ok');
+            
+            const csvText = await response.text();
+            
+            // Parse CSV using SheetJS
+            const workbook = XLSX.read(csvText, { type: 'string' });
+            const firstSheetName = workbook.SheetNames[0];
             const worksheet = workbook.Sheets[firstSheetName];
-            
-            // Convert to JSON
             const json = XLSX.utils.sheet_to_json(worksheet, { defval: "" });
-            
+
             processImportedData(json);
-            document.getElementById('lastUpdated').innerText = `Data loaded from: ${file.name}`;
+            
+            // Success UI
+            document.getElementById('lastUpdated').style.display = 'block';
+            document.getElementById('lastUpdated').innerText = `Synced: ${new Date().toLocaleTimeString()}`;
             document.getElementById('lastUpdated').style.color = '#10b981';
-        };
-        reader.readAsArrayBuffer(file);
+        } catch (error) {
+            console.error(error);
+            alert("Sync Failed: Could not load data. \n\n1. Check your internet.\n2. Ensure the Sheet is 'Published to Web' as CSV.\n3. Try pasting the link again.");
+        } finally {
+            // Reset Button
+            icon.classList.remove('fa-spinner', 'fa-spin');
+            icon.classList.add('fa-sync-alt');
+            btn.innerHTML = `<i class="fas fa-sync-alt"></i> Sync Data`;
+            btn.style.opacity = '1';
+        }
     }
 
     function processImportedData(json) {
-        // Map Excel columns to our app data structure
-        // We look for partial matches in headers to be flexible
         const newData = [];
-        
         json.forEach(row => {
-            // Flexible Key Matching
             const getVal = (keywords) => {
                 const key = Object.keys(row).find(k => keywords.some(kw => k.toLowerCase().includes(kw)));
                 return key ? row[key] : 0;
             };
 
             const dateVal = getVal(['date']);
-            
-            // Skip rows without valid dates
             if(!dateVal || dateVal === 'Total') return; 
 
-            // Handle Excel Date serial numbers if necessary, or just strings
             let dateStr = dateVal;
             if(typeof dateVal === 'number') {
-                // simple conversion for Excel serial date
                 const dateObj = new Date(Math.round((dateVal - 25569)*86400*1000));
-                dateStr = dateObj.toLocaleDateString('en-GB'); // DD/MM/YYYY
+                dateStr = dateObj.toLocaleDateString('en-GB'); 
             }
 
             newData.push({
@@ -321,16 +429,13 @@
                 adv: parseCurrency(getVal(['advance', 'adv col'])),
                 excess: parseCurrency(getVal(['excess', 'short'])),
                 allowance: parseCurrency(getVal(['allowance'])),
-                paidOut: 0 // Note: Paid Out is often not in main summary sheet. Default to 0.
+                paidOut: 0
             });
         });
 
         if(newData.length > 0) {
             appData = newData;
             refreshDashboard();
-            alert(`Successfully imported ${newData.length} records!`);
-        } else {
-            alert("Could not find recognizable columns. Please check your Excel headers.");
         }
     }
 
@@ -361,7 +466,6 @@
     function initCharts() {
         const labels = appData.map(d => typeof d.date === 'string' ? d.date.substring(0,5) : d.date);
 
-        // 1. Revenue
         if(charts.main) charts.main.destroy();
         charts.main = new Chart(document.getElementById('mainRevenueChart'), {
             type: 'line',
@@ -375,7 +479,6 @@
             options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { labels: { usePointStyle: true } } }, scales: { x: { grid: { display: false } } } }
         });
 
-        // 2. Pie
         const totals = appData.reduce((acc, curr) => ({ room: acc.room+curr.room, fb: acc.fb+curr.fb, adv: acc.adv+curr.adv }), { room:0, fb:0, adv:0 });
         if(charts.pie) charts.pie.destroy();
         charts.pie = new Chart(document.getElementById('collectionPieChart'), {
@@ -387,7 +490,6 @@
             options: { maintainAspectRatio: false, cutout: '70%', plugins: { legend: { position: 'bottom' } } }
         });
 
-        // 3. Expenses
         if(charts.exp) charts.exp.destroy();
         charts.exp = new Chart(document.getElementById('expenseChart'), {
             type: 'bar',
@@ -401,7 +503,6 @@
             options: { scales: { x: { stacked: true }, y: { stacked: true } } }
         });
 
-        // 4. Variance
         if(charts.var) charts.var.destroy();
         charts.var = new Chart(document.getElementById('varianceChart'), {
             type: 'bar',
@@ -418,7 +519,7 @@
         document.getElementById(id).classList.add('active');
         document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
         el.classList.add('active');
-        initCharts(); // Redraw to handle resize
+        initCharts(); 
     }
 </script>
 
