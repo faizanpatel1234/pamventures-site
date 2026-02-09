@@ -31,917 +31,450 @@
     </script>
 
     <style>
-        body { font-family: 'Inter', sans-serif; }
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
+        body { font-family: 'Inter', sans-serif; background-color: #f8fafc; }
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(226, 232, 240, 0.8);
         }
-        .animate-fadeIn {
-            animation: fadeIn 0.3s ease-out forwards;
+        .sidebar-link.active {
+            background-color: #eff6ff;
+            color: #2563eb;
+            border-right: 3px solid #2563eb;
         }
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(-10px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+        .animate-slideIn { animation: slideIn 0.3s ease-out forwards; }
     </style>
 </head>
-<body class="bg-slate-50 text-slate-900">
+<body class="text-slate-800">
     <div id="root"></div>
 
     <!-- Main Application Script -->
     <script type="text/babel" data-type="module">
         import React, { useState, useEffect, useMemo } from 'react';
         import { createRoot } from 'react-dom/client';
-        
         import { 
-            PieChart, Pie, Cell, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, AreaChart, Area 
+            PieChart, Pie, Cell, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer 
         } from 'recharts';
-        
         import { 
-            LayoutDashboard, Upload, DollarSign, TrendingUp, TrendingDown, 
+            LayoutDashboard, Upload, TrendingUp, TrendingDown, 
             FileText, Plus, Trash2, Save, Download, Menu, X,
-            ArrowUpRight, ArrowDownRight, Wallet, Activity, Calendar, CheckSquare, Square, Filter
+            Calendar, Filter, Settings, RefreshCw, AlertCircle
         } from 'lucide-react';
 
         // --- Utility Functions ---
-
         const generateId = () => Math.random().toString(36).substr(2, 9);
-
-        const formatDate = (dateString) => {
-            if (!dateString) return '';
-            const date = new Date(dateString);
-            return date.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
-        };
-
-        const formatCurrency = (amount) => {
-            return new Intl.NumberFormat('en-IN', {
-                style: 'currency',
-                currency: 'INR',
-                maximumFractionDigits: 0
-            }).format(amount);
-        };
-
-        const getColumnLetter = (index) => {
-            let letter = '';
-            while (index >= 0) {
-                letter = String.fromCharCode((index % 26) + 65) + letter;
-                index = Math.floor(index / 26) - 1;
-            }
-            return letter;
-        };
+        const formatCurrency = (val) => new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 0 }).format(val);
+        const formatDate = (d) => d ? new Date(d).toLocaleDateString('en-US', { day: 'numeric', month: 'short', year: 'numeric' }) : '';
 
         // --- Components ---
 
-        const Card = ({ children, className = "" }) => (
-            <div className={`bg-white rounded-xl shadow-sm border border-slate-100 ${className}`}>
-                {children}
-            </div>
-        );
-
-        const StatCard = ({ title, value, type, trend }) => {
-            const colorClass = type === 'income' ? 'text-emerald-600' : type === 'expense' ? 'text-rose-600' : 'text-blue-600';
-            const bgClass = type === 'income' ? 'bg-emerald-50' : type === 'expense' ? 'bg-rose-50' : 'bg-blue-50';
-            const icon = type === 'income' ? <TrendingUp size={24} /> : type === 'expense' ? <TrendingDown size={24} /> : <Wallet size={24} />;
-
+        const StatCard = ({ title, value, type }) => {
+            const isIncome = type === 'income';
             return (
-                <div className="bg-white p-6 rounded-xl shadow-sm border border-slate-100 flex items-center justify-between transition-transform hover:scale-[1.02] duration-200">
-                <div>
-                    <p className="text-sm font-medium text-slate-500 mb-1">{title}</p>
-                    <h3 className={`text-2xl font-bold ${colorClass}`}>{value}</h3>
-                    {trend && <p className="text-xs text-slate-400 mt-2">{trend}</p>}
-                </div>
-                <div className={`p-4 rounded-full ${bgClass} ${colorClass}`}>
-                    {icon}
-                </div>
+                <div className="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm flex items-center justify-between">
+                    <div>
+                        <p className="text-slate-500 text-sm font-medium mb-1">{title}</p>
+                        <h3 className={`text-2xl font-bold ${isIncome ? 'text-emerald-600' : 'text-slate-800'}`}>{value}</h3>
+                    </div>
+                    <div className={`p-3 rounded-xl ${isIncome ? 'bg-emerald-50 text-emerald-600' : 'bg-slate-100 text-slate-600'}`}>
+                        {isIncome ? <TrendingUp size={24} /> : <TrendingDown size={24} />}
+                    </div>
                 </div>
             );
         };
 
-        const TransactionTable = ({ data, onDelete }) => (
-            <div className="overflow-x-auto">
-                <table className="w-full text-left border-collapse">
-                <thead>
-                    <tr className="bg-slate-50/50 text-slate-500 text-xs uppercase tracking-wider">
-                    <th className="p-4 font-semibold">Date</th>
-                    <th className="p-4 font-semibold">Description</th>
-                    <th className="p-4 font-semibold">Category</th>
-                    <th className="p-4 font-semibold text-right">Amount</th>
-                    {onDelete && <th className="p-4 font-semibold text-center">Action</th>}
-                    </tr>
-                </thead>
-                <tbody className="divide-y divide-slate-50">
-                    {data.map(t => (
-                    <tr key={t.id} className="hover:bg-slate-50 transition-colors group">
-                        <td className="p-4 text-slate-600 whitespace-nowrap text-sm">{formatDate(t.date)}</td>
-                        <td className="p-4 text-slate-800 font-medium text-sm">{t.description}</td>
-                        <td className="p-4">
-                        <span className="px-2.5 py-1 bg-slate-100 text-slate-600 rounded-full text-xs font-medium border border-slate-200">
-                            {t.category}
-                        </span>
-                        </td>
-                        <td className={`p-4 text-right font-bold text-sm ${t.type === 'income' ? 'text-emerald-600' : 'text-rose-600'}`}>
-                        {t.type === 'income' ? '+' : '-'}{formatCurrency(t.amount)}
-                        </td>
-                        {onDelete && (
-                        <td className="p-4 text-center">
-                            <button 
-                            onClick={() => onDelete(t.id)} 
-                            className="text-slate-300 hover:text-rose-500 transition-colors p-1"
-                            >
-                            <Trash2 size={16} />
-                            </button>
-                        </td>
-                        )}
-                    </tr>
-                    ))}
-                    {data.length === 0 && (
-                    <tr>
-                        <td colSpan={onDelete ? 5 : 4} className="p-8 text-center text-slate-400">No records found</td>
-                    </tr>
-                    )}
-                </tbody>
-                </table>
-            </div>
-        );
-
-        const ExcelUploader = ({ onImport }) => {
-            const [dragActive, setDragActive] = useState(false);
+        const Importer = ({ onImport, onClear }) => {
             const [file, setFile] = useState(null);
-            const [preview, setPreview] = useState([]);
-            const [headers, setHeaders] = useState([]);
-            const [rawRows, setRawRows] = useState([]);
-            const [candidates, setCandidates] = useState([]); // Store rows for review before import
-            
-            // Default to today
             const [reportDate, setReportDate] = useState(new Date().toISOString().split('T')[0]);
-            const [defaultType, setDefaultType] = useState('income');
-            
-            const [mapping, setMapping] = useState({
-                description: '',
-                amount: '', // Usually 'NET' in IDS Next reports
-                category: ''
-            });
+            const [preview, setPreview] = useState([]);
+            const [isProcessing, setIsProcessing] = useState(false);
 
-            // Load saved mapping from local storage
-            useEffect(() => {
-                const savedMap = localStorage.getItem('hotel_import_mapping');
-                if (savedMap) {
-                    try { setMapping(JSON.parse(savedMap)); } catch(e) {}
-                }
-            }, []);
-
-            // Save mapping on change
-            useEffect(() => {
-                if (mapping.description || mapping.amount) {
-                    localStorage.setItem('hotel_import_mapping', JSON.stringify(mapping));
-                }
-            }, [mapping]);
-
-            const handleDrag = (e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                if (e.type === "dragenter" || e.type === "dragover") setDragActive(true);
-                else if (e.type === "dragleave") setDragActive(false);
+            const handleFile = async (e) => {
+                const f = e.target.files[0];
+                if (!f) return;
+                setFile(f);
+                setPreview([]);
             };
 
-            const handleDrop = (e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                setDragActive(false);
-                if (e.dataTransfer.files && e.dataTransfer.files[0]) handleFile(e.dataTransfer.files[0]);
-            };
+            const processFile = async () => {
+                if (!file) return;
+                setIsProcessing(true);
 
-            const handleChange = (e) => {
-                if (e.target.files && e.target.files[0]) handleFile(e.target.files[0]);
-            };
-
-            const handleFile = async (fileObj) => {
-                setFile(fileObj);
-                setCandidates([]); // Reset candidates on new file
-                const data = await fileObj.arrayBuffer();
-                
-                // Use the Global XLSX variable from the CDN script
+                const data = await file.arrayBuffer();
                 const workbook = window.XLSX.read(data, { type: 'array' });
-                const firstSheetName = workbook.SheetNames[0];
-                const worksheet = workbook.Sheets[firstSheetName];
-                
-                // Convert to array of arrays (header: 1)
-                const jsonData = window.XLSX.utils.sheet_to_json(worksheet, { header: 1, defval: "" });
-                
-                setRawRows(jsonData);
+                const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
+                const rows = window.XLSX.utils.sheet_to_json(firstSheet, { header: 1, defval: "" });
 
-                // Auto-detect Header Row (Look for 'Description' or 'Particular')
-                let headerRowIndex = 0;
-                for (let i = 0; i < Math.min(jsonData.length, 20); i++) {
-                    const rowStr = JSON.stringify(jsonData[i]).toLowerCase();
-                    if (rowStr.includes('description') || rowStr.includes('particular')) {
-                        headerRowIndex = i;
+                // --- SMART PARSER FOR IDS NEXT NIGHT REPORT ---
+                const transactions = [];
+                let descCol = 0; // Usually column A
+                let amountCol = -1; // We need to find this
+                
+                // 1. Locate Headers
+                // We look for a row containing "Description" and "NET" or "Amount"
+                let headerRowIdx = -1;
+                
+                for(let i=0; i<Math.min(rows.length, 25); i++) {
+                    const rowStr = rows[i].map(c => String(c).toLowerCase());
+                    if (rowStr.includes('description')) {
+                        headerRowIdx = i;
+                        // Find the first "NET" column or "Amount" column in this row
+                        // The user's file typically has: Description | Amount | Allowance | NET | ...
+                        // We usually want the FIRST NET column (For The Day)
+                        const netIndices = rowStr.map((val, idx) => val === 'net' ? idx : -1).filter(idx => idx !== -1);
+                        if (netIndices.length > 0) amountCol = netIndices[0];
+                        else {
+                             // Fallback to "Amount" if NET is missing
+                             const amtIndices = rowStr.map((val, idx) => val === 'amount' ? idx : -1).filter(idx => idx !== -1);
+                             if (amtIndices.length > 0) amountCol = amtIndices[0];
+                        }
                         break;
                     }
                 }
 
-                const detectedHeaders = jsonData[headerRowIndex].map((h, i) => {
-                    // Append column letter to handle duplicate headers (e.g., NET, NET, NET)
-                    const letter = getColumnLetter(i);
-                    return h ? `${h} (Col ${letter})` : `Column ${letter}`;
-                });
-                
-                setHeaders(detectedHeaders);
-
-                // Auto-map if possible
-                const newMapping = { ...mapping };
-                detectedHeaders.forEach((h, index) => {
-                    const lower = h.toLowerCase();
-                    // If we haven't set a mapping yet, try to guess
-                    if (!newMapping.description && (lower.includes('desc') || lower.includes('particular'))) newMapping.description = index;
-                    // IDS Next usually has Day Amount in early columns. Let's look for "NET" or "Amount"
-                    // If duplicate "NET" exists, the first one is usually "For The Day"
-                    if (newMapping.amount === '' && (lower.includes('net') || lower.includes('amount'))) {
-                        newMapping.amount = index; 
-                    }
-                });
-                setMapping(newMapping);
-
-                // Preview data (next 5 rows after header)
-                const previewRows = jsonData.slice(headerRowIndex + 1, headerRowIndex + 6).map((row, i) => {
-                   return {
-                       _originalIndex: headerRowIndex + 1 + i,
-                       data: row
-                   };
-                });
-                setPreview(previewRows);
-            };
-
-            const analyzeFile = () => {
-                if (!file || mapping.description === '' || mapping.amount === '') {
-                    alert("Please map the Description and Amount columns.");
+                if (headerRowIdx === -1 || amountCol === -1) {
+                    alert("Could not auto-detect specific report format. Please ensure 'Description' and 'NET' columns exist.");
+                    setIsProcessing(false);
                     return;
                 }
 
-                const newTransactions = [];
-                const descIdx = parseInt(mapping.description);
-                const amtIdx = parseInt(mapping.amount);
-                const catIdx = mapping.category !== '' ? parseInt(mapping.category) : -1;
+                // 2. Iterate and Filter
+                for (let i = headerRowIdx + 1; i < rows.length; i++) {
+                    const row = rows[i];
+                    if (!row) continue;
 
-                rawRows.forEach((row, index) => {
-                    // Skip if row doesn't have valid data at selected indices
-                    if (!row || row.length <= Math.max(descIdx, amtIdx)) return;
+                    const rawDesc = row[descCol];
+                    const rawAmt = row[amountCol];
+
+                    // Strict Filtering Rules
+                    if (!rawDesc || typeof rawDesc !== 'string') continue;
+                    const desc = rawDesc.trim();
+                    const descLower = desc.toLowerCase();
                     
-                    const desc = row[descIdx];
-                    const rawAmt = row[amtIdx];
+                    // -- SKIP RULES --
+                    if (desc === '') continue;
+                    if (desc.startsWith('_') || desc.startsWith('-')) continue; // Dividers
+                    if (desc.includes(':-')) continue; // Section headers like "Rate :-"
+                    if (descLower.includes('total')) continue; // EXCLUDE TOTALS (Double counting fix)
+                    if (descLower.includes('guest name')) continue; 
+                    if (descLower.includes('list of')) continue; 
+                    if (descLower.includes('description')) continue; // Header repeat
 
-                    // --- FILTERING LOGIC ---
-                    // 1. Must have description string
-                    if (!desc || typeof desc !== 'string') return;
-                    const dClean = desc.trim();
-
-                    // 2. Skip divider lines (underscores, dashes)
-                    if (dClean.startsWith('_') || dClean.startsWith('-')) return;
-
-                    // 3. Skip Headers/Section Titles found in Night Reports
-                    // e.g., "Rate :-", "City Ledger :-", "Description", "Guest Name", "LIST OF..."
-                    if (dClean.includes(':-')) return; 
-                    if (dClean.toLowerCase() === 'description') return;
-                    if (dClean.toLowerCase().includes('guest name')) return;
-                    if (dClean.includes('LIST OF')) return;
-                    if (dClean.includes('<---')) return;
-
-                    // 4. Skip Totals (User specifically asked to not add "all the stuff", totals duplicate data)
-                    if (dClean.toLowerCase().includes('total')) return;
-
-                    // 5. Check Amount
                     const amount = parseFloat(rawAmt);
-                    if (isNaN(amount) || amount === 0) return; // Skip zero/empty amounts
+                    if (isNaN(amount) || amount === 0) continue;
 
-                    // --- CATEGORIZATION ---
-                    let category = 'Uncategorized';
-                    if (catIdx > -1 && row[catIdx]) category = row[catIdx];
-                    else {
-                        // Auto-categorize based on description text heuristics
-                        const dLower = dClean.toLowerCase();
-                        if (dLower.includes('room') || dLower.includes('tariff') || dLower.includes('retention') || dLower.includes('bed')) category = 'Room Revenue';
-                        else if (dLower.includes('food') || dLower.includes('bev') || dLower.includes('restaurant') || dLower.includes('bqt') || dLower.includes('banquet')) category = 'F&B';
-                        else if (dLower.includes('laundry')) category = 'Laundry';
-                        else if (dLower.includes('telephone') || dLower.includes('internet')) category = 'Utilities';
-                        else category = 'Other Revenue';
-                    }
+                    // Categorization Logic
+                    let category = 'Other Revenue';
+                    if (descLower.includes('room') || descLower.includes('tariff') || descLower.includes('retention') || descLower.includes('bed')) category = 'Room Revenue';
+                    else if (descLower.includes('food') || descLower.includes('bev') || descLower.includes('restaurant') || descLower.includes('bqt') || descLower.includes('banquet') || descLower.includes('breakfast') || descLower.includes('lunch') || descLower.includes('dinner')) category = 'F&B';
+                    else if (descLower.includes('laundry')) category = 'Laundry';
+                    else if (descLower.includes('telephone') || descLower.includes('internet') || descLower.includes('wifi') || descLower.includes('misc')) category = 'Misc/Utilities';
 
-                    newTransactions.push({
-                        id: generateId(), // Temp ID
+                    transactions.push({
+                        id: generateId(),
                         date: new Date(reportDate).toISOString(),
-                        description: dClean,
+                        description: desc,
                         amount: Math.abs(amount),
-                        type: defaultType, // User selected default (Income/Expense)
+                        type: 'income', // Night reports are predominantly income
                         category: category,
-                        source: 'Import',
-                        selected: true // Selected by default
+                        source: 'Night Report'
                     });
-                });
-
-                if (newTransactions.length === 0) {
-                    alert("No valid transactions found using current filters. Please check your mapping or file content.");
-                } else {
-                    setCandidates(newTransactions);
                 }
+
+                setPreview(transactions);
+                setIsProcessing(false);
             };
 
-            const toggleCandidate = (index) => {
-                const updated = [...candidates];
-                updated[index].selected = !updated[index].selected;
-                setCandidates(updated);
-            };
-
-            const confirmImport = () => {
-                const selected = candidates.filter(c => c.selected);
-                if (selected.length === 0) {
-                    alert("No rows selected for import.");
-                    return;
-                }
-                // Regenerate IDs to ensure uniqueness on final commit
-                const finalData = selected.map(c => ({...c, id: generateId()}));
-                onImport(finalData);
+            const confirm = () => {
+                if(preview.length === 0) return;
+                onImport(preview);
                 setFile(null);
                 setPreview([]);
-                setCandidates([]);
+                alert("Import Successful!");
             };
-
-            const cancelImport = () => {
-                setCandidates([]);
-            };
-
-            // --- RENDER ---
-
-            if (candidates.length > 0) {
-                return (
-                    <Card className="p-6">
-                        <div className="flex justify-between items-center mb-4">
-                            <h2 className="text-xl font-bold text-slate-800">Review Data</h2>
-                            <div className="flex gap-2">
-                                <button onClick={cancelImport} className="px-4 py-2 text-slate-500 hover:text-slate-700 font-medium">Cancel</button>
-                                <button onClick={confirmImport} className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 flex items-center gap-2 font-medium">
-                                    <Save size={18} /> Import {candidates.filter(c => c.selected).length} Items
-                                </button>
-                            </div>
-                        </div>
-                        <p className="text-sm text-slate-500 mb-4">Uncheck any rows you do not want to import (e.g. duplicate totals or headers).</p>
-                        
-                        <div className="overflow-x-auto border border-slate-200 rounded-lg max-h-[500px]">
-                            <table className="w-full text-sm text-left bg-white">
-                                <thead className="bg-slate-50 sticky top-0 shadow-sm z-10">
-                                    <tr>
-                                        <th className="p-3 border-b w-10">
-                                            <input 
-                                                type="checkbox" 
-                                                className="rounded border-slate-300"
-                                                checked={candidates.every(c => c.selected)}
-                                                onChange={(e) => {
-                                                    const val = e.target.checked;
-                                                    setCandidates(candidates.map(c => ({...c, selected: val})));
-                                                }}
-                                            />
-                                        </th>
-                                        <th className="p-3 border-b font-semibold text-slate-600">Description</th>
-                                        <th className="p-3 border-b font-semibold text-slate-600">Category</th>
-                                        <th className="p-3 border-b font-semibold text-slate-600 text-right">Amount</th>
-                                    </tr>
-                                </thead>
-                                <tbody className="divide-y divide-slate-100">
-                                    {candidates.map((row, i) => (
-                                        <tr key={i} className={`hover:bg-blue-50/50 transition-colors cursor-pointer ${!row.selected ? 'opacity-50 bg-slate-50' : ''}`} onClick={() => toggleCandidate(i)}>
-                                            <td className="p-3">
-                                                <input 
-                                                    type="checkbox" 
-                                                    checked={row.selected}
-                                                    onChange={() => {}} // Handled by tr click
-                                                    className="rounded border-slate-300 text-blue-600 focus:ring-blue-500"
-                                                />
-                                            </td>
-                                            <td className="p-3 font-medium text-slate-800">{row.description}</td>
-                                            <td className="p-3 text-slate-500">
-                                                <span className="px-2 py-1 bg-slate-100 rounded text-xs">{row.category}</span>
-                                            </td>
-                                            <td className="p-3 text-right font-bold text-slate-700">{formatCurrency(row.amount)}</td>
-                                        </tr>
-                                    ))}
-                                </tbody>
-                            </table>
-                        </div>
-                    </Card>
-                );
-            }
 
             return (
-                <Card className="p-8">
-                <div className="text-center mb-8">
-                    <h2 className="text-2xl font-bold text-slate-800">Import Excel / Night Report</h2>
-                    <p className="text-slate-500">Upload your IDS Next (.xlsx) or Excel files</p>
+                <div className="space-y-6">
+                    <div className="bg-white p-8 rounded-2xl border border-dashed border-slate-300 text-center">
+                        {!file ? (
+                            <>
+                                <div className="mx-auto w-16 h-16 bg-blue-50 text-blue-600 rounded-full flex items-center justify-center mb-4">
+                                    <FileText size={32} />
+                                </div>
+                                <h3 className="text-lg font-semibold text-slate-800">Upload Night Report</h3>
+                                <p className="text-slate-500 mb-6 text-sm">Supports IDS Next .xlsx or .csv exports</p>
+                                <input type="file" accept=".xlsx,.csv,.xls" className="hidden" id="fileIn" onChange={handleFile} />
+                                <label htmlFor="fileIn" className="inline-block px-6 py-2 bg-slate-900 text-white rounded-lg cursor-pointer hover:bg-slate-800 transition-colors font-medium">
+                                    Select File
+                                </label>
+                            </>
+                        ) : (
+                            <div className="text-left max-w-lg mx-auto">
+                                <div className="flex justify-between items-center mb-6">
+                                    <div className="flex items-center gap-3">
+                                        <div className="w-10 h-10 bg-green-100 text-green-700 rounded-lg flex items-center justify-center font-bold text-xs">XLS</div>
+                                        <div>
+                                            <p className="font-medium text-slate-800 text-sm">{file.name}</p>
+                                            <button onClick={() => { setFile(null); setPreview([]); }} className="text-xs text-red-500 hover:underline">Remove</button>
+                                        </div>
+                                    </div>
+                                    <input 
+                                        type="date" 
+                                        value={reportDate} 
+                                        onChange={e => setReportDate(e.target.value)}
+                                        className="border border-slate-200 rounded-lg px-3 py-1.5 text-sm"
+                                    />
+                                </div>
+
+                                {preview.length === 0 ? (
+                                    <button 
+                                        onClick={processFile} 
+                                        disabled={isProcessing}
+                                        className="w-full py-3 bg-blue-600 text-white rounded-xl hover:bg-blue-700 font-medium transition-colors flex items-center justify-center gap-2"
+                                    >
+                                        {isProcessing ? <RefreshCw className="animate-spin" size={20} /> : <Filter size={20} />}
+                                        Process Night Report (Filter Noise)
+                                    </button>
+                                ) : (
+                                    <div className="space-y-4">
+                                        <div className="bg-blue-50 text-blue-700 p-4 rounded-xl flex items-start gap-3 text-sm">
+                                            <AlertCircle className="shrink-0 mt-0.5" size={16} />
+                                            <div>
+                                                <p className="font-bold">Ready to Import {preview.length} Items</p>
+                                                <p className="opacity-90 mt-1">We automatically removed "Totals", dividers, and headers to prevent double counting.</p>
+                                            </div>
+                                        </div>
+                                        <div className="max-h-60 overflow-y-auto border border-slate-200 rounded-xl">
+                                            <table className="w-full text-sm text-left">
+                                                <thead className="bg-slate-50 text-xs uppercase text-slate-500 sticky top-0">
+                                                    <tr>
+                                                        <th className="p-3">Description</th>
+                                                        <th className="p-3">Category</th>
+                                                        <th className="p-3 text-right">Amount</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody className="divide-y divide-slate-100 bg-white">
+                                                    {preview.map((row, i) => (
+                                                        <tr key={i}>
+                                                            <td className="p-3 font-medium text-slate-700">{row.description}</td>
+                                                            <td className="p-3 text-slate-500 text-xs">{row.category}</td>
+                                                            <td className="p-3 text-right font-bold text-emerald-600">{formatCurrency(row.amount)}</td>
+                                                        </tr>
+                                                    ))}
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                        <button 
+                                            onClick={confirm}
+                                            className="w-full py-3 bg-emerald-600 text-white rounded-xl hover:bg-emerald-700 font-bold transition-colors shadow-lg shadow-emerald-200"
+                                        >
+                                            Confirm Import
+                                        </button>
+                                    </div>
+                                )}
+                            </div>
+                        )}
+                    </div>
+                    
+                    <div className="border-t border-slate-200 pt-6">
+                         <h4 className="font-bold text-slate-800 mb-4 flex items-center gap-2"><Settings size={18} /> Data Management</h4>
+                         <button 
+                            onClick={onClear}
+                            className="text-red-600 border border-red-200 bg-red-50 hover:bg-red-100 px-4 py-2 rounded-lg text-sm font-medium transition-colors"
+                         >
+                            Clear All Dashboard Data
+                         </button>
+                    </div>
                 </div>
-                
-                {!file ? (
-                    <div 
-                    className={`border-2 border-dashed rounded-2xl p-12 text-center transition-all duration-200 ${dragActive ? 'border-blue-500 bg-blue-50 scale-[1.01]' : 'border-slate-300 hover:border-slate-400 hover:bg-slate-50'}`}
-                    onDragEnter={handleDrag} 
-                    onDragLeave={handleDrag} 
-                    onDragOver={handleDrag} 
-                    onDrop={handleDrop}
-                    >
-                    <div className="bg-white p-4 rounded-full inline-block shadow-sm mb-4">
-                        <FileText className="h-8 w-8 text-blue-600" />
-                    </div>
-                    <p className="text-xl font-medium text-slate-700 mb-2">Drag & Drop Excel file here</p>
-                    <p className="text-slate-500 mb-6">Supports .xlsx, .xls, .csv</p>
-                    <input 
-                        type="file" 
-                        accept=".xlsx, .xls, .csv"
-                        className="hidden" 
-                        id="excel-upload" 
-                        onChange={handleChange}
-                    />
-                    <label htmlFor="excel-upload" className="inline-flex items-center justify-center px-6 py-3 border border-transparent text-base font-medium rounded-lg text-white bg-blue-600 hover:bg-blue-700 cursor-pointer shadow-sm hover:shadow-md transition-all">
-                        Select File
-                    </label>
-                    </div>
-                ) : (
-                    <div className="space-y-6 animate-fadeIn">
-                    <div className="flex items-center justify-between bg-blue-50 p-4 rounded-lg border border-blue-100">
-                        <div className="flex items-center gap-3">
-                        <div className="bg-white p-2 rounded text-green-600 font-bold text-xs">XLS</div>
-                        <span className="font-medium text-blue-900">{file.name}</span>
-                        </div>
-                        <button onClick={() => { setFile(null); setRawRows([]); setHeaders([]); }} className="text-blue-400 hover:text-blue-600">
-                        <X size={20} />
-                        </button>
-                    </div>
-
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        {/* Global Settings for this import */}
-                        <div className="bg-slate-50 p-4 rounded-lg border border-slate-100 space-y-4">
-                            <h4 className="font-semibold text-slate-700 flex items-center gap-2">
-                                <Calendar size={16} /> Report Settings
-                            </h4>
-                            <div>
-                                <label className="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1.5">Report Date</label>
-                                <input 
-                                    type="date" 
-                                    className="w-full border-slate-200 rounded-lg shadow-sm focus:border-blue-500 focus:ring-blue-500 p-2.5 bg-white text-sm"
-                                    value={reportDate}
-                                    onChange={(e) => setReportDate(e.target.value)}
-                                />
-                                <p className="text-xs text-slate-400 mt-1">Applied to all imported rows</p>
-                            </div>
-                            <div>
-                                <label className="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1.5">Import As</label>
-                                <select 
-                                    className="w-full border-slate-200 rounded-lg shadow-sm focus:border-blue-500 focus:ring-blue-500 p-2.5 bg-white text-sm"
-                                    value={defaultType}
-                                    onChange={(e) => setDefaultType(e.target.value)}
-                                >
-                                    <option value="income">Income (Revenue)</option>
-                                    <option value="expense">Expense</option>
-                                </select>
-                            </div>
-                        </div>
-
-                        {/* Column Mapping */}
-                        <div className="bg-slate-50 p-4 rounded-lg border border-slate-100 space-y-4">
-                            <h4 className="font-semibold text-slate-700 flex items-center gap-2">
-                                <Activity size={16} /> Column Mapping
-                            </h4>
-                            <div>
-                                <label className="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1.5">Description Column</label>
-                                <select 
-                                    className="w-full border-slate-200 rounded-lg shadow-sm focus:border-blue-500 focus:ring-blue-500 p-2.5 bg-white text-sm"
-                                    value={mapping.description}
-                                    onChange={(e) => setMapping({...mapping, description: e.target.value})}
-                                >
-                                    <option value="">Select Column...</option>
-                                    {headers.map((h, i) => <option key={i} value={i}>{h}</option>)}
-                                </select>
-                            </div>
-                            <div>
-                                <label className="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1.5">Amount / NET Column</label>
-                                <select 
-                                    className="w-full border-slate-200 rounded-lg shadow-sm focus:border-blue-500 focus:ring-blue-500 p-2.5 bg-white text-sm"
-                                    value={mapping.amount}
-                                    onChange={(e) => setMapping({...mapping, amount: e.target.value})}
-                                >
-                                    <option value="">Select Column...</option>
-                                    {headers.map((h, i) => <option key={i} value={i}>{h}</option>)}
-                                </select>
-                            </div>
-                        </div>
-                    </div>
-
-                    {/* Preview Table */}
-                    <div className="mt-4">
-                        <p className="text-xs font-semibold uppercase tracking-wider text-slate-500 mb-2">Preview (First 5 Data Rows)</p>
-                        <div className="overflow-x-auto border rounded-lg">
-                            <table className="min-w-full text-xs text-left bg-white">
-                                <thead className="bg-slate-50">
-                                    <tr>
-                                        {mapping.description !== '' && <th className="p-2 border-b">Description ({headers[mapping.description]})</th>}
-                                        {mapping.amount !== '' && <th className="p-2 border-b">Amount ({headers[mapping.amount]})</th>}
-                                        <th className="p-2 border-b text-slate-400">Raw Data...</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {preview.map((row, i) => (
-                                        <tr key={i} className="border-b last:border-0">
-                                            {mapping.description !== '' && <td className="p-2 font-medium">{row.data[mapping.description]}</td>}
-                                            {mapping.amount !== '' && <td className="p-2">{row.data[mapping.amount]}</td>}
-                                            <td className="p-2 text-slate-400 truncate max-w-xs">{JSON.stringify(row.data)}</td>
-                                        </tr>
-                                    ))}
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-
-                    <div className="flex justify-end pt-4">
-                        <button 
-                        onClick={analyzeFile}
-                        className="px-6 py-2.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 flex items-center gap-2 font-medium shadow-sm hover:shadow-md transition-all"
-                        >
-                        <Filter size={18} />
-                        Analyze File
-                        </button>
-                    </div>
-                    </div>
-                )}
-                </Card>
             );
         };
 
-        // --- Main Application Component ---
-
-        const App = () => {
-            const [activeTab, setActiveTab] = useState('overview');
-            const [transactions, setTransactions] = useState([]);
-            const [loading, setLoading] = useState(true);
+        const MainApp = () => {
+            const [view, setView] = useState('dashboard');
+            const [data, setData] = useState([]);
             const [sidebarOpen, setSidebarOpen] = useState(false);
-            const [showAddModal, setShowAddModal] = useState(false);
-
-            const [newTx, setNewTx] = useState({
-                date: new Date().toISOString().split('T')[0],
-                description: '',
-                amount: '',
-                type: 'expense',
-                category: 'Operational'
-            });
 
             useEffect(() => {
-                const saved = localStorage.getItem('hotel_finance_data');
+                const saved = localStorage.getItem('hotel_dash_v2');
                 if (saved) {
-                try { setTransactions(JSON.parse(saved)); } catch (e) { console.error(e); }
-                } else {
-                setTransactions([
-                    { id: '1', date: '2023-10-25', description: 'Room 101 Booking', amount: 4500, type: 'income', category: 'Room Revenue' },
-                    { id: '2', date: '2023-10-25', description: 'Vegetable Supply', amount: 1200, type: 'expense', category: 'F&B Cost' },
-                    { id: '3', date: '2023-10-26', description: 'Banquet Advance', amount: 15000, type: 'income', category: 'Banquet' },
-                    { id: '4', date: '2023-10-26', description: 'Electricity Bill', amount: 8500, type: 'expense', category: 'Utilities' },
-                ]);
+                    try { setData(JSON.parse(saved)); } catch(e) {}
                 }
-                setLoading(false);
             }, []);
 
             useEffect(() => {
-                if (!loading) localStorage.setItem('hotel_finance_data', JSON.stringify(transactions));
-            }, [transactions, loading]);
+                localStorage.setItem('hotel_dash_v2', JSON.stringify(data));
+            }, [data]);
 
-            const handleImport = (newData) => {
-                setTransactions(prev => [...prev, ...newData]);
-                alert(`Successfully imported ${newData.length} records.`);
-                setActiveTab('transactions');
+            const stats = useMemo(() => {
+                const income = data.filter(d => d.type === 'income').reduce((a, b) => a + b.amount, 0);
+                const expense = data.filter(d => d.type === 'expense').reduce((a, b) => a + b.amount, 0);
+                
+                // Group by Category
+                const catGroup = data.filter(d => d.type === 'income').reduce((acc, curr) => {
+                    acc[curr.category] = (acc[curr.category] || 0) + curr.amount;
+                    return acc;
+                }, {});
+                const catData = Object.keys(catGroup).map(k => ({ name: k, value: catGroup[k] }));
+
+                // Last 7 days trend
+                const last7 = [...Array(7)].map((_, i) => {
+                    const d = new Date(); d.setDate(d.getDate() - i);
+                    return d.toISOString().split('T')[0];
+                }).reverse();
+                
+                const trend = last7.map(date => ({
+                    date: new Date(date).toLocaleDateString('en-US', {weekday: 'short'}),
+                    income: data.filter(d => d.date.startsWith(date) && d.type === 'income').reduce((a, b) => a + b.amount, 0)
+                }));
+
+                return { income, expense, catData, trend };
+            }, [data]);
+
+            const handleDelete = (id) => {
+                if(confirm("Delete this entry?")) setData(prev => prev.filter(item => item.id !== id));
             };
 
-            const addTransaction = (e) => {
-                e.preventDefault();
-                if (!newTx.description || !newTx.amount) return;
-                const transaction = {
-                id: generateId(),
-                ...newTx,
-                amount: parseFloat(newTx.amount),
-                date: new Date(newTx.date).toISOString()
-                };
-                setTransactions(prev => [transaction, ...prev]);
-                setNewTx({ ...newTx, description: '', amount: '' });
-                setShowAddModal(false);
-            };
-
-            const deleteTransaction = (id) => {
-                if (window.confirm('Delete this record?')) {
-                setTransactions(prev => prev.filter(t => t.id !== id));
+            const handleClearAll = () => {
+                if(confirm("WARNING: This will delete ALL data. Are you sure?")) {
+                    setData([]);
+                    alert("All data cleared.");
                 }
             };
 
-            const handleExport = () => {
-                const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(transactions));
-                const downloadAnchorNode = document.createElement('a');
-                downloadAnchorNode.setAttribute("href", dataStr);
-                downloadAnchorNode.setAttribute("download", "hotel_finance_backup.json");
-                document.body.appendChild(downloadAnchorNode);
-                downloadAnchorNode.click();
-                downloadAnchorNode.remove();
-            };
-
-            // --- Analytics Logic ---
-            const stats = useMemo(() => {
-                const totalIncome = transactions.filter(t => t.type === 'income').reduce((sum, t) => sum + t.amount, 0);
-                const totalExpense = transactions.filter(t => t.type === 'expense').reduce((sum, t) => sum + t.amount, 0);
-                const profit = totalIncome - totalExpense;
-
-                const getCategoryData = (type) => {
-                const grouped = transactions.filter(t => t.type === type).reduce((acc, t) => {
-                    acc[t.category] = (acc[t.category] || 0) + t.amount;
-                    return acc;
-                }, {});
-                return Object.keys(grouped).map(key => ({ name: key, value: grouped[key] }));
-                };
-
-                const getTrendData = () => {
-                const last7Days = [...Array(7)].map((_, i) => {
-                    const d = new Date();
-                    d.setDate(d.getDate() - i);
-                    return d.toISOString().split('T')[0];
-                }).reverse();
-
-                return last7Days.map(date => {
-                    const dayData = transactions.filter(t => t.date.startsWith(date));
-                    return {
-                    date: new Date(date).toLocaleDateString('en-US', {weekday: 'short'}),
-                    income: dayData.filter(t => t.type === 'income').reduce((sum, t) => sum + t.amount, 0),
-                    expense: dayData.filter(t => t.type === 'expense').reduce((sum, t) => sum + t.amount, 0),
-                    };
-                });
-                };
-
-                return { 
-                totalIncome, 
-                totalExpense, 
-                profit, 
-                incomeCategories: getCategoryData('income'),
-                expenseCategories: getCategoryData('expense'),
-                trendData: getTrendData() 
-                };
-            }, [transactions]);
-
-            // --- Render Functions ---
-
-            const renderOverview = () => (
-                <div className="space-y-6 animate-fadeIn">
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    <StatCard title="Total Income" value={formatCurrency(stats.totalIncome)} type="income" trend="All time" />
-                    <StatCard title="Total Expenses" value={formatCurrency(stats.totalExpense)} type="expense" trend="All time" />
-                    <StatCard title="Net Profit" value={formatCurrency(stats.profit)} type="profit" trend="All time" />
-                </div>
-
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                    <Card className="col-span-1 lg:col-span-2 p-6">
-                    <h3 className="text-lg font-bold text-slate-800 mb-6 flex items-center gap-2">
-                        <Activity size={20} className="text-blue-500" />
-                        Financial Flow (Last 7 Days)
-                    </h3>
-                    <div className="h-72">
-                        <ResponsiveContainer width="100%" height="100%">
-                        <BarChart data={stats.trendData} barGap={8}>
-                            <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
-                            <XAxis dataKey="date" axisLine={false} tickLine={false} tick={{fill: '#64748b', fontSize: 12}} dy={10} />
-                            <YAxis axisLine={false} tickLine={false} tick={{fill: '#64748b', fontSize: 12}} tickFormatter={(val) => `₹${val/1000}k`} />
-                            <Tooltip 
-                            cursor={{fill: '#f8fafc'}}
-                            contentStyle={{borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)'}}
-                            />
-                            <Legend iconType="circle" />
-                            <Bar dataKey="income" fill="#10b981" radius={[4, 4, 0, 0]} name="Income" barSize={32} />
-                            <Bar dataKey="expense" fill="#f43f5e" radius={[4, 4, 0, 0]} name="Expenses" barSize={32} />
-                        </BarChart>
-                        </ResponsiveContainer>
-                    </div>
-                    </Card>
-
-                    <Card className="p-6">
-                    <div className="flex justify-between items-center mb-6">
-                        <h3 className="text-lg font-bold text-slate-800">Recent Transactions</h3>
-                        <button onClick={() => setActiveTab('transactions')} className="text-blue-600 text-sm font-medium hover:underline">See all</button>
-                    </div>
-                    <div className="overflow-hidden">
-                        <TransactionTable data={transactions.slice(0, 5)} />
-                    </div>
-                    </Card>
-                </div>
-                </div>
-            );
-
-            const renderIncomeView = () => (
-                <div className="space-y-6 animate-fadeIn">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <StatCard title="Total Income" value={formatCurrency(stats.totalIncome)} type="income" trend="Revenue Generated" />
-                    <Card className="p-6">
-                    <h3 className="text-lg font-bold text-slate-800 mb-4">Income Sources</h3>
-                    <div className="h-48">
-                        <ResponsiveContainer width="100%" height="100%">
-                        <PieChart>
-                            <Pie
-                            data={stats.incomeCategories}
-                            cx="50%"
-                            cy="50%"
-                            innerRadius={50}
-                            outerRadius={70}
-                            paddingAngle={5}
-                            dataKey="value"
-                            >
-                            {stats.incomeCategories.map((entry, index) => (
-                                <Cell key={`cell-${index}`} fill={['#10b981', '#3b82f6', '#8b5cf6', '#f59e0b'][index % 4]} />
-                            ))}
-                            </Pie>
-                            <Tooltip formatter={(value) => formatCurrency(value)} />
-                            <Legend layout="vertical" verticalAlign="middle" align="right" />
-                        </PieChart>
-                        </ResponsiveContainer>
-                    </div>
-                    </Card>
-                </div>
-
-                <Card className="p-0 overflow-hidden">
-                    <div className="p-6 border-b border-slate-100">
-                    <h3 className="text-lg font-bold text-slate-800">Income History</h3>
-                    </div>
-                    <TransactionTable data={transactions.filter(t => t.type === 'income')} onDelete={deleteTransaction} />
-                </Card>
-                </div>
-            );
-
-            const renderExpenseView = () => (
-                <div className="space-y-6 animate-fadeIn">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <StatCard title="Total Expenses" value={formatCurrency(stats.totalExpense)} type="expense" trend="Cost Incurred" />
-                    <Card className="p-6">
-                    <h3 className="text-lg font-bold text-slate-800 mb-4">Expense Breakdown</h3>
-                    <div className="h-48">
-                        <ResponsiveContainer width="100%" height="100%">
-                        <PieChart>
-                            <Pie
-                            data={stats.expenseCategories}
-                            cx="50%"
-                            cy="50%"
-                            innerRadius={50}
-                            outerRadius={70}
-                            paddingAngle={5}
-                            dataKey="value"
-                            >
-                            {stats.expenseCategories.map((entry, index) => (
-                                <Cell key={`cell-${index}`} fill={['#f43f5e', '#f59e0b', '#6366f1', '#ec4899'][index % 4]} />
-                            ))}
-                            </Pie>
-                            <Tooltip formatter={(value) => formatCurrency(value)} />
-                            <Legend layout="vertical" verticalAlign="middle" align="right" />
-                        </PieChart>
-                        </ResponsiveContainer>
-                    </div>
-                    </Card>
-                </div>
-
-                <Card className="p-0 overflow-hidden">
-                    <div className="p-6 border-b border-slate-100">
-                    <h3 className="text-lg font-bold text-slate-800">Expense History</h3>
-                    </div>
-                    <TransactionTable data={transactions.filter(t => t.type === 'expense')} onDelete={deleteTransaction} />
-                </Card>
-                </div>
-            );
-
             return (
-                <div className="min-h-screen bg-slate-50 font-sans text-slate-900 flex">
-                {/* Mobile Toggle */}
-                <button 
-                    className="lg:hidden fixed bottom-6 right-6 z-50 bg-blue-600 text-white p-4 rounded-full shadow-lg hover:bg-blue-700 transition-all"
-                    onClick={() => setSidebarOpen(!sidebarOpen)}
-                >
-                    {sidebarOpen ? <X size={24} /> : <Menu size={24} />}
-                </button>
+                <div className="min-h-screen flex font-sans bg-slate-50">
+                    {/* Mobile Menu Button */}
+                    <button onClick={() => setSidebarOpen(!sidebarOpen)} className="lg:hidden fixed bottom-6 right-6 bg-slate-900 text-white p-4 rounded-full shadow-xl z-50">
+                        {sidebarOpen ? <X /> : <Menu />}
+                    </button>
 
-                {/* Sidebar */}
-                <aside className={`
-                    fixed lg:static inset-y-0 left-0 z-40 w-72 bg-white border-r border-slate-200 transition-transform duration-300 transform 
-                    ${sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
-                `}>
-                    <div className="p-8">
-                    <h1 className="text-2xl font-extrabold tracking-tight text-slate-900 flex items-center gap-2">
-                        <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center text-white">
-                        <Activity size={20} />
+                    {/* Sidebar */}
+                    <aside className={`fixed lg:static inset-y-0 left-0 w-72 bg-white border-r border-slate-200 transform transition-transform duration-300 z-40 ${sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}`}>
+                        <div className="p-8">
+                            <h1 className="text-2xl font-black text-slate-900 tracking-tight">Hotel<span className="text-blue-600">Dash</span></h1>
                         </div>
-                        Hotel<span className="text-blue-600">Dash</span>
-                    </h1>
-                    </div>
+                        <nav className="px-4 space-y-2">
+                            <button onClick={() => setView('dashboard')} className={`sidebar-link w-full text-left px-6 py-3 rounded-xl font-medium transition-colors ${view === 'dashboard' ? 'active' : 'text-slate-500 hover:bg-slate-50'}`}>
+                                Dashboard
+                            </button>
+                            <button onClick={() => setView('transactions')} className={`sidebar-link w-full text-left px-6 py-3 rounded-xl font-medium transition-colors ${view === 'transactions' ? 'active' : 'text-slate-500 hover:bg-slate-50'}`}>
+                                All Transactions
+                            </button>
+                            <button onClick={() => setView('import')} className={`sidebar-link w-full text-left px-6 py-3 rounded-xl font-medium transition-colors ${view === 'import' ? 'active' : 'text-slate-500 hover:bg-slate-50'}`}>
+                                Import Data
+                            </button>
+                        </nav>
+                    </aside>
 
-                    <nav className="px-4 space-y-1">
-                    <p className="px-4 text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2 mt-4">Analytics</p>
-                    <button onClick={() => { setActiveTab('overview'); setSidebarOpen(false); }}
-                        className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all font-medium ${activeTab === 'overview' ? 'bg-blue-50 text-blue-700' : 'text-slate-600 hover:bg-slate-50'}`}>
-                        <LayoutDashboard size={20} /> Overview
-                    </button>
-                    <button onClick={() => { setActiveTab('income'); setSidebarOpen(false); }}
-                        className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all font-medium ${activeTab === 'income' ? 'bg-emerald-50 text-emerald-700' : 'text-slate-600 hover:bg-slate-50'}`}>
-                        <TrendingUp size={20} /> Income
-                    </button>
-                    <button onClick={() => { setActiveTab('expenses'); setSidebarOpen(false); }}
-                        className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all font-medium ${activeTab === 'expenses' ? 'bg-rose-50 text-rose-700' : 'text-slate-600 hover:bg-slate-50'}`}>
-                        <TrendingDown size={20} /> Expenses
-                    </button>
+                    {/* Main Content */}
+                    <main className="flex-1 p-6 lg:p-12 overflow-y-auto h-screen">
+                        <div className="max-w-6xl mx-auto animate-slideIn">
+                            <header className="mb-10 flex justify-between items-end">
+                                <div>
+                                    <h2 className="text-3xl font-bold text-slate-900 capitalize">{view === 'dashboard' ? 'Overview' : view}</h2>
+                                    <p className="text-slate-500 mt-2">Manage your hotel finances efficiently.</p>
+                                </div>
+                                {view === 'dashboard' && (
+                                    <div className="hidden md:block text-right">
+                                        <p className="text-xs font-bold uppercase text-slate-400 tracking-wider">Net Profit</p>
+                                        <p className="text-2xl font-bold text-slate-900">{formatCurrency(stats.income - stats.expense)}</p>
+                                    </div>
+                                )}
+                            </header>
 
-                    <p className="px-4 text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2 mt-8">Management</p>
-                    <button onClick={() => { setActiveTab('transactions'); setSidebarOpen(false); }}
-                        className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all font-medium ${activeTab === 'transactions' ? 'bg-blue-50 text-blue-700' : 'text-slate-600 hover:bg-slate-50'}`}>
-                        <FileText size={20} /> All Transactions
-                    </button>
-                    <button onClick={() => { setActiveTab('import'); setSidebarOpen(false); }}
-                        className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all font-medium ${activeTab === 'import' ? 'bg-blue-50 text-blue-700' : 'text-slate-600 hover:bg-slate-50'}`}>
-                        <Upload size={20} /> Import Data
-                    </button>
-                    </nav>
-                </aside>
+                            {view === 'dashboard' && (
+                                <div className="space-y-8">
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                        <StatCard title="Total Revenue" value={formatCurrency(stats.income)} type="income" />
+                                        <StatCard title="Total Expenses" value={formatCurrency(stats.expense)} type="expense" />
+                                    </div>
+                                    
+                                    <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                                        <div className="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm col-span-2">
+                                            <h3 className="font-bold text-slate-800 mb-6">Revenue Trend (7 Days)</h3>
+                                            <div className="h-64">
+                                                <ResponsiveContainer width="100%" height="100%">
+                                                    <BarChart data={stats.trend}>
+                                                        <CartesianGrid strokeDasharray="3 3" vertical={false} />
+                                                        <XAxis dataKey="date" axisLine={false} tickLine={false} tick={{fill:'#94a3b8'}} />
+                                                        <Tooltip contentStyle={{borderRadius:'12px', border:'none', boxShadow:'0 10px 15px -3px rgba(0,0,0,0.1)'}} />
+                                                        <Bar dataKey="income" fill="#2563eb" radius={[6, 6, 0, 0]} barSize={40} />
+                                                    </BarChart>
+                                                </ResponsiveContainer>
+                                            </div>
+                                        </div>
+                                        <div className="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm">
+                                            <h3 className="font-bold text-slate-800 mb-6">Source Breakdown</h3>
+                                            <div className="h-64">
+                                                <ResponsiveContainer width="100%" height="100%">
+                                                    <PieChart>
+                                                        <Pie data={stats.catData} cx="50%" cy="50%" innerRadius={60} outerRadius={80} paddingAngle={5} dataKey="value">
+                                                            {stats.catData.map((entry, index) => (
+                                                                <Cell key={`cell-${index}`} fill={['#3b82f6', '#10b981', '#f59e0b', '#8b5cf6'][index % 4]} />
+                                                            ))}
+                                                        </Pie>
+                                                        <Tooltip formatter={(val) => formatCurrency(val)} />
+                                                        <Legend verticalAlign="bottom" height={36}/>
+                                                    </PieChart>
+                                                </ResponsiveContainer>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
 
-                {/* Main Content */}
-                <main className="flex-1 p-4 lg:p-10 overflow-y-auto h-screen bg-slate-50/50">
-                    <div className="max-w-7xl mx-auto">
-                    <header className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
-                        <div>
-                        <h2 className="text-3xl font-bold text-slate-900 capitalize">
-                            {activeTab}
-                        </h2>
-                        <p className="text-slate-500 mt-1">
-                            {new Date().toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
-                        </p>
+                            {view === 'transactions' && (
+                                <div className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
+                                    <div className="overflow-x-auto">
+                                        <table className="w-full text-left text-sm">
+                                            <thead className="bg-slate-50 text-slate-500 uppercase text-xs font-semibold">
+                                                <tr>
+                                                    <th className="p-4">Date</th>
+                                                    <th className="p-4">Description</th>
+                                                    <th className="p-4">Category</th>
+                                                    <th className="p-4 text-right">Amount</th>
+                                                    <th className="p-4 text-center">Action</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody className="divide-y divide-slate-100">
+                                                {data.sort((a,b) => new Date(b.date) - new Date(a.date)).map(t => (
+                                                    <tr key={t.id} className="hover:bg-slate-50">
+                                                        <td className="p-4 text-slate-500 whitespace-nowrap">{formatDate(t.date)}</td>
+                                                        <td className="p-4 font-medium text-slate-800">{t.description}</td>
+                                                        <td className="p-4"><span className="px-2 py-1 bg-slate-100 rounded text-xs text-slate-600">{t.category}</span></td>
+                                                        <td className={`p-4 text-right font-bold ${t.type === 'income' ? 'text-emerald-600' : 'text-red-600'}`}>
+                                                            {t.type === 'income' ? '+' : '-'}{formatCurrency(t.amount)}
+                                                        </td>
+                                                        <td className="p-4 text-center">
+                                                            <button onClick={() => handleDelete(t.id)} className="text-slate-300 hover:text-red-500"><Trash2 size={18} /></button>
+                                                        </td>
+                                                    </tr>
+                                                ))}
+                                                {data.length === 0 && <tr><td colSpan="5" className="p-8 text-center text-slate-400">No data found. Import some files!</td></tr>}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            )}
+
+                            {view === 'import' && (
+                                <Importer 
+                                    onImport={(newData) => { setData(prev => [...prev, ...newData]); setView('dashboard'); }} 
+                                    onClear={handleClearAll}
+                                />
+                            )}
                         </div>
-                        
-                        <div className="flex gap-3">
-                        <button 
-                            onClick={() => setShowAddModal(!showAddModal)}
-                            className="flex items-center gap-2 px-5 py-2.5 bg-blue-600 text-white rounded-xl hover:bg-blue-700 shadow-lg shadow-blue-200 transition-all font-medium"
-                        >
-                            <Plus size={20} />
-                            <span className="hidden md:inline">Quick Add</span>
-                        </button>
-                        <button onClick={handleExport} className="flex items-center gap-2 px-4 py-2.5 bg-white border border-slate-200 text-slate-700 rounded-xl hover:bg-slate-50 font-medium">
-                            <Download size={20} />
-                        </button>
-                        </div>
-                    </header>
-
-                    {/* Quick Add Modal Area */}
-                    {showAddModal && (
-                        <div className="mb-8 animate-fadeIn">
-                        <Card className="p-6 border-blue-100 ring-4 ring-blue-50">
-                            <div className="flex justify-between items-center mb-4">
-                            <h3 className="text-lg font-bold text-slate-800">Add New Entry</h3>
-                            <button onClick={() => setShowAddModal(false)}><X className="text-slate-400" /></button>
-                            </div>
-                            <form onSubmit={addTransaction} className="grid grid-cols-1 md:grid-cols-5 gap-4 items-end">
-                            <div className="md:col-span-1">
-                                <label className="block text-xs font-semibold uppercase text-slate-500 mb-1">Date</label>
-                                <input type="date" required className="w-full border-slate-200 rounded-lg p-2.5" value={newTx.date} onChange={e => setNewTx({...newTx, date: e.target.value})} />
-                            </div>
-                            <div className="md:col-span-1">
-                                <label className="block text-xs font-semibold uppercase text-slate-500 mb-1">Type</label>
-                                <select className="w-full border-slate-200 rounded-lg p-2.5" value={newTx.type} onChange={e => setNewTx({...newTx, type: e.target.value})}>
-                                <option value="income">Income</option>
-                                <option value="expense">Expense</option>
-                                </select>
-                            </div>
-                            <div className="md:col-span-1">
-                                <label className="block text-xs font-semibold uppercase text-slate-500 mb-1">Description</label>
-                                <input type="text" required placeholder="Description" className="w-full border-slate-200 rounded-lg p-2.5" value={newTx.description} onChange={e => setNewTx({...newTx, description: e.target.value})} />
-                            </div>
-                            <div className="md:col-span-1">
-                                <label className="block text-xs font-semibold uppercase text-slate-500 mb-1">Amount</label>
-                                <input type="number" required placeholder="0.00" className="w-full border-slate-200 rounded-lg p-2.5" value={newTx.amount} onChange={e => setNewTx({...newTx, amount: e.target.value})} />
-                            </div>
-                            <div className="md:col-span-1">
-                                <button type="submit" className="w-full bg-slate-900 text-white p-2.5 rounded-lg hover:bg-slate-800 transition-colors">Save</button>
-                            </div>
-                            </form>
-                        </Card>
-                        </div>
-                    )}
-
-                    {activeTab === 'overview' && renderOverview()}
-                    {activeTab === 'income' && renderIncomeView()}
-                    {activeTab === 'expenses' && renderExpenseView()}
-                    
-                    {activeTab === 'transactions' && (
-                        <Card className="p-0 overflow-hidden">
-                            <div className="p-6 border-b border-slate-100 flex justify-between items-center">
-                            <h3 className="text-lg font-bold text-slate-800">All Transactions</h3>
-                            </div>
-                            <TransactionTable data={transactions} onDelete={deleteTransaction} />
-                        </Card>
-                    )}
-
-                    {activeTab === 'import' && <ExcelUploader onImport={handleImport} />}
-                    </div>
-                </main>
+                    </main>
                 </div>
             );
         };
 
         const root = createRoot(document.getElementById('root'));
-        root.render(<App />);
+        root.render(<MainApp />);
     </script>
 </body>
 </html>
