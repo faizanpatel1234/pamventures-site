@@ -5,11 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MD Dashboard | Pam Premium Hotel</title>
     <!-- Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;700&display=swap" rel="stylesheet">
     <!-- Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- SheetJS for Excel Import -->
+    <script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>
 
     <style>
         :root {
@@ -21,261 +23,175 @@
             --text-muted: #94a3b8;
             --success: #10b981;
             --danger: #ef4444;
-            --glass: rgba(30, 41, 59, 0.7);
-            --border: rgba(255, 255, 255, 0.05);
+            --warning: #f59e0b;
+            --glass: rgba(15, 23, 42, 0.95);
+            --border: rgba(255, 255, 255, 0.08);
         }
 
         body {
             font-family: 'Outfit', sans-serif;
             background-color: var(--bg-dark);
+            background-image: 
+                radial-gradient(at 0% 0%, rgba(59, 130, 246, 0.15) 0px, transparent 50%),
+                radial-gradient(at 100% 0%, rgba(6, 182, 212, 0.15) 0px, transparent 50%);
             color: var(--text-main);
             margin: 0;
+            padding-top: 80px;
             overflow-x: hidden;
         }
 
-        /* --- LAYOUT --- */
-        .app-container {
-            display: flex;
-            min-height: 100vh;
-        }
-
-        /* Sidebar */
-        .sidebar {
-            width: 260px;
-            background: #0b1120;
-            padding: 2rem 1.5rem;
-            display: flex;
-            flex-direction: column;
-            border-right: 1px solid var(--border);
+        /* --- NAVIGATION --- */
+        .navbar {
             position: fixed;
-            height: 100%;
-            z-index: 100;
-            transition: transform 0.3s ease;
+            top: 0; left: 0; width: 100%; height: 70px;
+            background: var(--glass);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border);
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 0 2rem; box-sizing: border-box; z-index: 1000;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.2);
         }
 
-        .brand {
-            font-size: 1.5rem;
-            font-weight: 700;
-            margin-bottom: 3rem;
-            color: white;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
+        .brand { font-size: 1.4rem; font-weight: 700; color: white; display: flex; align-items: center; gap: 10px; }
         .brand span { color: var(--accent); }
 
+        .nav-center { display: flex; gap: 10px; height: 100%; align-items: center; }
+        
         .nav-item {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            padding: 1rem;
-            color: var(--text-muted);
-            text-decoration: none;
-            border-radius: 12px;
-            transition: all 0.3s ease;
-            margin-bottom: 0.5rem;
-            cursor: pointer;
-            border: 1px solid transparent;
+            padding: 0.6rem 1.2rem; color: var(--text-muted); border-radius: 8px;
+            transition: all 0.3s ease; cursor: pointer; font-weight: 500; font-size: 0.95rem;
+            display: flex; align-items: center; gap: 8px; border: 1px solid transparent;
         }
+        .nav-item:hover { color: white; background: rgba(255, 255, 255, 0.05); }
+        .nav-item.active { background: rgba(59, 130, 246, 0.15); color: var(--primary); border-color: rgba(59, 130, 246, 0.3); }
 
-        .nav-item:hover {
-            background: rgba(255, 255, 255, 0.03);
-            color: white;
+        .import-btn {
+            background: var(--success); color: white; border: none; padding: 8px 16px;
+            border-radius: 6px; cursor: pointer; font-weight: 600; display: flex; align-items: center; gap: 8px;
+            transition: transform 0.2s, box-shadow 0.2s;
         }
+        .import-btn:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4); }
 
-        .nav-item.active {
-            background: linear-gradient(90deg, rgba(59, 130, 246, 0.15), transparent);
-            color: var(--primary);
-            border-left: 3px solid var(--primary);
-        }
-
-        /* Main Content */
-        .main {
-            flex: 1;
-            margin-left: 260px;
-            padding: 2rem;
-            background-image: radial-gradient(circle at top right, rgba(6, 182, 212, 0.1), transparent 40%);
-        }
-
-        .header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 2rem;
-            animation: slideDown 0.6s ease-out;
-        }
-
-        .date-pill {
-            background: rgba(255,255,255,0.05);
-            padding: 8px 16px;
-            border-radius: 50px;
-            font-size: 0.9rem;
-            border: 1px solid var(--border);
-            backdrop-filter: blur(10px);
-        }
+        /* --- LAYOUT --- */
+        .container { max-width: 1400px; margin: 0 auto; padding: 2rem; animation: fadeIn 0.8s ease-out; }
 
         /* --- CARDS --- */
-        .grid-cards {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-            gap: 1.5rem;
-            margin-bottom: 2rem;
-        }
-
-        .card {
-            background: var(--glass);
-            border: 1px solid var(--border);
-            border-radius: 16px;
-            padding: 1.5rem;
-            backdrop-filter: blur(12px);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
-            border-color: rgba(255,255,255,0.1);
-        }
-
-        .card::after {
-            content: '';
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 4px;
-            background: var(--c-color, var(--primary));
-        }
-
-        .card-label { font-size: 0.85rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; }
-        .card-value { font-size: 2rem; font-weight: 700; margin-top: 0.5rem; color: white; }
-        .card-icon { position: absolute; right: 1.5rem; top: 1.5rem; font-size: 2rem; opacity: 0.2; color: var(--text-main); }
-
-        /* --- TABS --- */
-        .tab-content { display: none; animation: fadeIn 0.5s ease-out; }
-        .tab-content.active { display: block; }
-
-        /* --- CHARTS & TABLES --- */
-        .panel {
-            background: var(--bg-panel);
-            border-radius: 16px;
-            padding: 1.5rem;
-            border: 1px solid var(--border);
-            margin-bottom: 1.5rem;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-        }
-
-        table { width: 100%; border-collapse: collapse; }
-        th { text-align: left; padding: 1rem; color: var(--text-muted); border-bottom: 1px solid var(--border); font-weight: 600; }
-        td { padding: 1rem; border-bottom: 1px solid rgba(255,255,255,0.02); }
-        tr:hover td { background: rgba(255,255,255,0.02); }
+        .grid-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem; margin-bottom: 2rem; }
         
-        /* Utility */
+        .card {
+            background: linear-gradient(145deg, rgba(30, 41, 59, 0.9), rgba(30, 41, 59, 0.6));
+            border: 1px solid var(--border); border-radius: 16px; padding: 1.5rem;
+            position: relative; overflow: hidden; transition: all 0.3s;
+        }
+        .card:hover { transform: translateY(-5px); box-shadow: 0 15px 30px rgba(0,0,0,0.3); border-color: rgba(255,255,255,0.15); }
+        .card::before { content: ''; position: absolute; top: 0; left: 0; width: 4px; height: 100%; background: var(--c-color, var(--primary)); }
+        
+        .card-label { font-size: 0.8rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; font-weight: 600; }
+        .card-value { font-size: 2.2rem; font-weight: 700; margin-top: 0.5rem; color: white; }
+        .card-icon { position: absolute; right: 1.5rem; top: 1.5rem; font-size: 2.5rem; opacity: 0.1; color: white; transform: rotate(-10deg); }
+
+        /* --- PANELS --- */
+        .tab-content { display: none; }
+        .tab-content.active { display: block; animation: slideUp 0.5s ease-out; }
+        
+        .panel {
+            background: var(--bg-panel); border-radius: 16px; padding: 1.5rem;
+            border: 1px solid var(--border); margin-bottom: 1.5rem; box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .panel-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; }
+        .panel h3 { margin: 0; font-size: 1.1rem; font-weight: 600; }
+
+        /* --- TABLE --- */
+        .table-container { overflow-x: auto; border-radius: 12px; }
+        table { width: 100%; border-collapse: collapse; white-space: nowrap; }
+        th { text-align: left; padding: 1rem; color: var(--text-muted); border-bottom: 1px solid var(--border); font-weight: 600; font-size: 0.85rem; text-transform: uppercase; }
+        td { padding: 1rem; border-bottom: 1px solid rgba(255,255,255,0.03); font-size: 0.95rem; }
+        tr:hover td { background: rgba(255,255,255,0.03); }
         .text-success { color: var(--success); }
         .text-danger { color: var(--danger); }
+        .text-muted { color: var(--text-muted); }
+
+        /* --- UTILS --- */
         .flex-chart { display: grid; grid-template-columns: 2fr 1fr; gap: 1.5rem; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* Animations */
-        @keyframes slideDown { from { transform: translateY(-20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-
-        /* Mobile */
-        @media (max-width: 768px) {
-            .app-container { flex-direction: column; }
-            .sidebar { width: 100%; height: auto; position: relative; padding: 1rem; flex-direction: row; overflow-x: auto; border-right: none; border-bottom: 1px solid var(--border); }
-            .main { margin-left: 0; padding: 1rem; }
+        @media (max-width: 900px) {
+            .navbar { flex-direction: column; height: auto; padding: 1rem; gap: 1rem; }
+            body { padding-top: 150px; }
+            .nav-center { width: 100%; overflow-x: auto; padding-bottom: 5px; }
             .flex-chart { grid-template-columns: 1fr; }
-            .brand { margin-bottom: 0; margin-right: 2rem; font-size: 1.2rem; }
-            .nav-item { padding: 0.5rem 1rem; white-space: nowrap; margin-bottom: 0; }
         }
     </style>
 </head>
 <body>
 
-<div class="app-container">
-    <!-- Navigation -->
-    <nav class="sidebar">
+    <!-- NAV -->
+    <nav class="navbar">
         <div class="brand"><i class="fas fa-gem"></i> PAM<span>PREMIUM</span></div>
-        <div class="nav-item active" onclick="switchTab('overview', this)">
-            <i class="fas fa-chart-pie"></i> Overview
+        
+        <div class="nav-center">
+            <div class="nav-item active" onclick="switchTab('overview', this)"><i class="fas fa-chart-pie"></i> Overview</div>
+            <div class="nav-item" onclick="switchTab('daily', this)"><i class="fas fa-list"></i> Daily Report</div>
+            <div class="nav-item" onclick="switchTab('expenses', this)"><i class="fas fa-file-invoice-dollar"></i> Expenses</div>
+            <div class="nav-item" onclick="switchTab('trends', this)"><i class="fas fa-chart-line"></i> Trends</div>
         </div>
-        <div class="nav-item" onclick="switchTab('daily', this)">
-            <i class="fas fa-list"></i> Daily Report
-        </div>
-        <div class="nav-item" onclick="switchTab('expenses', this)">
-            <i class="fas fa-file-invoice-dollar"></i> Expenses
-        </div>
-        <div class="nav-item" onclick="switchTab('trends', this)">
-            <i class="fas fa-chart-line"></i> Trends
+
+        <div>
+            <input type="file" id="excelInput" accept=".xlsx, .xls, .csv" style="display:none;" onchange="handleFileUpload(this)">
+            <button class="import-btn" onclick="document.getElementById('excelInput').click()">
+                <i class="fas fa-file-import"></i> Import Excel
+            </button>
+            <div id="lastUpdated" style="font-size:0.7rem; color:var(--text-muted); text-align:right; margin-top:5px;">Using default data</div>
         </div>
     </nav>
 
-    <!-- Content -->
-    <main class="main">
-        <div class="header">
-            <div>
-                <h1 style="margin:0; font-weight:600;">Dashboard</h1>
-                <span style="color:var(--text-muted);">Welcome back, Sir</span>
-            </div>
-            <div class="date-pill">
-                <i class="far fa-calendar-alt"></i> Jan 08, 2026
-            </div>
-        </div>
-
-        <!-- OVERVIEW TAB -->
+    <div class="container">
+        <!-- OVERVIEW -->
         <div id="overview" class="tab-content active">
             <div class="grid-cards">
                 <div class="card" style="--c-color: #3b82f6;">
                     <div class="card-label">MTD Room Revenue</div>
-                    <div class="card-value" data-target="1632663">0</div>
+                    <div class="card-value" data-key="totalRoom">0</div>
                     <i class="fas fa-bed card-icon"></i>
                 </div>
                 <div class="card" style="--c-color: #10b981;">
                     <div class="card-label">MTD Total Collection</div>
-                    <div class="card-value" data-target="1171958">0</div>
+                    <div class="card-value" data-key="totalColl">0</div>
                     <i class="fas fa-wallet card-icon"></i>
                 </div>
                 <div class="card" style="--c-color: #ef4444;">
-                    <div class="card-label">MTD Expenses (Paid Out)</div>
-                    <div class="card-value" data-target="221">0</div>
+                    <div class="card-label">MTD Paid Outs</div>
+                    <div class="card-value" data-key="totalPaidOut">0</div>
                     <i class="fas fa-coins card-icon"></i>
                 </div>
                 <div class="card" style="--c-color: #f59e0b;">
                     <div class="card-label">MTD Allowances</div>
-                    <div class="card-value" data-target="18429">0</div>
+                    <div class="card-value" data-key="totalAllowance">0</div>
                     <i class="fas fa-percentage card-icon"></i>
                 </div>
             </div>
 
             <div class="flex-chart">
                 <div class="panel">
-                    <h3>Revenue Performance</h3>
+                    <div class="panel-header"><h3>Revenue Performance</h3></div>
                     <canvas id="mainRevenueChart"></canvas>
                 </div>
                 <div class="panel">
-                    <h3>Collection Mix</h3>
-                    <canvas id="collectionPieChart"></canvas>
+                    <div class="panel-header"><h3>Collection Mix</h3></div>
+                    <div style="position: relative; height: 300px;"><canvas id="collectionPieChart"></canvas></div>
                 </div>
             </div>
         </div>
 
-        <!-- DAILY REPORT TAB -->
+        <!-- DAILY REPORT -->
         <div id="daily" class="tab-content">
             <div class="panel">
-                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem;">
-                    <h3>Daily Detail Log</h3>
-                    <button style="background:var(--primary); border:none; color:white; padding:8px 16px; border-radius:6px; cursor:pointer;">Export CSV</button>
-                </div>
-                <div style="overflow-x:auto;">
+                <div class="panel-header"><h3>Daily Detail Log</h3></div>
+                <div class="table-container">
                     <table id="dailyTable">
                         <thead>
-                            <tr>
-                                <th>Date</th>
-                                <th>Room Tariff</th>
-                                <th>F&B Net</th>
-                                <th>Collection</th>
-                                <th>Advance</th>
-                                <th>Variance</th>
-                            </tr>
+                            <tr><th>Date</th><th>Room Tariff</th><th>F&B Net</th><th>Collection</th><th>Advance</th><th>Variance</th></tr>
                         </thead>
                         <tbody></tbody>
                     </table>
@@ -283,77 +199,26 @@
             </div>
         </div>
 
-        <!-- EXPENSES TAB -->
+        <!-- EXPENSES -->
         <div id="expenses" class="tab-content">
-            <div class="grid-cards">
-                <div class="card" style="--c-color: #ef4444;">
-                    <div class="card-label">Total Paid Outs (Cash)</div>
-                    <div class="card-value">₹221</div>
-                    <div style="font-size:0.8rem; color:var(--text-muted); margin-top:5px;">Petty cash usage</div>
-                </div>
-                <div class="card" style="--c-color: #f59e0b;">
-                    <div class="card-label">Total Allowances</div>
-                    <div class="card-value">₹18,429</div>
-                    <div style="font-size:0.8rem; color:var(--text-muted); margin-top:5px;">Discounts & Comps</div>
-                </div>
-            </div>
-
             <div class="panel">
-                <h3>Expense & Allowance Breakdown</h3>
+                <div class="panel-header"><h3>Expense Breakdown</h3></div>
                 <canvas id="expenseChart" height="100"></canvas>
-            </div>
-
-            <div class="panel">
-                <h3>Expense Log</h3>
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Date</th>
-                            <th>Type</th>
-                            <th>Description</th>
-                            <th>Amount</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>01/01/2026</td>
-                            <td><span class="text-danger">Paid Out</span></td>
-                            <td>Cash Paid Out (Operation)</td>
-                            <td>₹221.00</td>
-                        </tr>
-                        <tr>
-                            <td>01/01/2026</td>
-                            <td><span class="text-success">Allowance</span></td>
-                            <td>F&B Allowance</td>
-                            <td>₹5,858.26</td>
-                        </tr>
-                        <tr>
-                            <td>02/01/2026</td>
-                            <td><span class="text-success">Allowance</span></td>
-                            <td>F&B Allowance</td>
-                            <td>₹4,501.46</td>
-                        </tr>
-                        <!-- More rows can be added dynamically -->
-                    </tbody>
-                </table>
             </div>
         </div>
 
-        <!-- TRENDS TAB -->
+        <!-- TRENDS -->
         <div id="trends" class="tab-content">
             <div class="panel">
-                <h3>Excess / Short Variance Analysis</h3>
-                <p style="color:var(--text-muted); font-size:0.9rem;">Positive values indicate Excess, negative indicate Shortage.</p>
+                <div class="panel-header"><h3>Excess / Short Variance</h3></div>
                 <canvas id="varianceChart" height="120"></canvas>
             </div>
         </div>
-
-    </main>
-</div>
+    </div>
 
 <script>
-    // --- 1. DATA STORE (Updated from your CSVs) ---
-    const data = [
+    // --- DEFAULT DATA (Fallback) ---
+    let appData = [
         { date: "01/01/2026", room: 212236.84, fb: 51866.46, coll: 80138, adv: 6000, excess: 5858.26, allowance: 5858.26, paidOut: 221 },
         { date: "02/01/2026", room: 221251.95, fb: 37246.15, coll: 66589, adv: 13984, excess: 4501.86, allowance: 4501.46, paidOut: 0 },
         { date: "03/01/2026", room: 215104.98, fb: 35426.5, coll: 95164, adv: 8750, excess: 1385.32, allowance: 1385.12, paidOut: 0 },
@@ -364,123 +229,196 @@
         { date: "08/01/2026", room: 221202.1, fb: 45459.4, coll: 90963, adv: 35795, excess: 31947, allowance: 2771.24, paidOut: 0 }
     ];
 
-    const formatCurrency = (num) => new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 0 }).format(num);
+    // --- UTILS ---
+    const formatCurrency = (num) => new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 0 }).format(num || 0);
+    const parseCurrency = (val) => parseFloat(String(val).replace(/[^\d.-]/g, '')) || 0;
 
-    // --- 2. INIT DASHBOARD ---
+    // --- MAIN INIT ---
     document.addEventListener('DOMContentLoaded', () => {
-        animateNumbers();
-        renderTable();
-        initCharts();
+        refreshDashboard();
     });
 
-    // --- 3. FUNCTIONS ---
-    function switchTab(id, el) {
-        document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
-        document.getElementById(id).classList.add('active');
-        document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-        el.classList.add('active');
+    function refreshDashboard() {
+        calculateTotals();
+        renderTable();
+        initCharts();
+    }
+
+    function calculateTotals() {
+        const totals = appData.reduce((acc, curr) => ({
+            room: acc.room + (curr.room || 0),
+            coll: acc.coll + (curr.coll || 0),
+            allowance: acc.allowance + (curr.allowance || 0),
+            paidOut: acc.paidOut + (curr.paidOut || 0)
+        }), { room: 0, coll: 0, allowance: 0, paidOut: 0 });
+
+        // Update Cards
+        updateCard('totalRoom', totals.room);
+        updateCard('totalColl', totals.coll);
+        updateCard('totalPaidOut', totals.paidOut);
+        updateCard('totalAllowance', totals.allowance);
+    }
+
+    function updateCard(key, value) {
+        const el = document.querySelector(`[data-key="${key}"]`);
+        if(el) el.innerText = formatCurrency(value);
+    }
+
+    // --- EXCEL HANDLER ---
+    function handleFileUpload(input) {
+        const file = input.files[0];
+        if(!file) return;
+
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            const data = new Uint8Array(e.target.result);
+            const workbook = XLSX.read(data, { type: 'array' });
+            
+            // Assume first sheet is "Daily_Night_Report" or similar
+            const firstSheetName = workbook.SheetNames[0]; 
+            const worksheet = workbook.Sheets[firstSheetName];
+            
+            // Convert to JSON
+            const json = XLSX.utils.sheet_to_json(worksheet, { defval: "" });
+            
+            processImportedData(json);
+            document.getElementById('lastUpdated').innerText = `Data loaded from: ${file.name}`;
+            document.getElementById('lastUpdated').style.color = '#10b981';
+        };
+        reader.readAsArrayBuffer(file);
+    }
+
+    function processImportedData(json) {
+        // Map Excel columns to our app data structure
+        // We look for partial matches in headers to be flexible
+        const newData = [];
         
-        // Re-render charts if hidden (fixes Chart.js sizing issues)
-        if (id === 'expenses') initExpenseChart();
-        if (id === 'trends') initVarianceChart();
-    }
+        json.forEach(row => {
+            // Flexible Key Matching
+            const getVal = (keywords) => {
+                const key = Object.keys(row).find(k => keywords.some(kw => k.toLowerCase().includes(kw)));
+                return key ? row[key] : 0;
+            };
 
-    function animateNumbers() {
-        document.querySelectorAll('.card-value').forEach(el => {
-            if(!el.getAttribute('data-target')) return;
-            const target = +el.getAttribute('data-target');
-            let start = 0;
-            const step = target / 50;
-            const timer = setInterval(() => {
-                start += step;
-                if (start >= target) {
-                    el.innerText = formatCurrency(target);
-                    clearInterval(timer);
-                } else {
-                    el.innerText = formatCurrency(Math.floor(start));
-                }
-            }, 20);
+            const dateVal = getVal(['date']);
+            
+            // Skip rows without valid dates
+            if(!dateVal || dateVal === 'Total') return; 
+
+            // Handle Excel Date serial numbers if necessary, or just strings
+            let dateStr = dateVal;
+            if(typeof dateVal === 'number') {
+                // simple conversion for Excel serial date
+                const dateObj = new Date(Math.round((dateVal - 25569)*86400*1000));
+                dateStr = dateObj.toLocaleDateString('en-GB'); // DD/MM/YYYY
+            }
+
+            newData.push({
+                date: dateStr,
+                room: parseCurrency(getVal(['room tariff', 'tariff'])),
+                fb: parseCurrency(getVal(['f&b net', 'food & beverage', 'f&b'])),
+                coll: parseCurrency(getVal(['total collection', 'collections'])),
+                adv: parseCurrency(getVal(['advance', 'adv col'])),
+                excess: parseCurrency(getVal(['excess', 'short'])),
+                allowance: parseCurrency(getVal(['allowance'])),
+                paidOut: 0 // Note: Paid Out is often not in main summary sheet. Default to 0.
+            });
         });
+
+        if(newData.length > 0) {
+            appData = newData;
+            refreshDashboard();
+            alert(`Successfully imported ${newData.length} records!`);
+        } else {
+            alert("Could not find recognizable columns. Please check your Excel headers.");
+        }
     }
 
+    // --- TABLE RENDER ---
     function renderTable() {
         const tbody = document.querySelector('#dailyTable tbody');
-        data.forEach(row => {
+        tbody.innerHTML = '';
+        appData.forEach(row => {
             const tr = document.createElement('tr');
             tr.innerHTML = `
-                <td style="font-weight:600; color:white;">${row.date.substring(0,5)}</td>
+                <td style="font-weight:600; color:white;">${row.date}</td>
                 <td>${formatCurrency(row.room)}</td>
                 <td>${formatCurrency(row.fb)}</td>
-                <td style="color:var(--success)">${formatCurrency(row.coll)}</td>
+                <td class="text-success" style="font-weight:600;">${formatCurrency(row.coll)}</td>
                 <td>${formatCurrency(row.adv)}</td>
-                <td style="color:${row.excess < 0 ? 'var(--danger)' : 'var(--text-muted)'}">${formatCurrency(row.excess)}</td>
+                <td class="${row.excess < 0 ? 'text-danger' : 'text-muted'}">${formatCurrency(row.excess)}</td>
             `;
             tbody.appendChild(tr);
         });
     }
 
-    // --- 4. CHARTS ---
+    // --- CHARTS ---
+    let charts = {};
     Chart.defaults.color = '#94a3b8';
-    Chart.defaults.borderColor = 'rgba(255,255,255,0.05)';
+    Chart.defaults.borderColor = 'rgba(255,255,255,0.06)';
+    Chart.defaults.font.family = "'Outfit', sans-serif";
 
     function initCharts() {
-        // Main Revenue Line
-        new Chart(document.getElementById('mainRevenueChart'), {
+        const labels = appData.map(d => typeof d.date === 'string' ? d.date.substring(0,5) : d.date);
+
+        // 1. Revenue
+        if(charts.main) charts.main.destroy();
+        charts.main = new Chart(document.getElementById('mainRevenueChart'), {
             type: 'line',
             data: {
-                labels: data.map(d => d.date.substring(0,5)),
+                labels: labels,
                 datasets: [
-                    { label: 'Room Rev', data: data.map(d => d.room), borderColor: '#3b82f6', tension: 0.4, fill: true, backgroundColor: 'rgba(59, 130, 246, 0.1)' },
-                    { label: 'Total Coll', data: data.map(d => d.coll), borderColor: '#10b981', tension: 0.4 }
+                    { label: 'Room Revenue', data: appData.map(d => d.room), borderColor: '#3b82f6', tension: 0.4, fill: true, backgroundColor: 'rgba(59, 130, 246, 0.1)' },
+                    { label: 'Total Collection', data: appData.map(d => d.coll), borderColor: '#10b981', tension: 0.4 }
                 ]
             },
-            options: { responsive: true, plugins: { legend: { labels: { usePointStyle: true } } } }
+            options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { labels: { usePointStyle: true } } }, scales: { x: { grid: { display: false } } } }
         });
 
-        // Pie
-        new Chart(document.getElementById('collectionPieChart'), {
+        // 2. Pie
+        const totals = appData.reduce((acc, curr) => ({ room: acc.room+curr.room, fb: acc.fb+curr.fb, adv: acc.adv+curr.adv }), { room:0, fb:0, adv:0 });
+        if(charts.pie) charts.pie.destroy();
+        charts.pie = new Chart(document.getElementById('collectionPieChart'), {
             type: 'doughnut',
             data: {
                 labels: ['Room', 'F&B', 'Advance'],
-                datasets: [{
-                    data: [1632663, 357246, 179704],
-                    backgroundColor: ['#3b82f6', '#f59e0b', '#06b6d4'],
-                    borderWidth: 0
-                }]
+                datasets: [{ data: [totals.room, totals.fb, totals.adv], backgroundColor: ['#3b82f6', '#f59e0b', '#06b6d4'], borderWidth: 0 }]
             },
-            options: { cutout: '75%', plugins: { legend: { position: 'bottom' } } }
+            options: { maintainAspectRatio: false, cutout: '70%', plugins: { legend: { position: 'bottom' } } }
         });
-    }
 
-    function initExpenseChart() {
-        if(window.expChart) window.expChart.destroy();
-        window.expChart = new Chart(document.getElementById('expenseChart'), {
+        // 3. Expenses
+        if(charts.exp) charts.exp.destroy();
+        charts.exp = new Chart(document.getElementById('expenseChart'), {
             type: 'bar',
             data: {
-                labels: data.map(d => d.date.substring(0,5)),
+                labels: labels,
                 datasets: [
-                    { label: 'Allowances', data: data.map(d => d.allowance), backgroundColor: '#f59e0b', borderRadius: 4 },
-                    { label: 'Paid Out', data: data.map(d => d.paidOut), backgroundColor: '#ef4444', borderRadius: 4 }
+                    { label: 'Allowances', data: appData.map(d => d.allowance), backgroundColor: '#f59e0b', borderRadius: 4 },
+                    { label: 'Paid Out', data: appData.map(d => d.paidOut), backgroundColor: '#ef4444', borderRadius: 4 }
                 ]
             },
             options: { scales: { x: { stacked: true }, y: { stacked: true } } }
         });
-    }
 
-    function initVarianceChart() {
-        if(window.varChart) window.varChart.destroy();
-        window.varChart = new Chart(document.getElementById('varianceChart'), {
+        // 4. Variance
+        if(charts.var) charts.var.destroy();
+        charts.var = new Chart(document.getElementById('varianceChart'), {
             type: 'bar',
             data: {
-                labels: data.map(d => d.date.substring(0,5)),
-                datasets: [{ 
-                    label: 'Variance', 
-                    data: data.map(d => d.excess), 
-                    backgroundColor: data.map(d => d.excess >= 0 ? '#10b981' : '#ef4444'),
-                    borderRadius: 4
-                }]
-            }
+                labels: labels,
+                datasets: [{ label: 'Variance', data: appData.map(d => d.excess), backgroundColor: appData.map(d => d.excess >= 0 ? '#10b981' : '#ef4444'), borderRadius: 4 }]
+            },
+            options: { plugins: { legend: { display: false } }, scales: { x: { grid: { display: false } } } }
         });
+    }
+
+    function switchTab(id, el) {
+        document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+        document.getElementById(id).classList.add('active');
+        document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+        el.classList.add('active');
+        initCharts(); // Redraw to handle resize
     }
 </script>
 
