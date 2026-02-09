@@ -227,7 +227,9 @@
             <div class="flex-chart">
                 <div class="panel">
                     <div class="panel-header"><h3>Revenue Performance</h3></div>
-                    <canvas id="mainRevenueChart"></canvas>
+                    <div style="position: relative; height: 300px; width: 100%;">
+                        <canvas id="mainRevenueChart"></canvas>
+                    </div>
                 </div>
                 <div class="panel">
                     <div class="panel-header"><h3>Collection Mix</h3></div>
@@ -269,17 +271,11 @@
     </div>
 
 <script>
+    // --- CONFIGURATION ---
+    const DEFAULT_SHEET_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQhYL-hk8dYhYUZO3DZ502SGhXgYyXOpQwmOmrxghMfI7BcV4Nm4qAsD1byPxF3mZ2onw5HhwPV_JR8/pub?output=csv";
+
     // --- DEFAULT DATA (Fallback) ---
-    let appData = [
-        { date: "01/01/2026", room: 212236.84, fb: 51866.46, coll: 80138, adv: 6000, excess: 5858.26, allowance: 5858.26, paidOut: 221 },
-        { date: "02/01/2026", room: 221251.95, fb: 37246.15, coll: 66589, adv: 13984, excess: 4501.86, allowance: 4501.46, paidOut: 0 },
-        { date: "03/01/2026", room: 215104.98, fb: 35426.5, coll: 95164, adv: 8750, excess: 1385.32, allowance: 1385.12, paidOut: 0 },
-        { date: "04/01/2026", room: 198711.11, fb: 95294.28, coll: 174051, adv: 10745, excess: 3831.42, allowance: 3831.42, paidOut: 0 },
-        { date: "05/01/2026", room: 189926.41, fb: 35650.05, coll: 350956, adv: 28838, excess: 750.13, allowance: 750.13, paidOut: 0 },
-        { date: "06/01/2026", room: 172491.88, fb: 38507.65, coll: 246874, adv: 30707.58, excess: 1276.93, allowance: 1276.93, paidOut: 0 },
-        { date: "07/01/2026", room: 201737.8, fb: 17795.25, coll: 67223, adv: 44884, excess: 1326.89, allowance: 1326.89, paidOut: 0 },
-        { date: "08/01/2026", room: 221202.1, fb: 45459.4, coll: 90963, adv: 35795, excess: 31947, allowance: 2771.24, paidOut: 0 }
-    ];
+    let appData = [];
 
     // --- UTILS ---
     const formatCurrency = (num) => new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 0 }).format(num || 0);
@@ -287,14 +283,15 @@
 
     // --- MAIN INIT ---
     document.addEventListener('DOMContentLoaded', () => {
-        // Check if URL is saved
-        const savedUrl = localStorage.getItem('sheet_url');
-        if(savedUrl) {
-            syncData(); // Auto sync if url exists
-        } else {
-            refreshDashboard(); // Load default
-            setTimeout(() => { if(!savedUrl) openSettings(); }, 1000); // Prompt user if no sheet connected
+        let savedUrl = localStorage.getItem('sheet_url');
+        
+        // If no URL saved, use the default one provided by user
+        if (!savedUrl) {
+            savedUrl = DEFAULT_SHEET_URL;
+            localStorage.setItem('sheet_url', savedUrl);
         }
+
+        syncData();
     });
 
     function refreshDashboard() {
@@ -325,7 +322,7 @@
     // --- GOOGLE SHEET SYNC LOGIC ---
     function openSettings() {
         document.getElementById('settingsModal').style.display = 'block';
-        document.getElementById('sheetUrlInput').value = localStorage.getItem('sheet_url') || '';
+        document.getElementById('sheetUrlInput').value = localStorage.getItem('sheet_url') || DEFAULT_SHEET_URL;
     }
 
     function closeSettings() {
@@ -344,16 +341,7 @@
     }
 
     async function syncData() {
-        const url = localStorage.getItem('sheet_url');
-        if(!url) {
-            openSettings();
-            return;
-        }
-
-        // Validate basic format
-        if(!url.includes('docs.google.com') || !url.includes('output=csv')) {
-            alert("Warning: URL does not look like a 'Publish to Web' CSV link. It should end with 'output=csv'.");
-        }
+        const url = localStorage.getItem('sheet_url') || DEFAULT_SHEET_URL;
 
         const btn = document.querySelector('.sync-btn');
         const icon = btn.querySelector('i');
@@ -365,14 +353,14 @@
         btn.style.opacity = '0.7';
 
         try {
-            // Attempt 1: Direct Fetch (works if browser allows, usually fails CORS in strict modes)
+            // Attempt 1: Direct Fetch
             let response;
             try {
                 response = await fetch(url);
                 if (!response.ok) throw new Error('Direct fetch failed');
             } catch (e) {
                 console.warn("Direct fetch blocked by CORS, switching to proxy...");
-                // Attempt 2: CORS Proxy (Bypasses the "Load failed" error)
+                // Attempt 2: CORS Proxy
                 response = await fetch(`https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`);
             }
             
@@ -394,7 +382,7 @@
             document.getElementById('lastUpdated').style.color = '#10b981';
         } catch (error) {
             console.error(error);
-            alert("Sync Failed: Could not load data. \n\n1. Check your internet.\n2. Ensure the Sheet is 'Published to Web' as CSV.\n3. Try pasting the link again.");
+            alert("Sync Failed. Please check the console for details or verify your link.");
         } finally {
             // Reset Button
             icon.classList.remove('fa-spinner', 'fa-spin');
@@ -407,15 +395,18 @@
     function processImportedData(json) {
         const newData = [];
         json.forEach(row => {
+            // Helper to find key in object (fuzzy match)
             const getVal = (keywords) => {
                 const key = Object.keys(row).find(k => keywords.some(kw => k.toLowerCase().includes(kw)));
                 return key ? row[key] : 0;
             };
 
             const dateVal = getVal(['date']);
-            if(!dateVal || dateVal === 'Total') return; 
+            // Skip rows that look like totals or empty
+            if(!dateVal || String(dateVal).toLowerCase().includes('total')) return; 
 
             let dateStr = dateVal;
+            // Handle Excel serial date if necessary
             if(typeof dateVal === 'number') {
                 const dateObj = new Date(Math.round((dateVal - 25569)*86400*1000));
                 dateStr = dateObj.toLocaleDateString('en-GB'); 
@@ -429,13 +420,15 @@
                 adv: parseCurrency(getVal(['advance', 'adv col'])),
                 excess: parseCurrency(getVal(['excess', 'short'])),
                 allowance: parseCurrency(getVal(['allowance'])),
-                paidOut: 0
+                paidOut: 0 // Usually distinct from main log, defaulting to 0 unless column exists
             });
         });
 
         if(newData.length > 0) {
             appData = newData;
             refreshDashboard();
+        } else {
+            console.warn("Data loaded but no valid rows found. Check column headers.");
         }
     }
 
@@ -466,6 +459,7 @@
     function initCharts() {
         const labels = appData.map(d => typeof d.date === 'string' ? d.date.substring(0,5) : d.date);
 
+        // 1. Line Chart
         if(charts.main) charts.main.destroy();
         charts.main = new Chart(document.getElementById('mainRevenueChart'), {
             type: 'line',
@@ -476,9 +470,15 @@
                     { label: 'Total Collection', data: appData.map(d => d.coll), borderColor: '#10b981', tension: 0.4 }
                 ]
             },
-            options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { labels: { usePointStyle: true } } }, scales: { x: { grid: { display: false } } } }
+            options: { 
+                responsive: true, 
+                maintainAspectRatio: false, 
+                plugins: { legend: { labels: { usePointStyle: true } } }, 
+                scales: { x: { grid: { display: false } } } 
+            }
         });
 
+        // 2. Pie Chart
         const totals = appData.reduce((acc, curr) => ({ room: acc.room+curr.room, fb: acc.fb+curr.fb, adv: acc.adv+curr.adv }), { room:0, fb:0, adv:0 });
         if(charts.pie) charts.pie.destroy();
         charts.pie = new Chart(document.getElementById('collectionPieChart'), {
@@ -490,6 +490,7 @@
             options: { maintainAspectRatio: false, cutout: '70%', plugins: { legend: { position: 'bottom' } } }
         });
 
+        // 3. Bar Chart (Expenses)
         if(charts.exp) charts.exp.destroy();
         charts.exp = new Chart(document.getElementById('expenseChart'), {
             type: 'bar',
@@ -503,6 +504,7 @@
             options: { scales: { x: { stacked: true }, y: { stacked: true } } }
         });
 
+        // 4. Bar Chart (Variance)
         if(charts.var) charts.var.destroy();
         charts.var = new Chart(document.getElementById('varianceChart'), {
             type: 'bar',
