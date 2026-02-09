@@ -8,13 +8,16 @@
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     
+    <!-- SheetJS (XLSX) for Excel parsing -->
+    <script src="https://cdn.sheetjs.com/xlsx-0.20.2/package/dist/xlsx.full.min.js"></script>
+    
     <!-- Babel for JSX transformation -->
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
     
     <!-- Custom Font (Inter) -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     
-    <!-- Import Map: Fixes "Module name 'react' does not resolve" errors -->
+    <!-- Import Map -->
     <script type="importmap">
     {
         "imports": {
@@ -29,7 +32,6 @@
 
     <style>
         body { font-family: 'Inter', sans-serif; }
-        /* Simple Fade In Animation */
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(10px); }
             to { opacity: 1; transform: translateY(0); }
@@ -44,7 +46,6 @@
 
     <!-- Main Application Script -->
     <script type="text/babel" data-type="module">
-        // Import libraries using the names defined in the Import Map above
         import React, { useState, useEffect, useMemo } from 'react';
         import { createRoot } from 'react-dom/client';
         
@@ -55,7 +56,7 @@
         import { 
             LayoutDashboard, Upload, DollarSign, TrendingUp, TrendingDown, 
             FileText, Plus, Trash2, Save, Download, Menu, X,
-            ArrowUpRight, ArrowDownRight, Wallet, Activity 
+            ArrowUpRight, ArrowDownRight, Wallet, Activity, Calendar
         } from 'lucide-react';
 
         // --- Utility Functions ---
@@ -74,6 +75,15 @@
                 currency: 'INR',
                 maximumFractionDigits: 0
             }).format(amount);
+        };
+
+        const getColumnLetter = (index) => {
+            let letter = '';
+            while (index >= 0) {
+                letter = String.fromCharCode((index % 26) + 65) + letter;
+                index = Math.floor(index / 26) - 1;
+            }
+            return letter;
         };
 
         // --- Components ---
@@ -150,130 +160,180 @@
             </div>
         );
 
-        const CSVUploader = ({ onImport }) => {
+        const ExcelUploader = ({ onImport }) => {
             const [dragActive, setDragActive] = useState(false);
             const [file, setFile] = useState(null);
             const [preview, setPreview] = useState([]);
             const [headers, setHeaders] = useState([]);
+            const [rawRows, setRawRows] = useState([]);
+            
+            // Default to today
+            const [reportDate, setReportDate] = useState(new Date().toISOString().split('T')[0]);
+            const [defaultType, setDefaultType] = useState('income');
+            
             const [mapping, setMapping] = useState({
-                date: '',
                 description: '',
-                amount: '',
-                type: '',
+                amount: '', // Usually 'NET' in IDS Next reports
                 category: ''
             });
+
+            // Load saved mapping from local storage
+            useEffect(() => {
+                const savedMap = localStorage.getItem('hotel_import_mapping');
+                if (savedMap) {
+                    try { setMapping(JSON.parse(savedMap)); } catch(e) {}
+                }
+            }, []);
+
+            // Save mapping on change
+            useEffect(() => {
+                if (mapping.description || mapping.amount) {
+                    localStorage.setItem('hotel_import_mapping', JSON.stringify(mapping));
+                }
+            }, [mapping]);
 
             const handleDrag = (e) => {
                 e.preventDefault();
                 e.stopPropagation();
-                if (e.type === "dragenter" || e.type === "dragover") {
-                setDragActive(true);
-                } else if (e.type === "dragleave") {
-                setDragActive(false);
-                }
+                if (e.type === "dragenter" || e.type === "dragover") setDragActive(true);
+                else if (e.type === "dragleave") setDragActive(false);
             };
 
             const handleDrop = (e) => {
                 e.preventDefault();
                 e.stopPropagation();
                 setDragActive(false);
-                if (e.dataTransfer.files && e.dataTransfer.files[0]) {
-                handleFile(e.dataTransfer.files[0]);
-                }
+                if (e.dataTransfer.files && e.dataTransfer.files[0]) handleFile(e.dataTransfer.files[0]);
             };
 
             const handleChange = (e) => {
-                if (e.target.files && e.target.files[0]) {
-                handleFile(e.target.files[0]);
-                }
+                if (e.target.files && e.target.files[0]) handleFile(e.target.files[0]);
             };
 
-            const handleFile = (file) => {
-                setFile(file);
-                const reader = new FileReader();
-                reader.onload = (e) => {
-                const text = e.target.result;
-                const lines = text.split('\n').map(line => line.trim()).filter(line => line);
-                if (lines.length > 0) {
-                    const headers = lines[0].split(',').map(h => h.trim());
-                    setHeaders(headers);
-                    const previewData = lines.slice(1, 6).map(line => {
-                    const values = line.split(',');
-                    return headers.reduce((obj, header, index) => {
-                        obj[header] = values[index];
-                        return obj;
-                    }, {});
-                    });
-                    setPreview(previewData);
-                    
-                    const newMapping = { ...mapping };
-                    headers.forEach(h => {
-                    const lower = h.toLowerCase();
-                    if (lower.includes('date') || lower.includes('time')) newMapping.date = h;
-                    if (lower.includes('desc') || lower.includes('particular')) newMapping.description = h;
-                    if (lower.includes('amount') || lower.includes('total') || lower.includes('price')) newMapping.amount = h;
-                    if (lower.includes('type') || lower.includes('cr/dr')) newMapping.type = h;
-                    if (lower.includes('cat') || lower.includes('dept')) newMapping.category = h;
-                    });
-                    setMapping(newMapping);
+            const handleFile = async (fileObj) => {
+                setFile(fileObj);
+                const data = await fileObj.arrayBuffer();
+                
+                // Use the Global XLSX variable from the CDN script
+                const workbook = window.XLSX.read(data, { type: 'array' });
+                const firstSheetName = workbook.SheetNames[0];
+                const worksheet = workbook.Sheets[firstSheetName];
+                
+                // Convert to array of arrays (header: 1)
+                const jsonData = window.XLSX.utils.sheet_to_json(worksheet, { header: 1, defval: "" });
+                
+                setRawRows(jsonData);
+
+                // Auto-detect Header Row (Look for 'Description' or 'Particular')
+                let headerRowIndex = 0;
+                for (let i = 0; i < Math.min(jsonData.length, 20); i++) {
+                    const rowStr = JSON.stringify(jsonData[i]).toLowerCase();
+                    if (rowStr.includes('description') || rowStr.includes('particular')) {
+                        headerRowIndex = i;
+                        break;
+                    }
                 }
-                };
-                reader.readAsText(file);
+
+                const detectedHeaders = jsonData[headerRowIndex].map((h, i) => {
+                    // Append column letter to handle duplicate headers (e.g., NET, NET, NET)
+                    const letter = getColumnLetter(i);
+                    return h ? `${h} (Col ${letter})` : `Column ${letter}`;
+                });
+                
+                setHeaders(detectedHeaders);
+
+                // Auto-map if possible
+                const newMapping = { ...mapping };
+                detectedHeaders.forEach((h, index) => {
+                    const lower = h.toLowerCase();
+                    // If we haven't set a mapping yet, try to guess
+                    if (!newMapping.description && (lower.includes('desc') || lower.includes('particular'))) newMapping.description = index;
+                    // IDS Next usually has Day Amount in early columns. Let's look for "NET" or "Amount"
+                    // If duplicate "NET" exists, the first one is usually "For The Day"
+                    if (newMapping.amount === '' && (lower.includes('net') || lower.includes('amount'))) {
+                        newMapping.amount = index; 
+                    }
+                });
+                setMapping(newMapping);
+
+                // Preview data (next 5 rows after header)
+                const previewRows = jsonData.slice(headerRowIndex + 1, headerRowIndex + 6).map((row, i) => {
+                   return {
+                       _originalIndex: headerRowIndex + 1 + i,
+                       data: row
+                   };
+                });
+                setPreview(previewRows);
             };
 
             const processImport = () => {
-                if (!file) return;
-                const reader = new FileReader();
-                reader.onload = (e) => {
-                const text = e.target.result;
-                const lines = text.split('\n').map(line => line.trim()).filter(line => line);
-                const headers = lines[0].split(',').map(h => h.trim());
+                if (!file || mapping.description === '' || mapping.amount === '') {
+                    alert("Please map the Description and Amount columns.");
+                    return;
+                }
+
+                const headerRowIndex = rawRows.findIndex(row => 
+                    row[mapping.description] && row[mapping.amount] // simple check
+                ); // Actually we already found it, but let's just iterate
                 
-                const newTransactions = lines.slice(1).map(line => {
-                    const values = line.split(','); 
-                    const row = headers.reduce((obj, header, index) => {
-                    obj[header] = values[index];
-                    return obj;
-                    }, {});
+                // We'll iterate starting from the row after headers used in detection
+                // But for safety, let's just use rawRows and try to parse rows that look like data
+                
+                const newTransactions = [];
+                const descIdx = parseInt(mapping.description);
+                const amtIdx = parseInt(mapping.amount);
+                const catIdx = mapping.category !== '' ? parseInt(mapping.category) : -1;
 
-                    let type = 'expense';
-                    let amount = parseFloat(row[mapping.amount] || 0);
+                rawRows.forEach((row, index) => {
+                    // Skip if row doesn't have valid data
+                    if (!row || row.length <= Math.max(descIdx, amtIdx)) return;
+                    
+                    const desc = row[descIdx];
+                    const rawAmt = row[amtIdx];
 
-                    if (mapping.type) {
-                    const typeVal = row[mapping.type]?.toLowerCase() || '';
-                    if (typeVal.includes('income') || typeVal.includes('cr') || typeVal.includes('credit') || typeVal.includes('sale')) {
-                        type = 'income';
+                    // Heuristics to skip header lines, divider lines, or empty lines
+                    if (!desc || typeof desc !== 'string') return;
+                    if (desc.includes('___') || desc.toLowerCase() === 'description' || desc.toLowerCase().includes('total')) return;
+
+                    const amount = parseFloat(rawAmt);
+                    if (isNaN(amount) || amount === 0) return;
+
+                    let category = 'Uncategorized';
+                    if (catIdx > -1 && row[catIdx]) category = row[catIdx];
+                    else {
+                        // Auto-categorize based on description text
+                        const dLower = desc.toLowerCase();
+                        if (dLower.includes('room') || dLower.includes('tariff')) category = 'Room Revenue';
+                        else if (dLower.includes('food') || dLower.includes('bev') || dLower.includes('restaurant')) category = 'F&B';
+                        else if (dLower.includes('laundry')) category = 'Laundry';
+                        else category = 'Other Revenue';
                     }
-                    } else {
-                    const catVal = row[mapping.category]?.toLowerCase() || '';
-                    if (catVal.includes('room') || catVal.includes('f&b') || catVal.includes('sale') || catVal.includes('revenue')) {
-                        type = 'income';
-                    }
-                    }
 
-                    return {
-                    id: generateId(),
-                    date: row[mapping.date] ? new Date(row[mapping.date]).toISOString() : new Date().toISOString(),
-                    description: row[mapping.description] || 'Imported Transaction',
-                    amount: Math.abs(amount),
-                    type: type,
-                    category: row[mapping.category] || 'Uncategorized',
-                    source: 'Import'
-                    };
-                }).filter(t => !isNaN(t.amount) && t.amount > 0);
+                    newTransactions.push({
+                        id: generateId(),
+                        date: new Date(reportDate).toISOString(),
+                        description: desc,
+                        amount: Math.abs(amount),
+                        type: defaultType, // User selected default (Income/Expense)
+                        category: category,
+                        source: 'Import'
+                    });
+                });
 
-                onImport(newTransactions);
-                setFile(null);
-                setPreview([]);
-                };
-                reader.readAsText(file);
+                if (newTransactions.length === 0) {
+                    alert("No valid transactions found. Please check your mapping.");
+                } else {
+                    onImport(newTransactions);
+                    setFile(null);
+                    setPreview([]);
+                }
             };
 
             return (
                 <Card className="p-8">
                 <div className="text-center mb-8">
-                    <h2 className="text-2xl font-bold text-slate-800">Import CSV Data</h2>
-                    <p className="text-slate-500">Upload your IDS Next or Bank Statement exports</p>
+                    <h2 className="text-2xl font-bold text-slate-800">Import Excel / Night Report</h2>
+                    <p className="text-slate-500">Upload your IDS Next (.xlsx) or Excel files</p>
                 </div>
                 
                 {!file ? (
@@ -285,47 +345,115 @@
                     onDrop={handleDrop}
                     >
                     <div className="bg-white p-4 rounded-full inline-block shadow-sm mb-4">
-                        <Upload className="h-8 w-8 text-blue-600" />
+                        <FileText className="h-8 w-8 text-blue-600" />
                     </div>
-                    <p className="text-xl font-medium text-slate-700 mb-2">Drag & Drop file here</p>
-                    <p className="text-slate-500 mb-6">or</p>
+                    <p className="text-xl font-medium text-slate-700 mb-2">Drag & Drop Excel file here</p>
+                    <p className="text-slate-500 mb-6">Supports .xlsx, .xls, .csv</p>
                     <input 
                         type="file" 
-                        accept=".csv"
+                        accept=".xlsx, .xls, .csv"
                         className="hidden" 
-                        id="csv-upload" 
+                        id="excel-upload" 
                         onChange={handleChange}
                     />
-                    <label htmlFor="csv-upload" className="inline-flex items-center justify-center px-6 py-3 border border-transparent text-base font-medium rounded-lg text-white bg-blue-600 hover:bg-blue-700 cursor-pointer shadow-sm hover:shadow-md transition-all">
-                        Browse Files
+                    <label htmlFor="excel-upload" className="inline-flex items-center justify-center px-6 py-3 border border-transparent text-base font-medium rounded-lg text-white bg-blue-600 hover:bg-blue-700 cursor-pointer shadow-sm hover:shadow-md transition-all">
+                        Select File
                     </label>
                     </div>
                 ) : (
                     <div className="space-y-6 animate-fadeIn">
                     <div className="flex items-center justify-between bg-blue-50 p-4 rounded-lg border border-blue-100">
                         <div className="flex items-center gap-3">
-                        <FileText className="text-blue-600" />
+                        <div className="bg-white p-2 rounded text-green-600 font-bold text-xs">XLS</div>
                         <span className="font-medium text-blue-900">{file.name}</span>
                         </div>
-                        <button onClick={() => setFile(null)} className="text-blue-400 hover:text-blue-600">
+                        <button onClick={() => { setFile(null); setRawRows([]); setHeaders([]); }} className="text-blue-400 hover:text-blue-600">
                         <X size={20} />
                         </button>
                     </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                        {['Date', 'Description', 'Amount', 'Category'].map(field => (
-                        <div key={field}>
-                            <label className="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1.5">{field} Column</label>
-                            <select 
-                            className="w-full border-slate-200 rounded-lg shadow-sm focus:border-blue-500 focus:ring-blue-500 p-2.5 bg-white text-sm"
-                            value={mapping[field.toLowerCase()]}
-                            onChange={(e) => setMapping({...mapping, [field.toLowerCase()]: e.target.value})}
-                            >
-                            <option value="">Select Column...</option>
-                            {headers.map(h => <option key={h} value={h}>{h}</option>)}
-                            </select>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        {/* Global Settings for this import */}
+                        <div className="bg-slate-50 p-4 rounded-lg border border-slate-100 space-y-4">
+                            <h4 className="font-semibold text-slate-700 flex items-center gap-2">
+                                <Calendar size={16} /> Report Settings
+                            </h4>
+                            <div>
+                                <label className="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1.5">Report Date</label>
+                                <input 
+                                    type="date" 
+                                    className="w-full border-slate-200 rounded-lg shadow-sm focus:border-blue-500 focus:ring-blue-500 p-2.5 bg-white text-sm"
+                                    value={reportDate}
+                                    onChange={(e) => setReportDate(e.target.value)}
+                                />
+                                <p className="text-xs text-slate-400 mt-1">Applied to all imported rows</p>
+                            </div>
+                            <div>
+                                <label className="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1.5">Import As</label>
+                                <select 
+                                    className="w-full border-slate-200 rounded-lg shadow-sm focus:border-blue-500 focus:ring-blue-500 p-2.5 bg-white text-sm"
+                                    value={defaultType}
+                                    onChange={(e) => setDefaultType(e.target.value)}
+                                >
+                                    <option value="income">Income (Revenue)</option>
+                                    <option value="expense">Expense</option>
+                                </select>
+                            </div>
                         </div>
-                        ))}
+
+                        {/* Column Mapping */}
+                        <div className="bg-slate-50 p-4 rounded-lg border border-slate-100 space-y-4">
+                            <h4 className="font-semibold text-slate-700 flex items-center gap-2">
+                                <Activity size={16} /> Column Mapping
+                            </h4>
+                            <div>
+                                <label className="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1.5">Description Column</label>
+                                <select 
+                                    className="w-full border-slate-200 rounded-lg shadow-sm focus:border-blue-500 focus:ring-blue-500 p-2.5 bg-white text-sm"
+                                    value={mapping.description}
+                                    onChange={(e) => setMapping({...mapping, description: e.target.value})}
+                                >
+                                    <option value="">Select Column...</option>
+                                    {headers.map((h, i) => <option key={i} value={i}>{h}</option>)}
+                                </select>
+                            </div>
+                            <div>
+                                <label className="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1.5">Amount / NET Column</label>
+                                <select 
+                                    className="w-full border-slate-200 rounded-lg shadow-sm focus:border-blue-500 focus:ring-blue-500 p-2.5 bg-white text-sm"
+                                    value={mapping.amount}
+                                    onChange={(e) => setMapping({...mapping, amount: e.target.value})}
+                                >
+                                    <option value="">Select Column...</option>
+                                    {headers.map((h, i) => <option key={i} value={i}>{h}</option>)}
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Preview Table */}
+                    <div className="mt-4">
+                        <p className="text-xs font-semibold uppercase tracking-wider text-slate-500 mb-2">Preview (First 5 Data Rows)</p>
+                        <div className="overflow-x-auto border rounded-lg">
+                            <table className="min-w-full text-xs text-left bg-white">
+                                <thead className="bg-slate-50">
+                                    <tr>
+                                        {mapping.description !== '' && <th className="p-2 border-b">Description ({headers[mapping.description]})</th>}
+                                        {mapping.amount !== '' && <th className="p-2 border-b">Amount ({headers[mapping.amount]})</th>}
+                                        <th className="p-2 border-b text-slate-400">Raw Data...</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {preview.map((row, i) => (
+                                        <tr key={i} className="border-b last:border-0">
+                                            {mapping.description !== '' && <td className="p-2 font-medium">{row.data[mapping.description]}</td>}
+                                            {mapping.amount !== '' && <td className="p-2">{row.data[mapping.amount]}</td>}
+                                            <td className="p-2 text-slate-400 truncate max-w-xs">{JSON.stringify(row.data)}</td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
 
                     <div className="flex justify-end pt-4">
@@ -334,7 +462,7 @@
                         className="px-6 py-2.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 flex items-center gap-2 font-medium shadow-sm hover:shadow-md transition-all"
                         >
                         <Save size={18} />
-                        Confirm Import
+                        Import {defaultType}
                         </button>
                     </div>
                     </div>
@@ -708,7 +836,7 @@
                         </Card>
                     )}
 
-                    {activeTab === 'import' && <CSVUploader onImport={handleImport} />}
+                    {activeTab === 'import' && <ExcelUploader onImport={handleImport} />}
                     </div>
                 </main>
                 </div>
