@@ -56,7 +56,7 @@
         import { 
             LayoutDashboard, Upload, DollarSign, TrendingUp, TrendingDown, 
             FileText, Plus, Trash2, Save, Download, Menu, X,
-            ArrowUpRight, ArrowDownRight, Wallet, Activity, Calendar
+            ArrowUpRight, ArrowDownRight, Wallet, Activity, Calendar, CheckSquare, Square, Filter
         } from 'lucide-react';
 
         // --- Utility Functions ---
@@ -166,6 +166,7 @@
             const [preview, setPreview] = useState([]);
             const [headers, setHeaders] = useState([]);
             const [rawRows, setRawRows] = useState([]);
+            const [candidates, setCandidates] = useState([]); // Store rows for review before import
             
             // Default to today
             const [reportDate, setReportDate] = useState(new Date().toISOString().split('T')[0]);
@@ -212,6 +213,7 @@
 
             const handleFile = async (fileObj) => {
                 setFile(fileObj);
+                setCandidates([]); // Reset candidates on new file
                 const data = await fileObj.arrayBuffer();
                 
                 // Use the Global XLSX variable from the CDN script
@@ -266,68 +268,163 @@
                 setPreview(previewRows);
             };
 
-            const processImport = () => {
+            const analyzeFile = () => {
                 if (!file || mapping.description === '' || mapping.amount === '') {
                     alert("Please map the Description and Amount columns.");
                     return;
                 }
 
-                const headerRowIndex = rawRows.findIndex(row => 
-                    row[mapping.description] && row[mapping.amount] // simple check
-                ); // Actually we already found it, but let's just iterate
-                
-                // We'll iterate starting from the row after headers used in detection
-                // But for safety, let's just use rawRows and try to parse rows that look like data
-                
                 const newTransactions = [];
                 const descIdx = parseInt(mapping.description);
                 const amtIdx = parseInt(mapping.amount);
                 const catIdx = mapping.category !== '' ? parseInt(mapping.category) : -1;
 
                 rawRows.forEach((row, index) => {
-                    // Skip if row doesn't have valid data
+                    // Skip if row doesn't have valid data at selected indices
                     if (!row || row.length <= Math.max(descIdx, amtIdx)) return;
                     
                     const desc = row[descIdx];
                     const rawAmt = row[amtIdx];
 
-                    // Heuristics to skip header lines, divider lines, or empty lines
+                    // --- FILTERING LOGIC ---
+                    // 1. Must have description string
                     if (!desc || typeof desc !== 'string') return;
-                    if (desc.includes('___') || desc.toLowerCase() === 'description' || desc.toLowerCase().includes('total')) return;
+                    const dClean = desc.trim();
 
+                    // 2. Skip divider lines (underscores, dashes)
+                    if (dClean.startsWith('_') || dClean.startsWith('-')) return;
+
+                    // 3. Skip Headers/Section Titles found in Night Reports
+                    // e.g., "Rate :-", "City Ledger :-", "Description", "Guest Name", "LIST OF..."
+                    if (dClean.includes(':-')) return; 
+                    if (dClean.toLowerCase() === 'description') return;
+                    if (dClean.toLowerCase().includes('guest name')) return;
+                    if (dClean.includes('LIST OF')) return;
+                    if (dClean.includes('<---')) return;
+
+                    // 4. Skip Totals (User specifically asked to not add "all the stuff", totals duplicate data)
+                    if (dClean.toLowerCase().includes('total')) return;
+
+                    // 5. Check Amount
                     const amount = parseFloat(rawAmt);
-                    if (isNaN(amount) || amount === 0) return;
+                    if (isNaN(amount) || amount === 0) return; // Skip zero/empty amounts
 
+                    // --- CATEGORIZATION ---
                     let category = 'Uncategorized';
                     if (catIdx > -1 && row[catIdx]) category = row[catIdx];
                     else {
-                        // Auto-categorize based on description text
-                        const dLower = desc.toLowerCase();
-                        if (dLower.includes('room') || dLower.includes('tariff')) category = 'Room Revenue';
-                        else if (dLower.includes('food') || dLower.includes('bev') || dLower.includes('restaurant')) category = 'F&B';
+                        // Auto-categorize based on description text heuristics
+                        const dLower = dClean.toLowerCase();
+                        if (dLower.includes('room') || dLower.includes('tariff') || dLower.includes('retention') || dLower.includes('bed')) category = 'Room Revenue';
+                        else if (dLower.includes('food') || dLower.includes('bev') || dLower.includes('restaurant') || dLower.includes('bqt') || dLower.includes('banquet')) category = 'F&B';
                         else if (dLower.includes('laundry')) category = 'Laundry';
+                        else if (dLower.includes('telephone') || dLower.includes('internet')) category = 'Utilities';
                         else category = 'Other Revenue';
                     }
 
                     newTransactions.push({
-                        id: generateId(),
+                        id: generateId(), // Temp ID
                         date: new Date(reportDate).toISOString(),
-                        description: desc,
+                        description: dClean,
                         amount: Math.abs(amount),
                         type: defaultType, // User selected default (Income/Expense)
                         category: category,
-                        source: 'Import'
+                        source: 'Import',
+                        selected: true // Selected by default
                     });
                 });
 
                 if (newTransactions.length === 0) {
-                    alert("No valid transactions found. Please check your mapping.");
+                    alert("No valid transactions found using current filters. Please check your mapping or file content.");
                 } else {
-                    onImport(newTransactions);
-                    setFile(null);
-                    setPreview([]);
+                    setCandidates(newTransactions);
                 }
             };
+
+            const toggleCandidate = (index) => {
+                const updated = [...candidates];
+                updated[index].selected = !updated[index].selected;
+                setCandidates(updated);
+            };
+
+            const confirmImport = () => {
+                const selected = candidates.filter(c => c.selected);
+                if (selected.length === 0) {
+                    alert("No rows selected for import.");
+                    return;
+                }
+                // Regenerate IDs to ensure uniqueness on final commit
+                const finalData = selected.map(c => ({...c, id: generateId()}));
+                onImport(finalData);
+                setFile(null);
+                setPreview([]);
+                setCandidates([]);
+            };
+
+            const cancelImport = () => {
+                setCandidates([]);
+            };
+
+            // --- RENDER ---
+
+            if (candidates.length > 0) {
+                return (
+                    <Card className="p-6">
+                        <div className="flex justify-between items-center mb-4">
+                            <h2 className="text-xl font-bold text-slate-800">Review Data</h2>
+                            <div className="flex gap-2">
+                                <button onClick={cancelImport} className="px-4 py-2 text-slate-500 hover:text-slate-700 font-medium">Cancel</button>
+                                <button onClick={confirmImport} className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 flex items-center gap-2 font-medium">
+                                    <Save size={18} /> Import {candidates.filter(c => c.selected).length} Items
+                                </button>
+                            </div>
+                        </div>
+                        <p className="text-sm text-slate-500 mb-4">Uncheck any rows you do not want to import (e.g. duplicate totals or headers).</p>
+                        
+                        <div className="overflow-x-auto border border-slate-200 rounded-lg max-h-[500px]">
+                            <table className="w-full text-sm text-left bg-white">
+                                <thead className="bg-slate-50 sticky top-0 shadow-sm z-10">
+                                    <tr>
+                                        <th className="p-3 border-b w-10">
+                                            <input 
+                                                type="checkbox" 
+                                                className="rounded border-slate-300"
+                                                checked={candidates.every(c => c.selected)}
+                                                onChange={(e) => {
+                                                    const val = e.target.checked;
+                                                    setCandidates(candidates.map(c => ({...c, selected: val})));
+                                                }}
+                                            />
+                                        </th>
+                                        <th className="p-3 border-b font-semibold text-slate-600">Description</th>
+                                        <th className="p-3 border-b font-semibold text-slate-600">Category</th>
+                                        <th className="p-3 border-b font-semibold text-slate-600 text-right">Amount</th>
+                                    </tr>
+                                </thead>
+                                <tbody className="divide-y divide-slate-100">
+                                    {candidates.map((row, i) => (
+                                        <tr key={i} className={`hover:bg-blue-50/50 transition-colors cursor-pointer ${!row.selected ? 'opacity-50 bg-slate-50' : ''}`} onClick={() => toggleCandidate(i)}>
+                                            <td className="p-3">
+                                                <input 
+                                                    type="checkbox" 
+                                                    checked={row.selected}
+                                                    onChange={() => {}} // Handled by tr click
+                                                    className="rounded border-slate-300 text-blue-600 focus:ring-blue-500"
+                                                />
+                                            </td>
+                                            <td className="p-3 font-medium text-slate-800">{row.description}</td>
+                                            <td className="p-3 text-slate-500">
+                                                <span className="px-2 py-1 bg-slate-100 rounded text-xs">{row.category}</span>
+                                            </td>
+                                            <td className="p-3 text-right font-bold text-slate-700">{formatCurrency(row.amount)}</td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        </div>
+                    </Card>
+                );
+            }
 
             return (
                 <Card className="p-8">
@@ -458,11 +555,11 @@
 
                     <div className="flex justify-end pt-4">
                         <button 
-                        onClick={processImport}
+                        onClick={analyzeFile}
                         className="px-6 py-2.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 flex items-center gap-2 font-medium shadow-sm hover:shadow-md transition-all"
                         >
-                        <Save size={18} />
-                        Import {defaultType}
+                        <Filter size={18} />
+                        Analyze File
                         </button>
                     </div>
                     </div>
