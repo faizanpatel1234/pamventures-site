@@ -5,190 +5,327 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Hotel Night Report Dashboard</title>
     
-    <!-- Tailwind CSS for Styling -->
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     
-    <!-- Chart.js for Graphs -->
+    <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-    <!-- Font Awesome for Icons -->
+    <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
     <style>
         body {
-            background-color: #f3f4f6;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f8fafc;
+            font-family: 'Inter', sans-serif;
+            scroll-behavior: smooth;
         }
+        
+        /* Navigation Animation */
+        .nav-link {
+            position: relative;
+        }
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: -4px;
+            left: 0;
+            background-color: #3b82f6;
+            transition: width 0.3s ease-in-out;
+        }
+        .nav-link:hover::after {
+            width: 100%;
+        }
+
+        /* Card Hover Effects */
         .card {
             background: white;
-            border-radius: 12px;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-            transition: transform 0.2s;
+            border-radius: 16px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+            transition: all 0.3s ease;
+            border: 1px solid rgba(229, 231, 235, 0.5);
         }
         .card:hover {
-            transform: translateY(-2px);
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
         }
+
+        /* Loading Spinner */
         .loader {
-            border: 5px solid #f3f3f3;
-            border-top: 5px solid #3b82f6;
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #3b82f6;
             border-radius: 50%;
-            width: 50px;
-            height: 50px;
+            width: 40px;
+            height: 40px;
             animation: spin 1s linear infinite;
-            margin: 20px auto;
         }
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+        /* Fade In Animation */
+        .fade-in {
+            animation: fadeIn 0.8s ease-out forwards;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        @keyframes fadeIn {
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Custom Scrollbar for Table */
+        .custom-scrollbar::-webkit-scrollbar {
+            height: 8px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #f1f1f1; 
+            border-radius: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #cbd5e1; 
+            border-radius: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8; 
+        }
+
+        /* Glassmorphism Navbar */
+        .glass-nav {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(229, 231, 235, 0.5);
         }
     </style>
 </head>
-<body>
+<body class="text-slate-800">
 
-    <!-- Navigation / Header -->
-    <nav class="bg-slate-900 text-white p-6 shadow-lg">
-        <div class="container mx-auto flex justify-between items-center">
-            <h1 class="text-2xl font-bold"><i class="fas fa-hotel mr-3"></i>Night Report Dashboard</h1>
-            <div class="text-sm opacity-80" id="lastUpdated">Last Updated: Loading...</div>
+    <!-- Navigation Bar -->
+    <nav class="glass-nav fixed w-full z-50 top-0 transition-all duration-300">
+        <div class="container mx-auto px-6 py-4 flex justify-between items-center">
+            <div class="flex items-center gap-3">
+                <div class="bg-blue-600 text-white p-2 rounded-lg">
+                    <i class="fas fa-hotel text-xl"></i>
+                </div>
+                <div>
+                    <h1 class="text-xl font-bold text-slate-800 tracking-tight">Night Report</h1>
+                    <p class="text-xs text-slate-500 font-medium" id="lastUpdatedNav">Syncing...</p>
+                </div>
+            </div>
+            
+            <div class="hidden md:flex space-x-8 text-sm font-medium text-slate-600">
+                <a href="#overview" class="nav-link hover:text-blue-600 transition-colors">Overview</a>
+                <a href="#analytics" class="nav-link hover:text-blue-600 transition-colors">Analytics</a>
+                <a href="#daily-sheet" class="nav-link hover:text-blue-600 transition-colors">Daily Sheet</a>
+            </div>
+
+            <button onclick="fetchData()" class="bg-slate-100 hover:bg-slate-200 text-slate-700 px-4 py-2 rounded-lg text-sm font-medium transition-colors flex items-center gap-2">
+                <i class="fas fa-sync-alt"></i> Refresh
+            </button>
         </div>
     </nav>
 
     <!-- Main Content -->
-    <div class="container mx-auto p-6">
+    <div class="container mx-auto px-6 pt-24 pb-12">
         
-        <!-- Loading Indicator -->
-        <div id="loading" class="text-center py-20">
-            <div class="loader"></div>
-            <p class="text-gray-600 mt-4">Connecting to your live Excel sheet...</p>
+        <!-- Loading State -->
+        <div id="loading" class="flex flex-col items-center justify-center min-h-[60vh]">
+            <div class="loader mb-4"></div>
+            <p class="text-slate-500 font-medium">Fetching live data from Excel...</p>
         </div>
 
-        <!-- Dashboard Content (Hidden until loaded) -->
+        <!-- Dashboard Content -->
         <div id="dashboard" class="hidden">
             
-            <!-- KPI Cards Row -->
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-                <!-- KPI 1 -->
-                <div class="card p-6 border-l-4 border-blue-500">
-                    <div class="flex justify-between items-start">
+            <!-- SECTION 1: OVERVIEW (KPIs) -->
+            <section id="overview" class="mb-12 scroll-mt-28">
+                <div class="flex justify-between items-end mb-6">
+                    <div>
+                        <h2 class="text-2xl font-bold text-slate-800">Overview</h2>
+                        <p class="text-slate-500 text-sm mt-1">Key Performance Indicators (Month to Date)</p>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                    <!-- Room Revenue -->
+                    <div class="card p-6 border-t-4 border-blue-500 fade-in" style="animation-delay: 0.1s;">
+                        <div class="flex justify-between items-start mb-4">
+                            <div class="bg-blue-50 p-3 rounded-lg text-blue-600">
+                                <i class="fas fa-bed fa-lg"></i>
+                            </div>
+                            <span class="text-xs font-semibold text-green-600 bg-green-50 px-2 py-1 rounded-full">Revenue</span>
+                        </div>
+                        <h3 class="text-slate-500 text-sm font-medium">Room Revenue</h3>
+                        <p class="text-2xl font-bold text-slate-800 mt-1" id="kpi-room">₹0</p>
+                    </div>
+
+                    <!-- F&B Net -->
+                    <div class="card p-6 border-t-4 border-emerald-500 fade-in" style="animation-delay: 0.2s;">
+                        <div class="flex justify-between items-start mb-4">
+                            <div class="bg-emerald-50 p-3 rounded-lg text-emerald-600">
+                                <i class="fas fa-utensils fa-lg"></i>
+                            </div>
+                            <span class="text-xs font-semibold text-green-600 bg-green-50 px-2 py-1 rounded-full">Net</span>
+                        </div>
+                        <h3 class="text-slate-500 text-sm font-medium">F&B Net</h3>
+                        <p class="text-2xl font-bold text-slate-800 mt-1" id="kpi-fnb">₹0</p>
+                    </div>
+
+                    <!-- Total Collections -->
+                    <div class="card p-6 border-t-4 border-violet-500 fade-in" style="animation-delay: 0.3s;">
+                        <div class="flex justify-between items-start mb-4">
+                            <div class="bg-violet-50 p-3 rounded-lg text-violet-600">
+                                <i class="fas fa-cash-register fa-lg"></i>
+                            </div>
+                            <span class="text-xs font-semibold text-violet-600 bg-violet-50 px-2 py-1 rounded-full">Cash Flow</span>
+                        </div>
+                        <h3 class="text-slate-500 text-sm font-medium">Total Collections</h3>
+                        <p class="text-2xl font-bold text-slate-800 mt-1" id="kpi-collection">₹0</p>
+                    </div>
+
+                    <!-- Advance Collections -->
+                    <div class="card p-6 border-t-4 border-orange-500 fade-in" style="animation-delay: 0.4s;">
+                        <div class="flex justify-between items-start mb-4">
+                            <div class="bg-orange-50 p-3 rounded-lg text-orange-600">
+                                <i class="fas fa-clock fa-lg"></i>
+                            </div>
+                            <span class="text-xs font-semibold text-orange-600 bg-orange-50 px-2 py-1 rounded-full">Future</span>
+                        </div>
+                        <h3 class="text-slate-500 text-sm font-medium">Advance Collections</h3>
+                        <p class="text-2xl font-bold text-slate-800 mt-1" id="kpi-advance">₹0</p>
+                    </div>
+                </div>
+
+                <!-- Secondary KPIs -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">
+                    <div class="card p-4 flex items-center gap-4 fade-in" style="animation-delay: 0.5s;">
+                        <div class="p-2 bg-gray-100 rounded-full text-gray-600"><i class="fas fa-file-invoice-dollar"></i></div>
                         <div>
-                            <p class="text-gray-500 text-sm font-semibold uppercase">Total Room Revenue</p>
-                            <h2 class="text-2xl font-bold text-gray-800 mt-2" id="kpi-room">₹0</h2>
-                        </div>
-                        <div class="bg-blue-100 p-3 rounded-full text-blue-500">
-                            <i class="fas fa-bed fa-lg"></i>
+                            <p class="text-xs text-slate-500 uppercase font-semibold">Total Taxes</p>
+                            <p class="text-lg font-bold text-slate-700" id="kpi-taxes">₹0</p>
                         </div>
                     </div>
-                </div>
-
-                <!-- KPI 2 -->
-                <div class="card p-6 border-l-4 border-green-500">
-                    <div class="flex justify-between items-start">
+                    <div class="card p-4 flex items-center gap-4 fade-in" style="animation-delay: 0.6s;">
+                        <div class="p-2 bg-red-50 rounded-full text-red-500"><i class="fas fa-receipt"></i></div>
                         <div>
-                            <p class="text-gray-500 text-sm font-semibold uppercase">Total F&B Net</p>
-                            <h2 class="text-2xl font-bold text-gray-800 mt-2" id="kpi-fnb">₹0</h2>
-                        </div>
-                        <div class="bg-green-100 p-3 rounded-full text-green-500">
-                            <i class="fas fa-utensils fa-lg"></i>
+                            <p class="text-xs text-slate-500 uppercase font-semibold">F&B Allowance</p>
+                            <p class="text-lg font-bold text-slate-700" id="kpi-allowance">₹0</p>
                         </div>
                     </div>
-                </div>
-
-                <!-- KPI 3 -->
-                <div class="card p-6 border-l-4 border-purple-500">
-                    <div class="flex justify-between items-start">
+                    <div class="card p-4 flex items-center gap-4 fade-in" style="animation-delay: 0.7s;">
+                        <div class="p-2 bg-teal-50 rounded-full text-teal-600"><i class="fas fa-wallet"></i></div>
                         <div>
-                            <p class="text-gray-500 text-sm font-semibold uppercase">Total Collections</p>
-                            <h2 class="text-2xl font-bold text-gray-800 mt-2" id="kpi-collection">₹0</h2>
-                        </div>
-                        <div class="bg-purple-100 p-3 rounded-full text-purple-500">
-                            <i class="fas fa-cash-register fa-lg"></i>
+                            <p class="text-xs text-slate-500 uppercase font-semibold">Carry Forward FOM</p>
+                            <p class="text-lg font-bold text-slate-700" id="kpi-carry">₹0</p>
                         </div>
                     </div>
                 </div>
+            </section>
 
-                <!-- KPI 4 -->
-                <div class="card p-6 border-l-4 border-orange-500">
-                    <div class="flex justify-between items-start">
-                        <div>
-                            <p class="text-gray-500 text-sm font-semibold uppercase">Total Taxes</p>
-                            <h2 class="text-2xl font-bold text-gray-800 mt-2" id="kpi-taxes">₹0</h2>
+            <!-- SECTION 2: ANALYTICS (Charts) -->
+            <section id="analytics" class="mb-12 scroll-mt-28">
+                <h2 class="text-2xl font-bold text-slate-800 mb-6">Analytics</h2>
+                
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <!-- Main Trend Chart -->
+                    <div class="card p-6 lg:col-span-2">
+                        <div class="flex justify-between items-center mb-6">
+                            <h3 class="text-lg font-bold text-slate-700">Revenue Trends</h3>
+                            <select id="chartFilter" class="bg-slate-50 border border-slate-200 text-slate-600 text-xs rounded-lg px-3 py-2 outline-none">
+                                <option value="all">Last 30 Days</option>
+                                <option value="7">Last 7 Days</option>
+                            </select>
                         </div>
-                        <div class="bg-orange-100 p-3 rounded-full text-orange-500">
-                            <i class="fas fa-file-invoice-dollar fa-lg"></i>
+                        <div class="h-80 w-full relative">
+                            <canvas id="revenueChart"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- Revenue Mix -->
+                    <div class="card p-6">
+                        <h3 class="text-lg font-bold text-slate-700 mb-6">Revenue Mix</h3>
+                        <div class="h-64 w-full relative flex justify-center">
+                            <canvas id="mixChart"></canvas>
+                        </div>
+                        <div class="mt-6 space-y-3">
+                            <div class="flex justify-between text-sm">
+                                <span class="flex items-center gap-2"><span class="w-3 h-3 rounded-full bg-blue-500"></span> Room</span>
+                                <span class="font-semibold text-slate-700" id="legend-room">0%</span>
+                            </div>
+                            <div class="flex justify-between text-sm">
+                                <span class="flex items-center gap-2"><span class="w-3 h-3 rounded-full bg-emerald-500"></span> F&B</span>
+                                <span class="font-semibold text-slate-700" id="legend-fb">0%</span>
+                            </div>
+                            <div class="flex justify-between text-sm">
+                                <span class="flex items-center gap-2"><span class="w-3 h-3 rounded-full bg-orange-500"></span> Taxes</span>
+                                <span class="font-semibold text-slate-700" id="legend-tax">0%</span>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
+            </section>
 
-            <!-- Charts Row 1 -->
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
-                <!-- Line Chart (Main) -->
-                <div class="card p-6 lg:col-span-2">
-                    <h3 class="text-lg font-bold text-gray-700 mb-4">Daily Revenue Trend (Room vs F&B)</h3>
-                    <div class="h-80 relative w-full">
-                        <canvas id="revenueChart"></canvas>
+            <!-- SECTION 3: DAILY SHEET (Table) -->
+            <section id="daily-sheet" class="scroll-mt-28">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-2xl font-bold text-slate-800">Daily Sheet</h2>
+                    <div class="flex gap-2">
+                         <span class="text-xs bg-slate-100 text-slate-600 px-3 py-1 rounded-full flex items-center">
+                            <i class="fas fa-database mr-2"></i> Live Data
+                         </span>
                     </div>
                 </div>
 
-                <!-- Doughnut Chart -->
-                <div class="card p-6">
-                    <h3 class="text-lg font-bold text-gray-700 mb-4">Revenue Mix</h3>
-                    <div class="h-64 relative w-full flex justify-center">
-                        <canvas id="mixChart"></canvas>
+                <div class="card overflow-hidden">
+                    <div class="overflow-x-auto custom-scrollbar">
+                        <table class="w-full text-sm text-left">
+                            <thead class="bg-slate-50 text-slate-600 uppercase text-xs font-semibold border-b border-slate-200">
+                                <tr>
+                                    <th class="px-6 py-4 whitespace-nowrap sticky left-0 bg-slate-50 z-10">Date</th>
+                                    <th class="px-6 py-4 whitespace-nowrap text-right">Room Tariff</th>
+                                    <th class="px-6 py-4 whitespace-nowrap text-right">F&B Gross</th>
+                                    <th class="px-6 py-4 whitespace-nowrap text-right">F&B Allow</th>
+                                    <th class="px-6 py-4 whitespace-nowrap text-right text-emerald-600">F&B Net</th>
+                                    <th class="px-6 py-4 whitespace-nowrap text-right">Other Sales</th>
+                                    <th class="px-6 py-4 whitespace-nowrap text-right">Taxes</th>
+                                    <th class="px-6 py-4 whitespace-nowrap text-right">Advance Col.</th>
+                                    <th class="px-6 py-4 whitespace-nowrap text-right text-violet-600">Total Col.</th>
+                                    <th class="px-6 py-4 whitespace-nowrap text-right">Excess/Short</th>
+                                    <th class="px-6 py-4 whitespace-nowrap text-right">FOM Carry Fwd</th>
+                                </tr>
+                            </thead>
+                            <tbody id="dataTableBody" class="divide-y divide-slate-100">
+                                <!-- JS will populate this -->
+                            </tbody>
+                        </table>
                     </div>
-                    <div class="mt-4 text-center text-sm text-gray-500">
-                        Breakdown of Total Net Revenue
+                    <div class="p-4 bg-slate-50 border-t border-slate-100 text-center text-xs text-slate-500">
+                        End of Report
                     </div>
                 </div>
-            </div>
+            </section>
 
-            <!-- Charts Row 2 -->
-            <div class="card p-6 mb-8">
-                <h3 class="text-lg font-bold text-gray-700 mb-4">Total Collection vs Taxes</h3>
-                <div class="h-64 relative w-full">
-                    <canvas id="collectionChart"></canvas>
-                </div>
-            </div>
-
-            <!-- Data Table (Collapsible) -->
-            <div class="card p-6">
-                <div class="flex justify-between items-center mb-4 cursor-pointer" onclick="toggleTable()">
-                    <h3 class="text-lg font-bold text-gray-700">Recent Data Entries</h3>
-                    <i class="fas fa-chevron-down text-gray-400"></i>
-                </div>
-                <div id="tableContainer" class="hidden overflow-x-auto">
-                    <table class="min-w-full text-sm text-left text-gray-500">
-                        <thead class="text-xs text-gray-700 uppercase bg-gray-50">
-                            <tr>
-                                <th class="px-6 py-3">Date</th>
-                                <th class="px-6 py-3">Room Tariff</th>
-                                <th class="px-6 py-3">F&B Net</th>
-                                <th class="px-6 py-3">Collection</th>
-                                <th class="px-6 py-3">Taxes</th>
-                            </tr>
-                        </thead>
-                        <tbody id="dataTableBody">
-                            <!-- Rows inserted by JS -->
-                        </tbody>
-                    </table>
-                </div>
-            </div>
+            <!-- Footer -->
+            <footer class="mt-12 border-t border-slate-200 py-8 text-center text-slate-400 text-sm">
+                <p>&copy; 2026 Hotel Management System. Data sourced from Live Excel.</p>
+            </footer>
 
         </div>
 
-        <!-- Error Message Container -->
-        <div id="errorMessage" class="hidden bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mt-4" role="alert">
-            <strong class="font-bold">Error!</strong>
-            <span class="block sm:inline" id="errorText">Something went wrong fetching the data.</span>
+        <!-- Error State -->
+        <div id="errorMessage" class="hidden max-w-lg mx-auto mt-20 p-6 bg-red-50 rounded-xl border border-red-100 text-center">
+            <div class="text-red-500 text-4xl mb-4"><i class="fas fa-exclamation-circle"></i></div>
+            <h3 class="text-lg font-bold text-red-800 mb-2">Connection Error</h3>
+            <p class="text-red-600 text-sm mb-4" id="errorText">Unable to fetch data.</p>
+            <button onclick="location.reload()" class="bg-red-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-red-700">Try Again</button>
         </div>
 
     </div>
 
     <script>
         // --- CONFIGURATION ---
-        // This is the link you provided. 
-        // IMPORTANT: Ensure this link points to the 'Daily_Night_Report' sheet specifically if your Excel has multiple tabs.
-        // If the dashboard looks weird, Publish ONLY the 'Daily_Night_Report' tab to CSV in Google Sheets.
         const SHEET_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQhYL-hk8dYhYUZO3DZ502SGhXgYyXOpQwmOmrxghMfI7BcV4Nm4qAsD1byPxF3mZ2onw5HhwPV_JR8/pub?output=csv';
 
         // --- UTILS ---
@@ -202,41 +339,30 @@
 
         const parseCSV = (str) => {
             const arr = [];
-            let quote = false;  // 'true' means we're inside a quoted field
-
-            // Iterate over each character, keep track of current row and column (of the returned array)
+            let quote = false; 
             for (let row = 0, col = 0, c = 0; c < str.length; c++) {
-                let cc = str[c], nc = str[c+1];        // Current character, next character
-                arr[row] = arr[row] || [];             // Create a new row if necessary
-                arr[row][col] = arr[row][col] || '';   // Create a new column (start with empty string) if necessary
-
-                // If the current character is a quotation mark, and we're inside a
-                // quoted field, and the next character is also a quotation mark,
-                // add a quotation mark to the current column and skip the next character
+                let cc = str[c], nc = str[c+1];
+                arr[row] = arr[row] || [];
+                arr[row][col] = arr[row][col] || '';
                 if (cc == '"' && quote && nc == '"') { arr[row][col] += cc; ++c; }
-
-                // If it's just one quotation mark, begin/end quoted field
                 else if (cc == '"') { quote = !quote; }
-
-                // If it's a comma and we're not in a quoted field, move on to the next column
                 else if (cc == ',' && !quote) { ++col; }
-
-                // If it's a newline (CRLF) and we're not in a quoted field, skip the next character
-                // and move on to the next row and move to column 0 of that new row
                 else if (cc == '\r' && nc == '\n' && !quote) { ++row; col = 0; ++c; }
-
-                // If it's a newline (LF or CR) and we're not in a quoted field,
-                // move on to the next row and move to column 0 of that new row
                 else if ((cc == '\n' || cc == '\r') && !quote) { ++row; col = 0; }
-
-                // Otherwise, push the current character to the current column
                 else { arr[row][col] += cc; }
             }
             return arr;
         }
 
         // --- MAIN LOGIC ---
+        let charts = {}; // Store chart instances to destroy/update later
+
         async function fetchData() {
+            // Show loading
+            document.getElementById('loading').classList.remove('hidden');
+            document.getElementById('dashboard').classList.add('hidden');
+            document.getElementById('errorMessage').classList.add('hidden');
+
             try {
                 const response = await fetch(SHEET_URL);
                 if (!response.ok) throw new Error("Network response was not ok");
@@ -244,167 +370,199 @@
                 const csvText = await response.text();
                 const rawData = parseCSV(csvText);
 
-                // Assuming the first row is headers
-                // Expected Headers based on your file:
-                // Date, Room Tariff, F&B Gross, F&B Allowance, F&B Net, Other Sales Net, Taxes, Advance Collection, Total Collection...
+                // --- DATA MAPPING ---
+                // Based on File: Daily_Night_Report.csv
+                // Headers: Date, Room Tariff, F&B Gross, F&B Allowance, F&B Net, Other Sales Net, Taxes, Advance Collection, Total Collection, Excess / Short, Carry Forward FOM
                 
                 const headers = rawData[0].map(h => h.trim().toLowerCase());
-                const dataRows = rawData.slice(1).filter(r => r.length > 1 && r[0]); // Remove empty rows
+                const dataRows = rawData.slice(1).filter(r => r.length > 1 && r[0]); 
 
-                // Map column indices (Dynamic approach in case columns move slightly)
                 const getIdx = (name) => headers.findIndex(h => h.includes(name));
                 
+                // Mappings
                 const idxDate = getIdx('date');
                 const idxRoom = getIdx('room tariff');
+                const idxFbGross = getIdx('f&b gross');
+                const idxFbAllow = getIdx('f&b allowance');
                 const idxFbNet = getIdx('f&b net');
-                const idxCollection = getIdx('total collection');
-                const idxTaxes = getIdx('taxes');
                 const idxOther = getIdx('other sales');
+                const idxTaxes = getIdx('taxes');
+                const idxAdvance = getIdx('advance collection');
+                const idxCollection = getIdx('total collection');
+                const idxExcess = getIdx('excess');
+                const idxCarry = getIdx('carry forward');
 
-                // Process Data
-                const processedData = dataRows.map(row => {
-                    return {
-                        date: row[idxDate],
-                        room: parseFloat(row[idxRoom] || 0),
-                        fb: parseFloat(row[idxFbNet] || 0),
-                        collection: parseFloat(row[idxCollection] || 0),
-                        taxes: parseFloat(row[idxTaxes] || 0),
-                        other: parseFloat(row[idxOther] || 0)
-                    };
-                });
+                const processedData = dataRows.map(row => ({
+                    date: row[idxDate],
+                    room: parseFloat(row[idxRoom] || 0),
+                    fbGross: parseFloat(row[idxFbGross] || 0),
+                    fbAllow: parseFloat(row[idxFbAllow] || 0),
+                    fbNet: parseFloat(row[idxFbNet] || 0),
+                    other: parseFloat(row[idxOther] || 0),
+                    taxes: parseFloat(row[idxTaxes] || 0),
+                    advance: parseFloat(row[idxAdvance] || 0),
+                    collection: parseFloat(row[idxCollection] || 0),
+                    excess: parseFloat(row[idxExcess] || 0),
+                    carry: parseFloat(row[idxCarry] || 0)
+                }));
 
-                updateDashboard(processedData);
+                updateUI(processedData);
 
             } catch (error) {
-                console.error("Error fetching data:", error);
+                console.error("Error:", error);
                 document.getElementById('loading').classList.add('hidden');
                 document.getElementById('errorMessage').classList.remove('hidden');
-                document.getElementById('errorText').textContent = "Could not load data. Ensure the Google Sheet link is correct and published as CSV. Details: " + error.message;
+                document.getElementById('errorText').textContent = error.message;
             }
         }
 
-        function updateDashboard(data) {
-            // 1. Calculate Totals
-            const totalRoom = data.reduce((sum, item) => sum + item.room, 0);
-            const totalFb = data.reduce((sum, item) => sum + item.fb, 0);
-            const totalCollection = data.reduce((sum, item) => sum + item.collection, 0);
-            const totalTaxes = data.reduce((sum, item) => sum + item.taxes, 0);
-            const totalOther = data.reduce((sum, item) => sum + item.other, 0);
+        function updateUI(data) {
+            // 1. Calculate Totals for KPIs
+            const totals = data.reduce((acc, curr) => ({
+                room: acc.room + curr.room,
+                fbNet: acc.fbNet + curr.fbNet,
+                collection: acc.collection + curr.collection,
+                taxes: acc.taxes + curr.taxes,
+                advance: acc.advance + curr.advance,
+                allowance: acc.allowance + curr.fbAllow,
+                // For carry forward, we usually want the *latest* value, not sum, but depending on data logic.
+                // Assuming "Carry Forward FOM" is a running balance, we take the last entry's value.
+                carry: curr.carry // Will end up being the last row's value
+            }), { room:0, fbNet:0, collection:0, taxes:0, advance:0, allowance:0, carry:0 });
 
-            // 2. Update UI Cards
-            document.getElementById('kpi-room').textContent = formatCurrency(totalRoom);
-            document.getElementById('kpi-fnb').textContent = formatCurrency(totalFb);
-            document.getElementById('kpi-collection').textContent = formatCurrency(totalCollection);
-            document.getElementById('kpi-taxes').textContent = formatCurrency(totalTaxes);
+            // 2. Update KPI DOM
+            document.getElementById('kpi-room').textContent = formatCurrency(totals.room);
+            document.getElementById('kpi-fnb').textContent = formatCurrency(totals.fbNet);
+            document.getElementById('kpi-collection').textContent = formatCurrency(totals.collection);
+            document.getElementById('kpi-taxes').textContent = formatCurrency(totals.taxes);
+            document.getElementById('kpi-advance').textContent = formatCurrency(totals.advance);
+            document.getElementById('kpi-allowance').textContent = formatCurrency(totals.allowance);
             
-            const today = new Date();
-            document.getElementById('lastUpdated').textContent = "Last Updated: " + today.toLocaleDateString() + " " + today.toLocaleTimeString();
+            // For Carry Forward, get the value from the most recent date entry (first in list if reversed, or last in raw)
+            // Processed Data is in original order (oldest to newest usually).
+            const lastEntry = data[data.length - 1];
+            document.getElementById('kpi-carry').textContent = formatCurrency(lastEntry ? lastEntry.carry : 0);
 
-            // 3. Prepare Chart Data
+            // Update Time
+            const now = new Date();
+            document.getElementById('lastUpdatedNav').textContent = "Updated: " + now.toLocaleTimeString();
+
+            // 3. Render Charts
+            renderCharts(data, totals);
+
+            // 4. Render Table (Reverse order for newest first)
+            const tbody = document.getElementById('dataTableBody');
+            tbody.innerHTML = '';
+            
+            [...data].reverse().forEach(row => {
+                const tr = document.createElement('tr');
+                tr.className = "bg-white hover:bg-slate-50 transition-colors border-b border-slate-100 group";
+                
+                // Helper for cells
+                const td = (val, extraClasses = "") => `<td class="px-6 py-4 font-medium whitespace-nowrap ${extraClasses}">${val}</td>`;
+                const tdNum = (val, extraClasses = "text-slate-600") => `<td class="px-6 py-4 text-right whitespace-nowrap ${extraClasses}">${formatCurrency(val)}</td>`;
+
+                tr.innerHTML = `
+                    ${td(row.date, "text-slate-800 sticky left-0 bg-white group-hover:bg-slate-50 border-r border-transparent group-hover:border-slate-200")}
+                    ${tdNum(row.room)}
+                    ${tdNum(row.fbGross)}
+                    ${tdNum(row.fbAllow, "text-red-400")}
+                    ${tdNum(row.fbNet, "text-emerald-600 font-semibold")}
+                    ${tdNum(row.other)}
+                    ${tdNum(row.taxes)}
+                    ${tdNum(row.advance, "text-orange-500")}
+                    ${tdNum(row.collection, "text-violet-600 font-bold bg-violet-50/50")}
+                    ${tdNum(row.excess, row.excess < 0 ? "text-red-500" : "text-slate-500")}
+                    ${tdNum(row.carry, "text-slate-500")}
+                `;
+                tbody.appendChild(tr);
+            });
+
+            // Show Dashboard
+            document.getElementById('loading').classList.add('hidden');
+            document.getElementById('dashboard').classList.remove('hidden');
+        }
+
+        function renderCharts(data, totals) {
             const labels = data.map(d => d.date);
             
-            // Chart 1: Revenue Line Chart
-            new Chart(document.getElementById('revenueChart'), {
+            // Destroy existing if refresh
+            if(charts.revenue) charts.revenue.destroy();
+            if(charts.mix) charts.mix.destroy();
+
+            // 1. Revenue Chart
+            const ctxRev = document.getElementById('revenueChart').getContext('2d');
+            charts.revenue = new Chart(ctxRev, {
                 type: 'line',
                 data: {
                     labels: labels,
                     datasets: [
                         {
-                            label: 'Room Revenue',
+                            label: 'Room',
                             data: data.map(d => d.room),
-                            borderColor: '#3b82f6', // Blue
-                            backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                            borderColor: '#3b82f6',
+                            backgroundColor: 'rgba(59, 130, 246, 0.05)',
+                            tension: 0.4,
                             fill: true,
-                            tension: 0.3
+                            pointRadius: 2,
+                            pointHoverRadius: 6
                         },
                         {
-                            label: 'F&B Revenue',
-                            data: data.map(d => d.fb),
-                            borderColor: '#10b981', // Green
-                            backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                            label: 'F&B Net',
+                            data: data.map(d => d.fbNet),
+                            borderColor: '#10b981',
+                            backgroundColor: 'rgba(16, 185, 129, 0.05)',
+                            tension: 0.4,
                             fill: true,
-                            tension: 0.3
+                            pointRadius: 2,
+                            pointHoverRadius: 6
                         }
                     ]
                 },
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
-                    interaction: { mode: 'index', intersect: false },
-                    scales: { y: { beginAtZero: true } }
+                    plugins: {
+                        legend: { position: 'top', align: 'end', labels: { boxWidth: 10, usePointStyle: true } },
+                        tooltip: { mode: 'index', intersect: false, backgroundColor: 'rgba(255,255,255,0.9)', titleColor:'#1e293b', bodyColor:'#475569', borderColor:'#e2e8f0', borderWidth:1 }
+                    },
+                    scales: {
+                        y: { grid: { borderDash: [2, 4], color: '#f1f5f9' }, beginAtZero: true },
+                        x: { grid: { display: false } }
+                    }
                 }
             });
 
-            // Chart 2: Revenue Mix (Pie)
-            new Chart(document.getElementById('mixChart'), {
+            // 2. Mix Chart (Doughnut)
+            const ctxMix = document.getElementById('mixChart').getContext('2d');
+            const totalNet = totals.room + totals.fbNet + totals.taxes;
+            
+            // Update Legend Texts
+            document.getElementById('legend-room').innerText = Math.round((totals.room/totalNet)*100) + "%";
+            document.getElementById('legend-fb').innerText = Math.round((totals.fbNet/totalNet)*100) + "%";
+            document.getElementById('legend-tax').innerText = Math.round((totals.taxes/totalNet)*100) + "%";
+
+            charts.mix = new Chart(ctxMix, {
                 type: 'doughnut',
                 data: {
-                    labels: ['Room', 'F&B', 'Other', 'Taxes'],
+                    labels: ['Room', 'F&B', 'Taxes', 'Other'],
                     datasets: [{
-                        data: [totalRoom, totalFb, totalOther, totalTaxes],
-                        backgroundColor: ['#3b82f6', '#10b981', '#6b7280', '#f97316']
+                        data: [totals.room, totals.fbNet, totals.taxes, totals.other],
+                        backgroundColor: ['#3b82f6', '#10b981', '#f97316', '#cbd5e1'],
+                        borderWidth: 0,
+                        hoverOffset: 4
                     }]
                 },
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
-                    plugins: { legend: { position: 'bottom' } }
+                    cutout: '75%',
+                    plugins: { legend: { display: false } }
                 }
             });
-
-            // Chart 3: Collections Bar Chart
-            new Chart(document.getElementById('collectionChart'), {
-                type: 'bar',
-                data: {
-                    labels: labels,
-                    datasets: [
-                        {
-                            label: 'Total Collection',
-                            data: data.map(d => d.collection),
-                            backgroundColor: '#8b5cf6' // Purple
-                        },
-                        {
-                            label: 'Taxes Collected',
-                            data: data.map(d => d.taxes),
-                            backgroundColor: '#f97316' // Orange
-                        }
-                    ]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    scales: { y: { beginAtZero: true } }
-                }
-            });
-
-            // 4. Populate Table
-            const tbody = document.getElementById('dataTableBody');
-            // Show last 7 entries
-            const recentData = data.slice(-7).reverse(); 
-            recentData.forEach(row => {
-                const tr = document.createElement('tr');
-                tr.className = "bg-white border-b hover:bg-gray-50";
-                tr.innerHTML = `
-                    <td class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">${row.date}</td>
-                    <td class="px-6 py-4 text-blue-600">${formatCurrency(row.room)}</td>
-                    <td class="px-6 py-4 text-green-600">${formatCurrency(row.fb)}</td>
-                    <td class="px-6 py-4 text-purple-600 font-bold">${formatCurrency(row.collection)}</td>
-                    <td class="px-6 py-4 text-gray-500">${formatCurrency(row.taxes)}</td>
-                `;
-                tbody.appendChild(tr);
-            });
-
-            // Finish Loading
-            document.getElementById('loading').classList.add('hidden');
-            document.getElementById('dashboard').classList.remove('hidden');
         }
 
-        function toggleTable() {
-            const container = document.getElementById('tableContainer');
-            container.classList.toggle('hidden');
-        }
-
-        // Start
+        // Init
         fetchData();
 
     </script>
