@@ -10,21 +10,20 @@
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,600;0,700;1,600&display=swap" rel="stylesheet">
 
     <style>
-        /* --- CSS VARIABLES: THE DOUBLE COLOR PALETTE --- */
+        /* --- CSS VARIABLES --- */
         :root {
-            /* Color 1: Pristine White */
+            /* Light Theme Colors */
             --bg-light: #ffffff;
             --text-dark: #121212;
-            --card-light: #f8fafc;
+            --text-gray: #475569;
             
-            /* Color 2: Midnight Charcoal */
-            --bg-dark: #0f1115;
+            /* Dark Theme Colors */
+            --bg-dark: #0a0c10;
             --text-light: #ffffff;
             --text-muted: #94a3b8;
-            --card-dark: #161a20;
 
             /* Accent Color */
-            --accent-color: #d4af37; /* Gold */
+            --accent-color: #d4af37; /* Luxury Gold */
             
             --section-spacing: 120px;
         }
@@ -37,29 +36,77 @@
 
         html { scroll-behavior: smooth; }
 
+        /* --- DYNAMIC BODY STYLES --- */
         body {
-            /* Base font settings */
             font-family: 'Outfit', sans-serif; 
             font-weight: 300;
             line-height: 1.7;
             overflow-x: hidden;
-            background-color: var(--bg-light); /* Starts light */
+            
+            /* These properties will transition smoothly via JavaScript */
+            background-color: var(--bg-light); 
             color: var(--text-dark);
+            transition: background-color 0.8s ease, color 0.8s ease;
+        }
+
+        h1, h2, h3, p, .logo {
+            transition: color 0.8s ease;
         }
 
         h1, h2, h3, .logo {
             font-family: 'Playfair Display', serif;
         }
 
-        /* --- ANIMATIONS --- */
-        @keyframes fadeInUp {
-            from { opacity: 0; transform: translateY(30px); }
-            to { opacity: 1; transform: translateY(0); }
+        /* --- DARK MODE CLASSES (Triggered by Scroll) --- */
+        body.dark-mode {
+            background-color: var(--bg-dark);
+            color: var(--text-light);
         }
-        .animate-block { opacity: 0; animation: fadeInUp 1s ease-out forwards; }
-        .delay-1 { animation-delay: 0.2s; }
-        .delay-2 { animation-delay: 0.4s; }
-        .delay-3 { animation-delay: 0.6s; }
+        body.dark-mode h1, 
+        body.dark-mode h2, 
+        body.dark-mode h3, 
+        body.dark-mode .logo {
+            color: var(--text-light);
+        }
+        body.dark-mode p {
+            color: var(--text-muted);
+        }
+        body.dark-mode nav {
+            background-color: rgba(10, 12, 16, 0.9);
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+        body.dark-mode .nav-links a {
+            color: var(--text-light);
+        }
+        body.dark-mode .card {
+            background: rgba(255, 255, 255, 0.03);
+            border-color: rgba(255, 255, 255, 0.08);
+        }
+        body.dark-mode .card:hover {
+            border-color: var(--accent-color);
+            background: rgba(255, 255, 255, 0.06);
+        }
+        body.dark-mode input, 
+        body.dark-mode textarea {
+            background: #12151c;
+            border-color: #2a3140;
+            color: white;
+        }
+
+        /* --- SCROLL ANIMATIONS (The "Reveal" Effect) --- */
+        .reveal {
+            opacity: 0;
+            transform: translateY(50px) scale(0.98);
+            transition: all 0.9s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+        }
+        /* Delays for cascading animations */
+        .delay-1 { transition-delay: 0.1s; }
+        .delay-2 { transition-delay: 0.2s; }
+        .delay-3 { transition-delay: 0.3s; }
 
         /* --- NAVIGATION --- */
         nav {
@@ -75,12 +122,12 @@
             top: 0;
             z-index: 1000;
             border-bottom: 1px solid #f1f5f9;
+            transition: background-color 0.8s ease, border-color 0.8s ease;
         }
 
         .logo {
             font-size: 1.6rem;
             font-weight: 700;
-            color: var(--text-dark);
             letter-spacing: 1px;
         }
         .logo span { color: var(--accent-color); font-style: italic; }
@@ -98,23 +145,14 @@
         }
         .nav-links a:hover { color: var(--accent-color); }
 
-        /* --- DOUBLE COLOR LAYOUT SECTIONS --- */
-        
-        /* Section Type A: Light */
-        .section-light {
-            background-color: var(--bg-light);
-            color: var(--text-dark);
+        /* --- SECTIONS --- */
+        section {
             padding: var(--section-spacing) 8%;
+            /* Make sections transparent so the body color shows through */
+            background-color: transparent; 
         }
 
-        /* Section Type B: Dark */
-        .section-dark {
-            background-color: var(--bg-dark);
-            color: var(--text-light);
-            padding: var(--section-spacing) 8%;
-        }
-
-        /* --- HERO SECTION (Light) --- */
+        /* --- HERO SECTION --- */
         .hero {
             min-height: 100vh;
             display: flex;
@@ -123,9 +161,6 @@
             align-items: center;
             text-align: center;
             padding: 120px 20px 0 20px;
-            background-color: var(--bg-light);
-            /* A subtle double-color gradient in the background */
-            background: linear-gradient(135deg, #ffffff 40%, #f8fafc 100%);
         }
 
         .hero h1 {
@@ -133,7 +168,6 @@
             font-weight: 700;
             line-height: 1.05;
             margin-bottom: 25px;
-            color: var(--text-dark);
             letter-spacing: -1px;
         }
         
@@ -144,16 +178,16 @@
 
         .hero p {
             font-size: 1.4rem;
-            color: #475569; /* Slate grey for readability */
+            color: var(--text-gray);
             max-width: 650px;
             margin-bottom: 40px;
             font-weight: 400;
         }
 
         /* Buttons */
-        .btn-dark {
-            background: var(--text-dark);
-            color: var(--bg-light);
+        .btn {
+            background: var(--accent-color);
+            color: #000;
             padding: 18px 45px;
             text-decoration: none;
             border-radius: 4px;
@@ -163,15 +197,15 @@
             text-transform: uppercase;
             transition: all 0.3s;
             display: inline-block;
-            border: 2px solid var(--text-dark);
+            border: 2px solid var(--accent-color);
+            box-shadow: 0 10px 30px rgba(212, 175, 55, 0.2);
         }
-        .btn-dark:hover {
-            background: var(--accent-color);
-            border-color: var(--accent-color);
-            color: #fff;
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(212, 175, 55, 0.4);
         }
 
-        .btn-light {
+        .btn-outline {
             background: transparent;
             color: var(--accent-color);
             padding: 12px 25px;
@@ -186,7 +220,7 @@
             display: inline-block;
             margin-top: 15px;
         }
-        .btn-light:hover {
+        .btn-outline:hover {
             background: var(--accent-color);
             color: #fff;
         }
@@ -197,9 +231,7 @@
             max-width: 700px;
             margin: 0 auto 80px auto;
         }
-        .section-header h2 { font-size: 3rem; margin-bottom: 15px; }
-        .section-light .section-header p { color: #475569; font-size: 1.2rem; }
-        .section-dark .section-header p { color: var(--text-muted); font-size: 1.2rem; }
+        .section-header h2 { font-size: 3.5rem; margin-bottom: 15px; }
 
         /* --- GRIDS & CARDS --- */
         .services-grid {
@@ -208,73 +240,62 @@
             gap: 40px;
         }
 
-        /* Dark Cards (Inside Light Section) */
-        .card-dark {
-            background: var(--bg-dark);
-            color: var(--text-light);
+        /* Universal Glass Card */
+        .card {
+            background: rgba(0, 0, 0, 0.03);
+            border: 1px solid rgba(0, 0, 0, 0.05);
             padding: 50px 40px;
-            border-radius: 8px;
-            transition: transform 0.4s ease;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.08);
+            border-radius: 12px;
+            backdrop-filter: blur(10px);
+            transition: transform 0.4s ease, border-color 0.4s ease, background 0.4s ease;
         }
-        .card-dark:hover { transform: translateY(-10px); }
-        .card-dark h3 { font-size: 1.5rem; margin-bottom: 15px; color: var(--bg-light); }
-        .card-dark p { color: var(--text-muted); font-size: 1.05rem; }
-
-        /* Light Cards (Inside Dark Section) */
-        .card-light {
-            background: var(--card-dark);
-            color: var(--text-light);
-            padding: 50px 40px;
-            border-radius: 8px;
-            border: 1px solid rgba(255,255,255,0.05);
-            transition: transform 0.4s ease, border-color 0.4s ease;
-        }
-        .card-light:hover { 
+        .card:hover { 
             transform: translateY(-10px); 
             border-color: var(--accent-color);
         }
-        .card-light h3 { font-size: 1.5rem; margin-bottom: 15px; color: #fff; }
-        .card-light p { color: var(--text-muted); font-size: 1.05rem; }
+        .card h3 { font-size: 1.6rem; margin-bottom: 15px; }
+        .card p { font-size: 1.05rem; }
 
         /* --- FORM --- */
         input, textarea {
             width: 100%;
             padding: 20px;
-            background: #fff;
+            background: #f8fafc;
             border: 1px solid #e2e8f0;
-            border-radius: 4px;
+            border-radius: 6px;
             color: var(--text-dark);
             font-size: 1rem;
             font-family: 'Outfit', sans-serif;
             outline: none;
             margin-bottom: 20px;
-            transition: border-color 0.3s;
+            transition: all 0.3s ease;
         }
         input:focus, textarea:focus { border-color: var(--accent-color); }
         
         button[type="submit"] {
-            background: var(--text-dark);
-            color: #fff;
+            background: var(--accent-color);
+            color: #000;
             border: none;
-            border-radius: 4px;
+            border-radius: 6px;
             padding: 20px;
             font-family: 'Outfit', sans-serif;
-            font-weight: 600;
+            font-weight: 700;
             text-transform: uppercase;
             letter-spacing: 2px;
             cursor: pointer;
             transition: 0.3s;
             width: 100%;
         }
-        button[type="submit"]:hover { background: var(--accent-color); }
+        button[type="submit"]:hover { 
+            background: #f3e5ab; 
+            transform: translateY(-2px);
+        }
 
         /* --- FOOTER --- */
         footer {
             text-align: center;
             padding: 40px;
-            background-color: var(--bg-light);
-            color: #94a3b8;
+            background-color: transparent;
             font-size: 0.85rem;
             text-transform: uppercase;
             letter-spacing: 2px;
@@ -284,23 +305,14 @@
         @media (max-width: 768px) {
             .hero h1 { font-size: 3.5rem; }
             .hero p { font-size: 1.1rem; }
-            .section-light, .section-dark { padding: 80px 5%; }
-            nav { padding: 15px 5%; }
-            .nav-links { display: none; } /* Simplified mobile nav for now */
+            section { padding: 80px 5%; }
+            .nav-links { display: none; }
         }
     </style>
 </head>
 <body>
 
-    <script>
-        if (history.scrollRestoration) {
-            history.scrollRestoration = 'manual';
-        } else {
-            window.onbeforeunload = function () { window.scrollTo(0, 0); }
-        }
-    </script>
-
-    <nav class="animate-block">
+    <nav>
         <div class="logo">Pam <span>Ventures</span></div>
         <div class="nav-links">
             <a href="#services">Services</a>
@@ -309,74 +321,74 @@
         </div>
     </nav>
 
-    <section class="hero" id="home">
-        <h1 class="animate-block delay-1">
+    <section class="hero" id="home" data-theme="light">
+        <h1 class="reveal">
             Engineering <br> <span>Gold Standard</span> Tech.
         </h1>
-        <p class="animate-block delay-2">
+        <p class="reveal delay-1">
             Pam Ventures builds high-performance enterprise Java systems and premium digital experiences for elite businesses.
         </p>
-        <div class="animate-block delay-3">
-            <a href="#contact" class="btn-dark">Start Project</a>
+        <div class="reveal delay-2">
+            <a href="#contact" class="btn">Start Project</a>
         </div>
     </section>
 
-    <section class="section-dark" id="services">
-        <div class="section-header">
+    <section id="services" data-theme="dark">
+        <div class="section-header reveal">
             <h2>Our Expertise</h2>
             <p>We do not just write code; we architect legacy-grade infrastructure.</p>
         </div>
         <div class="services-grid">
-            <div class="card-light">
+            <div class="card reveal delay-1">
                 <h3 style="color: var(--accent-color);">Java Enterprise</h3>
                 <p>Secure, scalable back-end systems designed for high-volume transactions and banking-grade security.</p>
             </div>
-            <div class="card-light">
+            <div class="card reveal delay-2">
                 <h3 style="color: var(--accent-color);">Web Architecture</h3>
                 <p>Fast, responsive front-end applications built with modern frameworks and premium aesthetics.</p>
             </div>
-            <div class="card-light">
+            <div class="card reveal delay-3">
                 <h3 style="color: var(--accent-color);">System Strategy</h3>
                 <p>Technical consulting to transform complex business requirements into streamlined digital logic.</p>
             </div>
         </div>
     </section>
 
-    <section class="section-light" id="work">
-        <div class="section-header">
-            <h2 style="color: var(--text-dark);">Selected Works</h2>
+    <section id="work" data-theme="light">
+        <div class="section-header reveal">
+            <h2>Selected Works</h2>
             <p>Recent prototypes and live deployments.</p>
         </div>
 
         <div class="services-grid">
-            <div class="card-dark">
+            <div class="card reveal delay-1">
                 <div style="margin-bottom: 20px; font-size: 3rem;">🏦</div>
                 <h3>FinTech Logic</h3>
                 <p>A secure Java-based banking prototype handling user authentication and transaction processing.</p>
             </div>
 
-            <div class="card-dark">
+            <div class="card reveal delay-2">
                 <div style="margin-bottom: 20px; font-size: 3rem;">🧮</div>
                 <h3>Algorithmic Engine</h3>
                 <p>High-precision calculation module designed for rapid data processing and mathematical operations.</p>
             </div>
 
-            <div class="card-dark" style="border: 1px solid var(--accent-color);">
+            <div class="card reveal delay-3" style="border: 1px solid var(--accent-color);">
                 <div style="margin-bottom: 20px; font-size: 3rem;">📱</div>
                 <h3>Contactless Menu</h3>
                 <p>Premium digital QR solution for Arab Ino Restaurant. Features Google Sheet database logic.</p>
-                <a href="menu.html" target="_blank" class="btn-light">View Live Demo</a>
+                <a href="menu.html" target="_blank" class="btn-outline">View Live Demo</a>
             </div>
         </div>
     </section>
 
-    <section class="section-light" id="contact" style="background-color: #f8fafc; border-top: 1px solid #e2e8f0;">
-        <div class="section-header">
-            <h2 style="color: var(--text-dark);">Request Consultation</h2>
+    <section id="contact" data-theme="dark">
+        <div class="section-header reveal">
+            <h2>Request Consultation</h2>
             <p>Ready to elevate your digital presence? Send us a brief.</p>
         </div>
 
-        <div style="max-width: 500px; margin: 0 auto;">
+        <div class="reveal delay-1" style="max-width: 500px; margin: 0 auto;">
             <form action="https://formspree.io/f/mbddjznr" method="POST">
                 <input type="text" name="name" placeholder="Name / Company" required>
                 <input type="email" name="email" placeholder="Email Address" required>
@@ -390,5 +402,52 @@
         <p>&copy; 2026 Pam Ventures. All Rights Reserved.</p>
     </footer>
 
+    <script>
+        // Fix scroll jumping on refresh
+        if (history.scrollRestoration) { history.scrollRestoration = 'manual'; } 
+        else { window.onbeforeunload = function () { window.scrollTo(0, 0); } }
+
+        document.addEventListener("DOMContentLoaded", () => {
+            // 1. SCROLL ANIMATIONS (Fade Up)
+            const revealElements = document.querySelectorAll('.reveal');
+            const revealOptions = {
+                threshold: 0.15, // Triggers when 15% of the item is visible
+                rootMargin: "0px 0px -50px 0px"
+            };
+
+            const revealOnScroll = new IntersectionObserver(function(entries, observer) {
+                entries.forEach(entry => {
+                    if (!entry.isIntersecting) return;
+                    entry.target.classList.add('active');
+                    observer.unobserve(entry.target); // Animates only once
+                });
+            }, revealOptions);
+
+            revealElements.forEach(el => revealOnScroll.observe(el));
+
+            // 2. DYNAMIC BACKGROUND COLOR CHANGER
+            const sections = document.querySelectorAll('section');
+            const colorOptions = {
+                threshold: 0.35 // Changes background when 35% of the next section is visible
+            };
+
+            const colorChangeOnScroll = new IntersectionObserver(function(entries) {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const theme = entry.target.getAttribute('data-theme');
+                        
+                        // Switch body class based on section's data-theme
+                        if (theme === 'dark') {
+                            document.body.classList.add('dark-mode');
+                        } else {
+                            document.body.classList.remove('dark-mode');
+                        }
+                    }
+                });
+            }, colorOptions);
+
+            sections.forEach(section => colorChangeOnScroll.observe(section));
+        });
+    </script>
 </body>
 </html>
