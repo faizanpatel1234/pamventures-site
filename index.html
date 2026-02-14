@@ -8,22 +8,23 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,600;0,700;1,600&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <style>
         /* --- CSS VARIABLES --- */
         :root {
-            /* The Core Colors (Used for text and accents) */
+            var(--text-light): #ffffff;
             --text-light: #ffffff;
             --text-muted: #94a3b8;
-            --accent-gold: #fbbf24; /* A vibrant, modern gold */
+            --accent-gold: #fbbf24; 
             
-            /* The 4 Aurora Background States */
-            --bg-state-1: #0f172a; /* Slate / Midnight Blue */
-            --bg-state-2: #1e1b4b; /* Deep Indigo / Violet */
-            --bg-state-3: #083344; /* Dark Teal / Cyan */
-            --bg-state-4: #0f172a; /* Back to Slate */
+            --bg-state-1: #0f172a; /* Slate */
+            --bg-state-2: #1e1b4b; /* Indigo */
+            --bg-state-3: #083344; /* Teal */
+            --bg-state-4: #0f172a; /* Slate */
 
-            --section-spacing: 150px; /* Lots of clean breathing room */
+            --section-spacing: 150px; 
         }
 
         * {
@@ -34,22 +35,16 @@
 
         html { scroll-behavior: smooth; }
 
-        /* --- THE BODY & AURORA BACKGROUND --- */
         body {
             font-family: 'Outfit', sans-serif; 
             font-weight: 300;
             line-height: 1.8;
             color: var(--text-light);
             overflow-x: hidden;
-            
-            /* The starting background */
             background-color: var(--bg-state-1);
-            
-            /* The Magic: 2-Second Liquid Transition between colors */
             transition: background-color 2s ease-in-out;
         }
 
-        /* Classes applied by JS on scroll */
         body.theme-1 { background-color: var(--bg-state-1); }
         body.theme-2 { background-color: var(--bg-state-2); }
         body.theme-3 { background-color: var(--bg-state-3); }
@@ -70,12 +65,10 @@
             width: 100%;
             top: 0;
             z-index: 1000;
-            /* Glassmorphism Effect */
             background: rgba(15, 23, 42, 0.4);
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
             border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-            transition: transform 0.4s ease;
         }
 
         .logo-text {
@@ -97,9 +90,16 @@
             font-weight: 500;
             text-transform: uppercase;
             letter-spacing: 2px;
-            transition: color 0.3s;
+            transition: all 0.3s ease;
         }
+        
         .nav-links a:hover { color: var(--accent-gold); }
+        
+        /* THE GLOWING ACTIVE NAV STATE */
+        .nav-links a.active {
+            color: var(--accent-gold);
+            text-shadow: 0 0 12px rgba(251, 191, 36, 0.5);
+        }
 
         /* --- SCROLL ANIMATIONS --- */
         .reveal {
@@ -148,6 +148,7 @@
             align-items: center;
             text-align: center;
             padding-top: 150px;
+            min-height: 80vh; /* Reduced to make room for marquee */
         }
 
         .hero h1 {
@@ -169,7 +170,6 @@
             margin: 0 auto 50px auto;
         }
 
-        /* Premium Glow Button */
         .btn-primary {
             background: var(--text-light);
             color: #000;
@@ -191,6 +191,45 @@
             box-shadow: 0 15px 30px rgba(251, 191, 36, 0.3);
         }
 
+        /* --- TECH STACK MARQUEE --- */
+        .marquee-container {
+            width: 100%;
+            overflow: hidden;
+            background: rgba(255, 255, 255, 0.02);
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            padding: 25px 0;
+            white-space: nowrap;
+            display: flex;
+            align-items: center;
+        }
+
+        .marquee-content {
+            display: inline-block;
+            animation: marquee 25s linear infinite;
+        }
+
+        .marquee-item {
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 1.2rem;
+            color: var(--text-muted);
+            margin: 0 40px;
+            font-weight: 500;
+            letter-spacing: 1px;
+        }
+
+        .marquee-item i {
+            color: var(--accent-gold);
+            font-size: 1.6rem;
+        }
+
+        @keyframes marquee {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+        }
+
         /* --- SERVICES (GLASS CARDS) --- */
         .grid-3 {
             display: grid;
@@ -202,7 +241,6 @@
         .glass-card {
             background: rgba(255, 255, 255, 0.02);
             backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
             border: 1px solid rgba(255, 255, 255, 0.05);
             padding: 50px 40px;
             border-radius: 16px;
@@ -213,15 +251,8 @@
             border-color: rgba(251, 191, 36, 0.4);
             transform: translateY(-10px);
         }
-        .glass-card h3 {
-            font-size: 1.8rem;
-            margin-bottom: 15px;
-            color: var(--text-light);
-        }
-        .glass-card p {
-            color: var(--text-muted);
-            font-size: 1.05rem;
-        }
+        .glass-card h3 { font-size: 1.8rem; margin-bottom: 15px; }
+        .glass-card p { color: var(--text-muted); font-size: 1.05rem; }
 
         /* --- WORK PORTFOLIO --- */
         .portfolio-grid {
@@ -237,12 +268,8 @@
             border-radius: 16px;
             padding: 40px;
             transition: all 0.4s ease;
-            position: relative;
-            overflow: hidden;
         }
-        .portfolio-card:hover {
-            border-color: var(--accent-gold);
-        }
+        .portfolio-card:hover { border-color: var(--accent-gold); }
         .icon-box {
             font-size: 2.5rem;
             margin-bottom: 25px;
@@ -301,6 +328,34 @@
             background: rgba(0, 0, 0, 0.4);
         }
 
+        /* --- FLOATING WHATSAPP BUTTON --- */
+        .whatsapp-float {
+            position: fixed;
+            bottom: 40px;
+            right: 40px;
+            background-color: #25d366;
+            color: white;
+            border-radius: 50px;
+            padding: 15px 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            text-decoration: none;
+            box-shadow: 0 10px 20px rgba(37, 211, 102, 0.3);
+            z-index: 1000;
+            transition: all 0.3s ease;
+        }
+        
+        .whatsapp-float i { font-size: 1.5rem; }
+        
+        .whatsapp-float:hover {
+            transform: scale(1.05) translateY(-5px);
+            box-shadow: 0 15px 30px rgba(37, 211, 102, 0.5);
+            color: white;
+        }
+
         /* --- FOOTER --- */
         footer {
             text-align: center;
@@ -319,6 +374,14 @@
             section { padding: 100px 5%; }
             .nav-links { display: none; }
             .form-glass { padding: 30px 20px; }
+            /* Make WhatsApp button smaller on mobile */
+            .whatsapp-float {
+                bottom: 20px;
+                right: 20px;
+                padding: 12px;
+                border-radius: 50%;
+            }
+            .whatsapp-float span { display: none; } /* Hide text, just show icon */
         }
     </style>
 </head>
@@ -327,9 +390,9 @@
     <nav>
         <a href="#home" class="logo-text">Pam <span>Ventures</span></a>
         <div class="nav-links">
-            <a href="#services">Expertise</a>
-            <a href="#work">Portfolio</a>
-            <a href="#contact">Contact</a>
+            <a href="#services" class="nav-item">Expertise</a>
+            <a href="#work" class="nav-item">Portfolio</a>
+            <a href="#contact" class="nav-item">Contact</a>
         </div>
     </nav>
 
@@ -345,6 +408,24 @@
             <a href="#contact" class="btn-primary">Initiate Project</a>
         </div>
     </section>
+
+    <div class="marquee-container reveal">
+        <div class="marquee-content">
+            <span class="marquee-item"><i class="fab fa-java"></i> Enterprise Java</span>
+            <span class="marquee-item"><i class="fab fa-html5"></i> HTML5 Core</span>
+            <span class="marquee-item"><i class="fab fa-css3-alt"></i> Modern CSS</span>
+            <span class="marquee-item"><i class="fas fa-server"></i> API Architecture</span>
+            <span class="marquee-item"><i class="fas fa-database"></i> Database Logic</span>
+            <span class="marquee-item"><i class="fas fa-mobile-alt"></i> Responsive UI</span>
+            
+            <span class="marquee-item"><i class="fab fa-java"></i> Enterprise Java</span>
+            <span class="marquee-item"><i class="fab fa-html5"></i> HTML5 Core</span>
+            <span class="marquee-item"><i class="fab fa-css3-alt"></i> Modern CSS</span>
+            <span class="marquee-item"><i class="fas fa-server"></i> API Architecture</span>
+            <span class="marquee-item"><i class="fas fa-database"></i> Database Logic</span>
+            <span class="marquee-item"><i class="fas fa-mobile-alt"></i> Responsive UI</span>
+        </div>
+    </div>
 
     <section id="services" data-theme="theme-2">
         <div class="reveal">
@@ -422,43 +503,59 @@
         <p>&copy; 2026 Pam Ventures. Designed for the Future.</p>
     </footer>
 
+    <a href="https://wa.me/91XXXXXXXXXX?text=Hi%20Pam%20Ventures,%20I%20would%20like%20to%20discuss%20a%20project." 
+       class="whatsapp-float" 
+       target="_blank" 
+       rel="noopener noreferrer">
+        <i class="fab fa-whatsapp"></i>
+        <span>Chat with us</span>
+    </a>
+
     <script>
-        // Fix scroll jump on refresh
         if (history.scrollRestoration) { history.scrollRestoration = 'manual'; } 
         else { window.onbeforeunload = function () { window.scrollTo(0, 0); } }
 
         document.addEventListener("DOMContentLoaded", () => {
             
-            // 1. SCROLL REVEAL ANIMATIONS (Fade Up smoothly)
+            // 1. SCROLL REVEAL ANIMATIONS
             const reveals = document.querySelectorAll('.reveal');
             const revealObserver = new IntersectionObserver((entries, observer) => {
                 entries.forEach(entry => {
                     if (entry.isIntersecting) {
                         entry.target.classList.add('active');
-                        observer.unobserve(entry.target); // Animates only once
+                        observer.unobserve(entry.target); 
                     }
                 });
             }, { threshold: 0.15, rootMargin: "0px 0px -50px 0px" });
 
             reveals.forEach(el => revealObserver.observe(el));
 
-            // 2. AURORA BACKGROUND COLOR CHANGER
-            // This watches the sections and changes the body class to trigger the CSS color transition
+            // 2. AURORA BACKGROUND & SCROLL-SPY NAVIGATION
             const sections = document.querySelectorAll('section');
-            const colorObserver = new IntersectionObserver((entries) => {
+            const navLinks = document.querySelectorAll('.nav-item');
+
+            const sectionObserver = new IntersectionObserver((entries) => {
                 entries.forEach(entry => {
                     if (entry.isIntersecting) {
-                        const theme = entry.target.getAttribute('data-theme');
                         
-                        // Remove all existing theme classes
+                        // A: Change the Background Color
+                        const theme = entry.target.getAttribute('data-theme');
                         document.body.classList.remove('theme-1', 'theme-2', 'theme-3', 'theme-4');
-                        // Add the new theme class based on the section currently on screen
                         document.body.classList.add(theme);
+
+                        // B: Glowing Navigation (Scroll-Spy)
+                        const id = entry.target.getAttribute('id');
+                        navLinks.forEach(link => {
+                            link.classList.remove('active');
+                            if (link.getAttribute('href') === `#${id}`) {
+                                link.classList.add('active');
+                            }
+                        });
                     }
                 });
             }, { threshold: 0.4 }); // Triggers when 40% of the section is visible
 
-            sections.forEach(section => colorObserver.observe(section));
+            sections.forEach(section => sectionObserver.observe(section));
         });
     </script>
 </body>
