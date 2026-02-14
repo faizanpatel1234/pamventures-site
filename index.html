@@ -12,18 +12,13 @@
     <style>
         /* --- CSS VARIABLES --- */
         :root {
-            /* Light Theme Colors */
-            --bg-light: #ffffff;
-            --text-dark: #121212;
-            --text-gray: #475569;
-            
-            /* Dark Theme Colors */
-            --bg-dark: #0a0c10;
-            --text-light: #ffffff;
+            /* Text Colors (Stays constant to prevent eye strain) */
+            --text-light: #f8fafc;
             --text-muted: #94a3b8;
 
             /* Accent Color */
             --accent-color: #d4af37; /* Luxury Gold */
+            --accent-glow: rgba(212, 175, 55, 0.15);
             
             --section-spacing: 120px;
         }
@@ -42,71 +37,40 @@
             font-weight: 300;
             line-height: 1.7;
             overflow-x: hidden;
+            color: var(--text-light);
             
-            /* These properties will transition smoothly via JavaScript */
-            background-color: var(--bg-light); 
-            color: var(--text-dark);
-            transition: background-color 0.8s ease, color 0.8s ease;
+            /* BUTTERY SMOOTH 1.5s TRANSITION */
+            transition: background-color 1.5s ease-in-out;
         }
 
-        h1, h2, h3, p, .logo {
-            transition: color 0.8s ease;
+        /* --- THE 3 AMBIENT DARK COLORS --- */
+        body[data-bg="graphite"] {
+            background-color: #101012; /* Neutral Deep Dark */
+        }
+        body[data-bg="warm-midnight"] {
+            background-color: #171513; /* Very slight warm brown/gold undertone */
+        }
+        body[data-bg="deep-slate"] {
+            background-color: #0d1115; /* Very slight cool blue undertone */
         }
 
         h1, h2, h3, .logo {
             font-family: 'Playfair Display', serif;
         }
 
-        /* --- DARK MODE CLASSES (Triggered by Scroll) --- */
-        body.dark-mode {
-            background-color: var(--bg-dark);
-            color: var(--text-light);
-        }
-        body.dark-mode h1, 
-        body.dark-mode h2, 
-        body.dark-mode h3, 
-        body.dark-mode .logo {
-            color: var(--text-light);
-        }
-        body.dark-mode p {
-            color: var(--text-muted);
-        }
-        body.dark-mode nav {
-            background-color: rgba(10, 12, 16, 0.9);
-            border-bottom: 1px solid rgba(255,255,255,0.05);
-        }
-        body.dark-mode .nav-links a {
-            color: var(--text-light);
-        }
-        body.dark-mode .card {
-            background: rgba(255, 255, 255, 0.03);
-            border-color: rgba(255, 255, 255, 0.08);
-        }
-        body.dark-mode .card:hover {
-            border-color: var(--accent-color);
-            background: rgba(255, 255, 255, 0.06);
-        }
-        body.dark-mode input, 
-        body.dark-mode textarea {
-            background: #12151c;
-            border-color: #2a3140;
-            color: white;
-        }
-
-        /* --- SCROLL ANIMATIONS (The "Reveal" Effect) --- */
+        /* --- SCROLL ANIMATIONS (Fade Up) --- */
         .reveal {
             opacity: 0;
-            transform: translateY(50px) scale(0.98);
-            transition: all 0.9s cubic-bezier(0.16, 1, 0.3, 1);
+            transform: translateY(40px);
+            transition: all 1s cubic-bezier(0.16, 1, 0.3, 1);
         }
         .reveal.active {
             opacity: 1;
-            transform: translateY(0) scale(1);
+            transform: translateY(0);
         }
-        /* Delays for cascading animations */
-        .delay-1 { transition-delay: 0.1s; }
-        .delay-2 { transition-delay: 0.2s; }
-        .delay-3 { transition-delay: 0.3s; }
+        .delay-1 { transition-delay: 0.15s; }
+        .delay-2 { transition-delay: 0.3s; }
+        .delay-3 { transition-delay: 0.45s; }
 
         /* --- NAVIGATION --- */
         nav {
@@ -114,15 +78,15 @@
             justify-content: space-between;
             align-items: center;
             padding: 20px 5%;
-            background-color: rgba(255, 255, 255, 0.9);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
+            /* Dark Frosted Glass */
+            background-color: rgba(10, 10, 12, 0.7);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
             position: fixed;
             width: 100%;
             top: 0;
             z-index: 1000;
-            border-bottom: 1px solid #f1f5f9;
-            transition: background-color 0.8s ease, border-color 0.8s ease;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.03);
         }
 
         .logo {
@@ -134,7 +98,7 @@
 
         .nav-links a {
             font-family: 'Outfit', sans-serif;
-            color: var(--text-dark);
+            color: var(--text-muted);
             text-decoration: none;
             margin-left: 30px;
             font-size: 0.9rem;
@@ -148,7 +112,6 @@
         /* --- SECTIONS --- */
         section {
             padding: var(--section-spacing) 8%;
-            /* Make sections transparent so the body color shows through */
             background-color: transparent; 
         }
 
@@ -161,6 +124,21 @@
             align-items: center;
             text-align: center;
             padding: 120px 20px 0 20px;
+            position: relative;
+        }
+
+        /* A soft gold ambient glow behind the hero text */
+        .hero::before {
+            content: '';
+            position: absolute;
+            width: 40vw;
+            height: 40vw;
+            background: radial-gradient(circle, var(--accent-glow) 0%, transparent 70%);
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: -1;
+            pointer-events: none;
         }
 
         .hero h1 {
@@ -178,51 +156,32 @@
 
         .hero p {
             font-size: 1.4rem;
-            color: var(--text-gray);
+            color: var(--text-muted);
             max-width: 650px;
             margin-bottom: 40px;
             font-weight: 400;
         }
 
-        /* Buttons */
+        /* Gold Outline Button */
         .btn {
-            background: var(--accent-color);
-            color: #000;
-            padding: 18px 45px;
+            background: transparent;
+            color: var(--accent-color);
+            padding: 16px 45px;
             text-decoration: none;
+            border: 1px solid var(--accent-color);
             border-radius: 4px;
             font-size: 0.95rem;
             font-weight: 600;
             letter-spacing: 2px;
             text-transform: uppercase;
-            transition: all 0.3s;
+            transition: all 0.4s ease;
             display: inline-block;
-            border: 2px solid var(--accent-color);
-            box-shadow: 0 10px 30px rgba(212, 175, 55, 0.2);
         }
         .btn:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 15px 40px rgba(212, 175, 55, 0.4);
-        }
-
-        .btn-outline {
-            background: transparent;
-            color: var(--accent-color);
-            padding: 12px 25px;
-            text-decoration: none;
-            border: 1px solid var(--accent-color);
-            border-radius: 4px;
-            font-size: 0.8rem;
-            font-weight: 600;
-            letter-spacing: 1px;
-            text-transform: uppercase;
-            transition: all 0.3s;
-            display: inline-block;
-            margin-top: 15px;
-        }
-        .btn-outline:hover {
             background: var(--accent-color);
-            color: #fff;
+            color: #000;
+            box-shadow: 0 10px 30px var(--accent-glow);
+            transform: translateY(-2px);
         }
 
         /* --- HEADERS --- */
@@ -232,6 +191,7 @@
             margin: 0 auto 80px auto;
         }
         .section-header h2 { font-size: 3.5rem; margin-bottom: 15px; }
+        .section-header p { color: var(--text-muted); font-size: 1.2rem; }
 
         /* --- GRIDS & CARDS --- */
         .services-grid {
@@ -240,35 +200,35 @@
             gap: 40px;
         }
 
-        /* Universal Glass Card */
+        /* Subtle Dark Glass Cards */
         .card {
-            background: rgba(0, 0, 0, 0.03);
-            border: 1px solid rgba(0, 0, 0, 0.05);
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.05);
             padding: 50px 40px;
-            border-radius: 12px;
-            backdrop-filter: blur(10px);
-            transition: transform 0.4s ease, border-color 0.4s ease, background 0.4s ease;
+            border-radius: 8px;
+            transition: all 0.5s ease;
         }
         .card:hover { 
-            transform: translateY(-10px); 
-            border-color: var(--accent-color);
+            transform: translateY(-8px); 
+            border-color: rgba(212, 175, 55, 0.5); /* Gold border on hover */
+            background: rgba(255, 255, 255, 0.04);
         }
         .card h3 { font-size: 1.6rem; margin-bottom: 15px; }
-        .card p { font-size: 1.05rem; }
+        .card p { font-size: 1.05rem; color: var(--text-muted); }
 
         /* --- FORM --- */
         input, textarea {
             width: 100%;
             padding: 20px;
-            background: #f8fafc;
-            border: 1px solid #e2e8f0;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.08);
             border-radius: 6px;
-            color: var(--text-dark);
+            color: var(--text-light);
             font-size: 1rem;
             font-family: 'Outfit', sans-serif;
             outline: none;
             margin-bottom: 20px;
-            transition: all 0.3s ease;
+            transition: border-color 0.3s ease;
         }
         input:focus, textarea:focus { border-color: var(--accent-color); }
         
@@ -283,11 +243,11 @@
             text-transform: uppercase;
             letter-spacing: 2px;
             cursor: pointer;
-            transition: 0.3s;
+            transition: all 0.3s ease;
             width: 100%;
         }
         button[type="submit"]:hover { 
-            background: #f3e5ab; 
+            background: #e6c55c; 
             transform: translateY(-2px);
         }
 
@@ -295,10 +255,11 @@
         footer {
             text-align: center;
             padding: 40px;
-            background-color: transparent;
+            border-top: 1px solid rgba(255,255,255,0.05);
             font-size: 0.85rem;
             text-transform: uppercase;
             letter-spacing: 2px;
+            color: var(--text-muted);
         }
 
         /* --- RESPONSIVE --- */
@@ -310,9 +271,7 @@
         }
     </style>
 </head>
-<body>
-
-    <nav>
+<body data-bg="graphite"> <nav>
         <div class="logo">Pam <span>Ventures</span></div>
         <div class="nav-links">
             <a href="#services">Services</a>
@@ -321,7 +280,7 @@
         </div>
     </nav>
 
-    <section class="hero" id="home" data-theme="light">
+    <section class="hero" id="home" data-color="graphite">
         <h1 class="reveal">
             Engineering <br> <span>Gold Standard</span> Tech.
         </h1>
@@ -333,7 +292,7 @@
         </div>
     </section>
 
-    <section id="services" data-theme="dark">
+    <section id="services" data-color="warm-midnight">
         <div class="section-header reveal">
             <h2>Our Expertise</h2>
             <p>We do not just write code; we architect legacy-grade infrastructure.</p>
@@ -354,7 +313,7 @@
         </div>
     </section>
 
-    <section id="work" data-theme="light">
+    <section id="work" data-color="deep-slate">
         <div class="section-header reveal">
             <h2>Selected Works</h2>
             <p>Recent prototypes and live deployments.</p>
@@ -373,16 +332,16 @@
                 <p>High-precision calculation module designed for rapid data processing and mathematical operations.</p>
             </div>
 
-            <div class="card reveal delay-3" style="border: 1px solid var(--accent-color);">
+            <div class="card reveal delay-3" style="border: 1px solid rgba(212, 175, 55, 0.3);">
                 <div style="margin-bottom: 20px; font-size: 3rem;">📱</div>
                 <h3>Contactless Menu</h3>
-                <p>Premium digital QR solution for Arab Ino Restaurant. Features Google Sheet database logic.</p>
-                <a href="menu.html" target="_blank" class="btn-outline">View Live Demo</a>
+                <p>Premium digital QR solution for Arab Ino Restaurant. Features live Google Sheet database logic.</p>
+                <a href="menu.html" target="_blank" class="btn" style="padding: 12px 25px; font-size: 0.8rem; margin-top: 15px;">View Live Demo</a>
             </div>
         </div>
     </section>
 
-    <section id="contact" data-theme="dark">
+    <section id="contact" data-color="graphite">
         <div class="section-header reveal">
             <h2>Request Consultation</h2>
             <p>Ready to elevate your digital presence? Send us a brief.</p>
@@ -403,50 +362,48 @@
     </footer>
 
     <script>
-        // Fix scroll jumping on refresh
+        // Fix scroll jumping
         if (history.scrollRestoration) { history.scrollRestoration = 'manual'; } 
         else { window.onbeforeunload = function () { window.scrollTo(0, 0); } }
 
         document.addEventListener("DOMContentLoaded", () => {
-            // 1. SCROLL ANIMATIONS (Fade Up)
-            const revealElements = document.querySelectorAll('.reveal');
+            // 1. SCROLL REVEAL ANIMATIONS
+            const reveals = document.querySelectorAll('.reveal');
             const revealOptions = {
-                threshold: 0.15, // Triggers when 15% of the item is visible
+                threshold: 0.15,
                 rootMargin: "0px 0px -50px 0px"
             };
 
-            const revealOnScroll = new IntersectionObserver(function(entries, observer) {
+            const revealObserver = new IntersectionObserver((entries, observer) => {
                 entries.forEach(entry => {
-                    if (!entry.isIntersecting) return;
-                    entry.target.classList.add('active');
-                    observer.unobserve(entry.target); // Animates only once
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('active');
+                        observer.unobserve(entry.target); 
+                    }
                 });
             }, revealOptions);
 
-            revealElements.forEach(el => revealOnScroll.observe(el));
+            reveals.forEach(el => revealObserver.observe(el));
 
-            // 2. DYNAMIC BACKGROUND COLOR CHANGER
+            // 2. SMOOTH AMBIENT COLOR CHANGER
             const sections = document.querySelectorAll('section');
             const colorOptions = {
-                threshold: 0.35 // Changes background when 35% of the next section is visible
+                // Triggers when 40% of the section is visible on screen
+                threshold: 0.4 
             };
 
-            const colorChangeOnScroll = new IntersectionObserver(function(entries) {
+            const colorObserver = new IntersectionObserver((entries) => {
                 entries.forEach(entry => {
                     if (entry.isIntersecting) {
-                        const theme = entry.target.getAttribute('data-theme');
-                        
-                        // Switch body class based on section's data-theme
-                        if (theme === 'dark') {
-                            document.body.classList.add('dark-mode');
-                        } else {
-                            document.body.classList.remove('dark-mode');
-                        }
+                        // Gets the data-color from the section (e.g., "warm-midnight")
+                        const newColor = entry.target.getAttribute('data-color');
+                        // Applies it to the body, triggering the 1.5s CSS transition
+                        document.body.setAttribute('data-bg', newColor);
                     }
                 });
             }, colorOptions);
 
-            sections.forEach(section => colorChangeOnScroll.observe(section));
+            sections.forEach(section => colorObserver.observe(section));
         });
     </script>
 </body>
