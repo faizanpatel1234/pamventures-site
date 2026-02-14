@@ -12,15 +12,18 @@
     <style>
         /* --- CSS VARIABLES --- */
         :root {
-            /* Text Colors (Stays constant to prevent eye strain) */
-            --text-light: #f8fafc;
+            /* The Core Colors (Used for text and accents) */
+            --text-light: #ffffff;
             --text-muted: #94a3b8;
-
-            /* Accent Color */
-            --accent-color: #d4af37; /* Luxury Gold */
-            --accent-glow: rgba(212, 175, 55, 0.15);
+            --accent-gold: #fbbf24; /* A vibrant, modern gold */
             
-            --section-spacing: 120px;
+            /* The 4 Aurora Background States */
+            --bg-state-1: #0f172a; /* Slate / Midnight Blue */
+            --bg-state-2: #1e1b4b; /* Deep Indigo / Violet */
+            --bg-state-3: #083344; /* Dark Teal / Cyan */
+            --bg-state-4: #0f172a; /* Back to Slate */
+
+            --section-spacing: 150px; /* Lots of clean breathing room */
         }
 
         * {
@@ -31,377 +34,429 @@
 
         html { scroll-behavior: smooth; }
 
-        /* --- DYNAMIC BODY STYLES --- */
+        /* --- THE BODY & AURORA BACKGROUND --- */
         body {
             font-family: 'Outfit', sans-serif; 
             font-weight: 300;
-            line-height: 1.7;
-            overflow-x: hidden;
+            line-height: 1.8;
             color: var(--text-light);
+            overflow-x: hidden;
             
-            /* BUTTERY SMOOTH 1.5s TRANSITION */
-            transition: background-color 1.5s ease-in-out;
+            /* The starting background */
+            background-color: var(--bg-state-1);
+            
+            /* The Magic: 2-Second Liquid Transition between colors */
+            transition: background-color 2s ease-in-out;
         }
 
-        /* --- THE 3 AMBIENT DARK COLORS --- */
-        body[data-bg="graphite"] {
-            background-color: #101012; /* Neutral Deep Dark */
-        }
-        body[data-bg="warm-midnight"] {
-            background-color: #171513; /* Very slight warm brown/gold undertone */
-        }
-        body[data-bg="deep-slate"] {
-            background-color: #0d1115; /* Very slight cool blue undertone */
-        }
+        /* Classes applied by JS on scroll */
+        body.theme-1 { background-color: var(--bg-state-1); }
+        body.theme-2 { background-color: var(--bg-state-2); }
+        body.theme-3 { background-color: var(--bg-state-3); }
+        body.theme-4 { background-color: var(--bg-state-4); }
 
-        h1, h2, h3, .logo {
+        h1, h2, h3, .logo-text {
             font-family: 'Playfair Display', serif;
+            font-weight: 700;
         }
 
-        /* --- SCROLL ANIMATIONS (Fade Up) --- */
+        /* --- FROSTED GLASS NAVIGATION --- */
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 6%;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            /* Glassmorphism Effect */
+            background: rgba(15, 23, 42, 0.4);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            transition: transform 0.4s ease;
+        }
+
+        .logo-text {
+            font-size: 1.5rem;
+            letter-spacing: 1px;
+            color: white;
+            text-decoration: none;
+        }
+        .logo-text span {
+            color: var(--accent-gold);
+            font-style: italic;
+        }
+
+        .nav-links a {
+            color: var(--text-light);
+            text-decoration: none;
+            margin-left: 35px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            transition: color 0.3s;
+        }
+        .nav-links a:hover { color: var(--accent-gold); }
+
+        /* --- SCROLL ANIMATIONS --- */
         .reveal {
             opacity: 0;
             transform: translateY(40px);
-            transition: all 1s cubic-bezier(0.16, 1, 0.3, 1);
+            transition: all 1s cubic-bezier(0.25, 1, 0.5, 1);
         }
         .reveal.active {
             opacity: 1;
             transform: translateY(0);
         }
-        .delay-1 { transition-delay: 0.15s; }
-        .delay-2 { transition-delay: 0.3s; }
-        .delay-3 { transition-delay: 0.45s; }
+        .delay-1 { transition-delay: 0.2s; }
+        .delay-2 { transition-delay: 0.4s; }
 
-        /* --- NAVIGATION --- */
-        nav {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 20px 5%;
-            /* Dark Frosted Glass */
-            background-color: rgba(10, 10, 12, 0.7);
-            backdrop-filter: blur(15px);
-            -webkit-backdrop-filter: blur(15px);
-            position: fixed;
-            width: 100%;
-            top: 0;
-            z-index: 1000;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.03);
-        }
-
-        .logo {
-            font-size: 1.6rem;
-            font-weight: 700;
-            letter-spacing: 1px;
-        }
-        .logo span { color: var(--accent-color); font-style: italic; }
-
-        .nav-links a {
-            font-family: 'Outfit', sans-serif;
-            color: var(--text-muted);
-            text-decoration: none;
-            margin-left: 30px;
-            font-size: 0.9rem;
-            font-weight: 500;
-            transition: color 0.3s;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-        .nav-links a:hover { color: var(--accent-color); }
-
-        /* --- SECTIONS --- */
+        /* --- COMMON SECTION STYLES --- */
         section {
             padding: var(--section-spacing) 8%;
-            background-color: transparent; 
-        }
-
-        /* --- HERO SECTION --- */
-        .hero {
             min-height: 100vh;
             display: flex;
             flex-direction: column;
             justify-content: center;
-            align-items: center;
-            text-align: center;
-            padding: 120px 20px 0 20px;
-            position: relative;
         }
 
-        /* A soft gold ambient glow behind the hero text */
-        .hero::before {
-            content: '';
-            position: absolute;
-            width: 40vw;
-            height: 40vw;
-            background: radial-gradient(circle, var(--accent-glow) 0%, transparent 70%);
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            z-index: -1;
-            pointer-events: none;
+        .section-tag {
+            display: inline-block;
+            padding: 8px 16px;
+            background: rgba(251, 191, 36, 0.1);
+            color: var(--accent-gold);
+            border-radius: 50px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-bottom: 25px;
+            border: 1px solid rgba(251, 191, 36, 0.2);
+        }
+
+        .section-title {
+            font-size: 3.5rem;
+            margin-bottom: 20px;
+            line-height: 1.1;
+        }
+
+        /* --- HERO SECTION --- */
+        .hero {
+            align-items: center;
+            text-align: center;
+            padding-top: 150px;
         }
 
         .hero h1 {
-            font-size: 5.5rem; 
-            font-weight: 700;
-            line-height: 1.05;
-            margin-bottom: 25px;
-            letter-spacing: -1px;
+            font-size: 6rem;
+            letter-spacing: -2px;
+            margin-bottom: 30px;
         }
-        
         .hero h1 span {
-            color: var(--accent-color);
-            font-style: italic; 
+            background: linear-gradient(to right, #fbbf24, #fde68a);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-style: italic;
         }
 
         .hero p {
             font-size: 1.4rem;
             color: var(--text-muted);
-            max-width: 650px;
-            margin-bottom: 40px;
-            font-weight: 400;
+            max-width: 600px;
+            margin: 0 auto 50px auto;
         }
 
-        /* Gold Outline Button */
-        .btn {
-            background: transparent;
-            color: var(--accent-color);
-            padding: 16px 45px;
+        /* Premium Glow Button */
+        .btn-primary {
+            background: var(--text-light);
+            color: #000;
+            padding: 18px 50px;
+            border-radius: 50px;
             text-decoration: none;
-            border: 1px solid var(--accent-color);
-            border-radius: 4px;
-            font-size: 0.95rem;
             font-weight: 600;
+            font-size: 0.9rem;
             letter-spacing: 2px;
             text-transform: uppercase;
             transition: all 0.4s ease;
             display: inline-block;
+            border: none;
+            cursor: pointer;
         }
-        .btn:hover {
-            background: var(--accent-color);
-            color: #000;
-            box-shadow: 0 10px 30px var(--accent-glow);
-            transform: translateY(-2px);
+        .btn-primary:hover {
+            background: var(--accent-gold);
+            transform: translateY(-3px);
+            box-shadow: 0 15px 30px rgba(251, 191, 36, 0.3);
         }
 
-        /* --- HEADERS --- */
-        .section-header {
-            text-align: center;
-            max-width: 700px;
-            margin: 0 auto 80px auto;
-        }
-        .section-header h2 { font-size: 3.5rem; margin-bottom: 15px; }
-        .section-header p { color: var(--text-muted); font-size: 1.2rem; }
-
-        /* --- GRIDS & CARDS --- */
-        .services-grid {
+        /* --- SERVICES (GLASS CARDS) --- */
+        .grid-3 {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-            gap: 40px;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-top: 50px;
         }
 
-        /* Subtle Dark Glass Cards */
-        .card {
+        .glass-card {
             background: rgba(255, 255, 255, 0.02);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
             border: 1px solid rgba(255, 255, 255, 0.05);
             padding: 50px 40px;
-            border-radius: 8px;
-            transition: all 0.5s ease;
+            border-radius: 16px;
+            transition: all 0.4s ease;
         }
-        .card:hover { 
-            transform: translateY(-8px); 
-            border-color: rgba(212, 175, 55, 0.5); /* Gold border on hover */
+        .glass-card:hover {
             background: rgba(255, 255, 255, 0.04);
+            border-color: rgba(251, 191, 36, 0.4);
+            transform: translateY(-10px);
         }
-        .card h3 { font-size: 1.6rem; margin-bottom: 15px; }
-        .card p { font-size: 1.05rem; color: var(--text-muted); }
+        .glass-card h3 {
+            font-size: 1.8rem;
+            margin-bottom: 15px;
+            color: var(--text-light);
+        }
+        .glass-card p {
+            color: var(--text-muted);
+            font-size: 1.05rem;
+        }
 
-        /* --- FORM --- */
+        /* --- WORK PORTFOLIO --- */
+        .portfolio-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 40px;
+            margin-top: 50px;
+        }
+
+        .portfolio-card {
+            background: rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            padding: 40px;
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        .portfolio-card:hover {
+            border-color: var(--accent-gold);
+        }
+        .icon-box {
+            font-size: 2.5rem;
+            margin-bottom: 25px;
+            display: inline-block;
+            background: rgba(255, 255, 255, 0.05);
+            padding: 15px 20px;
+            border-radius: 12px;
+        }
+        
+        .btn-link {
+            color: var(--accent-gold);
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 0.9rem;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 25px;
+            transition: gap 0.3s;
+        }
+        .btn-link:hover { gap: 15px; }
+
+        /* --- CONTACT FORM --- */
+        .contact-wrapper {
+            max-width: 600px;
+            margin: 0 auto;
+            width: 100%;
+            text-align: center;
+        }
+        
+        .form-glass {
+            background: rgba(255, 255, 255, 0.02);
+            padding: 50px;
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(20px);
+        }
+
         input, textarea {
             width: 100%;
-            padding: 20px;
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            border-radius: 6px;
+            padding: 18px 25px;
+            background: rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
             color: var(--text-light);
+            font-family: 'Outfit', sans-serif;
             font-size: 1rem;
-            font-family: 'Outfit', sans-serif;
             outline: none;
-            margin-bottom: 20px;
-            transition: border-color 0.3s ease;
-        }
-        input:focus, textarea:focus { border-color: var(--accent-color); }
-        
-        button[type="submit"] {
-            background: var(--accent-color);
-            color: #000;
-            border: none;
-            border-radius: 6px;
-            padding: 20px;
-            font-family: 'Outfit', sans-serif;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            cursor: pointer;
+            margin-bottom: 25px;
             transition: all 0.3s ease;
-            width: 100%;
         }
-        button[type="submit"]:hover { 
-            background: #e6c55c; 
-            transform: translateY(-2px);
+        input:focus, textarea:focus {
+            border-color: var(--accent-gold);
+            background: rgba(0, 0, 0, 0.4);
         }
 
         /* --- FOOTER --- */
         footer {
             text-align: center;
             padding: 40px;
-            border-top: 1px solid rgba(255,255,255,0.05);
-            font-size: 0.85rem;
-            text-transform: uppercase;
-            letter-spacing: 2px;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
             color: var(--text-muted);
+            font-size: 0.8rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
         }
 
         /* --- RESPONSIVE --- */
         @media (max-width: 768px) {
-            .hero h1 { font-size: 3.5rem; }
-            .hero p { font-size: 1.1rem; }
-            section { padding: 80px 5%; }
+            .hero h1 { font-size: 4rem; }
+            .section-title { font-size: 2.5rem; }
+            section { padding: 100px 5%; }
             .nav-links { display: none; }
+            .form-glass { padding: 30px 20px; }
         }
     </style>
 </head>
-<body data-bg="graphite"> <nav>
-        <div class="logo">Pam <span>Ventures</span></div>
+<body>
+
+    <nav>
+        <a href="#home" class="logo-text">Pam <span>Ventures</span></a>
         <div class="nav-links">
-            <a href="#services">Services</a>
-            <a href="#work">Work</a>
+            <a href="#services">Expertise</a>
+            <a href="#work">Portfolio</a>
             <a href="#contact">Contact</a>
         </div>
     </nav>
 
-    <section class="hero" id="home" data-color="graphite">
-        <h1 class="reveal">
+    <section class="hero" id="home" data-theme="theme-1">
+        <div class="section-tag reveal">Digital Agency</div>
+        <h1 class="reveal delay-1">
             Engineering <br> <span>Gold Standard</span> Tech.
         </h1>
-        <p class="reveal delay-1">
-            Pam Ventures builds high-performance enterprise Java systems and premium digital experiences for elite businesses.
+        <p class="reveal delay-2">
+            Pam Ventures architects high-performance Java systems and premium digital experiences for forward-thinking businesses.
         </p>
         <div class="reveal delay-2">
-            <a href="#contact" class="btn">Start Project</a>
+            <a href="#contact" class="btn-primary">Initiate Project</a>
         </div>
     </section>
 
-    <section id="services" data-color="warm-midnight">
-        <div class="section-header reveal">
-            <h2>Our Expertise</h2>
-            <p>We do not just write code; we architect legacy-grade infrastructure.</p>
+    <section id="services" data-theme="theme-2">
+        <div class="reveal">
+            <div class="section-tag">Our Capabilities</div>
+            <h2 class="section-title">Architecting the Future.</h2>
+            <p style="color: var(--text-muted); max-width: 500px;">We do not just write code. We build scalable, legacy-grade infrastructure designed to grow.</p>
         </div>
-        <div class="services-grid">
-            <div class="card reveal delay-1">
-                <h3 style="color: var(--accent-color);">Java Enterprise</h3>
-                <p>Secure, scalable back-end systems designed for high-volume transactions and banking-grade security.</p>
+
+        <div class="grid-3">
+            <div class="glass-card reveal delay-1">
+                <h3 style="color: var(--accent-gold);">Java Enterprise</h3>
+                <p>Secure, hyper-scalable back-end systems designed for high-volume transactions and banking-grade security.</p>
             </div>
-            <div class="card reveal delay-2">
-                <h3 style="color: var(--accent-color);">Web Architecture</h3>
-                <p>Fast, responsive front-end applications built with modern frameworks and premium aesthetics.</p>
+            <div class="glass-card reveal delay-2">
+                <h3 style="color: var(--accent-gold);">Web Architecture</h3>
+                <p>Lightning-fast, responsive front-end applications built with modern frameworks and premium aesthetics.</p>
             </div>
-            <div class="card reveal delay-3">
-                <h3 style="color: var(--accent-color);">System Strategy</h3>
-                <p>Technical consulting to transform complex business requirements into streamlined digital logic.</p>
+            <div class="glass-card reveal delay-3">
+                <h3 style="color: var(--accent-gold);">System Strategy</h3>
+                <p>Technical consulting to transform complex business requirements into streamlined, automated digital logic.</p>
             </div>
         </div>
     </section>
 
-    <section id="work" data-color="deep-slate">
-        <div class="section-header reveal">
-            <h2>Selected Works</h2>
-            <p>Recent prototypes and live deployments.</p>
+    <section id="work" data-theme="theme-3">
+        <div class="reveal">
+            <div class="section-tag">Selected Portfolio</div>
+            <h2 class="section-title">Recent Deployments.</h2>
         </div>
 
-        <div class="services-grid">
-            <div class="card reveal delay-1">
-                <div style="margin-bottom: 20px; font-size: 3rem;">🏦</div>
-                <h3>FinTech Logic</h3>
-                <p>A secure Java-based banking prototype handling user authentication and transaction processing.</p>
+        <div class="portfolio-grid">
+            <div class="portfolio-card reveal delay-1">
+                <div class="icon-box">🏦</div>
+                <h3>FinTech Logic Core</h3>
+                <p>A highly secure Java-based banking prototype handling complex user authentication and instantaneous transaction processing.</p>
+                <a href="#" class="btn-link">Review Logic <span>&rarr;</span></a>
             </div>
 
-            <div class="card reveal delay-2">
-                <div style="margin-bottom: 20px; font-size: 3rem;">🧮</div>
+            <div class="portfolio-card reveal delay-2">
+                <div class="icon-box">🧮</div>
                 <h3>Algorithmic Engine</h3>
-                <p>High-precision calculation module designed for rapid data processing and mathematical operations.</p>
+                <p>A precision calculation module engineered for rapid data processing, designed to integrate into larger enterprise applications.</p>
+                <a href="#" class="btn-link">Review Logic <span>&rarr;</span></a>
             </div>
 
-            <div class="card reveal delay-3" style="border: 1px solid rgba(212, 175, 55, 0.3);">
-                <div style="margin-bottom: 20px; font-size: 3rem;">📱</div>
-                <h3>Contactless Menu</h3>
-                <p>Premium digital QR solution for Arab Ino Restaurant. Features live Google Sheet database logic.</p>
-                <a href="menu.html" target="_blank" class="btn" style="padding: 12px 25px; font-size: 0.8rem; margin-top: 15px;">View Live Demo</a>
+            <div class="portfolio-card reveal delay-3" style="border-color: rgba(251, 191, 36, 0.3);">
+                <div class="icon-box">📱</div>
+                <h3>Restaurant Ecosystem</h3>
+                <p>A premium contactless QR menu built for Arab Ino. Features a live Google Sheets database architecture for instant updates.</p>
+                <a href="menu.html" target="_blank" class="btn-link">View Live Demo <span>&rarr;</span></a>
             </div>
         </div>
     </section>
 
-    <section id="contact" data-color="graphite">
-        <div class="section-header reveal">
-            <h2>Request Consultation</h2>
-            <p>Ready to elevate your digital presence? Send us a brief.</p>
-        </div>
+    <section id="contact" data-theme="theme-4">
+        <div class="contact-wrapper">
+            <div class="reveal">
+                <div class="section-tag">Connect</div>
+                <h2 class="section-title">Request Consultation.</h2>
+                <p style="color: var(--text-muted); margin-bottom: 40px;">Ready to elevate your digital infrastructure? Send us your brief.</p>
+            </div>
 
-        <div class="reveal delay-1" style="max-width: 500px; margin: 0 auto;">
-            <form action="https://formspree.io/f/mbddjznr" method="POST">
-                <input type="text" name="name" placeholder="Name / Company" required>
-                <input type="email" name="email" placeholder="Email Address" required>
-                <textarea name="message" placeholder="Project Details..." rows="5" required></textarea>
-                <button type="submit">Send Inquiry</button>
-            </form>
+            <div class="form-glass reveal delay-1">
+                <form action="https://formspree.io/f/mbddjznr" method="POST">
+                    <input type="text" name="name" placeholder="Your Name / Company" required>
+                    <input type="email" name="email" placeholder="Official Email Address" required>
+                    <textarea name="message" placeholder="Tell us about your project requirements..." rows="4" required></textarea>
+                    <button type="submit" class="btn-primary" style="width: 100%;">Submit Inquiry</button>
+                </form>
+            </div>
         </div>
     </section>
 
     <footer>
-        <p>&copy; 2026 Pam Ventures. All Rights Reserved.</p>
+        <p>&copy; 2026 Pam Ventures. Designed for the Future.</p>
     </footer>
 
     <script>
-        // Fix scroll jumping
+        // Fix scroll jump on refresh
         if (history.scrollRestoration) { history.scrollRestoration = 'manual'; } 
         else { window.onbeforeunload = function () { window.scrollTo(0, 0); } }
 
         document.addEventListener("DOMContentLoaded", () => {
-            // 1. SCROLL REVEAL ANIMATIONS
+            
+            // 1. SCROLL REVEAL ANIMATIONS (Fade Up smoothly)
             const reveals = document.querySelectorAll('.reveal');
-            const revealOptions = {
-                threshold: 0.15,
-                rootMargin: "0px 0px -50px 0px"
-            };
-
             const revealObserver = new IntersectionObserver((entries, observer) => {
                 entries.forEach(entry => {
                     if (entry.isIntersecting) {
                         entry.target.classList.add('active');
-                        observer.unobserve(entry.target); 
+                        observer.unobserve(entry.target); // Animates only once
                     }
                 });
-            }, revealOptions);
+            }, { threshold: 0.15, rootMargin: "0px 0px -50px 0px" });
 
             reveals.forEach(el => revealObserver.observe(el));
 
-            // 2. SMOOTH AMBIENT COLOR CHANGER
+            // 2. AURORA BACKGROUND COLOR CHANGER
+            // This watches the sections and changes the body class to trigger the CSS color transition
             const sections = document.querySelectorAll('section');
-            const colorOptions = {
-                // Triggers when 40% of the section is visible on screen
-                threshold: 0.4 
-            };
-
             const colorObserver = new IntersectionObserver((entries) => {
                 entries.forEach(entry => {
                     if (entry.isIntersecting) {
-                        // Gets the data-color from the section (e.g., "warm-midnight")
-                        const newColor = entry.target.getAttribute('data-color');
-                        // Applies it to the body, triggering the 1.5s CSS transition
-                        document.body.setAttribute('data-bg', newColor);
+                        const theme = entry.target.getAttribute('data-theme');
+                        
+                        // Remove all existing theme classes
+                        document.body.classList.remove('theme-1', 'theme-2', 'theme-3', 'theme-4');
+                        // Add the new theme class based on the section currently on screen
+                        document.body.classList.add(theme);
                     }
                 });
-            }, colorOptions);
+            }, { threshold: 0.4 }); // Triggers when 40% of the section is visible
 
             sections.forEach(section => colorObserver.observe(section));
         });
