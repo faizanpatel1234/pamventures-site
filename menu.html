@@ -91,7 +91,7 @@
             margin-top: 6px;
             font-weight: 600;
         }
-       
+        
         .fade-in { animation: fadeIn 0.4s ease-in-out; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
@@ -133,7 +133,7 @@
             <h1 class="text-3xl font-bold font-serif text-white tracking-wide mb-0.5 text-gold-gradient">Arab Ino</h1>
             <p class="text-[11px] text-gray-400 italic font-serif tracking-wide">In-Room Dining Menu</p>
         </div>
-       
+        
         <!-- Search Bar and Veg Toggle -->
         <div class="px-5 mt-6 mb-2 max-w-xl mx-auto w-full relative z-10">
             <!-- Veg Only Toggle -->
@@ -176,11 +176,30 @@
         <i class="fas fa-arrow-up text-lg"></i>
     </button>
 
-    <!-- Footer Space -->
-    <div class="py-6 text-center opacity-60 mb-6">
-        <i class="fas fa-crown text-gold text-xs mb-2 block"></i>
-        <p class="text-[10px] text-gray-400 dark:text-gray-500 uppercase tracking-[0.2em] font-serif">Taste of Luxury</p>
-    </div>
+    <!-- Premium Footer -->
+    <footer class="py-12 px-6 text-center border-t border-gray-100 dark:border-gray-800 bg-white/50 dark:bg-darkcard/30 transition-colors duration-300">
+        <div class="max-w-4xl mx-auto flex flex-col items-center">
+            <i class="fas fa-crown text-gold text-sm mb-6 opacity-80"></i>
+            
+            <div class="space-y-2 mb-8">
+                <p class="text-xs md:text-sm text-gray-500 dark:text-gray-400 font-medium">
+                    All prices are in Indian Rupees (₹) · Exclusive of applicable taxes
+                </p>
+                <p class="text-xs md:text-sm text-gray-500 dark:text-gray-400">
+                    GST & service charges applicable as per government norms
+                </p>
+                <p class="text-[11px] md:text-xs italic text-gray-400 dark:text-gray-500 pt-1">
+                    Please inform our team of any allergies or dietary requirements
+                </p>
+            </div>
+
+            <div class="pt-6 border-t border-gray-100 dark:border-gray-800 w-full max-w-xs">
+                <p class="text-[10px] md:text-[11px] text-gold dark:text-gold uppercase tracking-[0.3em] font-bold font-serif">
+                    Arab Ino · PAM Premium · Vadodara
+                </p>
+            </div>
+        </div>
+    </footer>
 
     <script>
         // --- DATA CONFIGURATION ---
@@ -201,7 +220,6 @@
             { id: 'midnight', name: 'Midnight Meal' }
         ];
 
-        // Extracted Data (Added 'spice' attribute for 🔥 icons)
         const menuData = [
             // === BREAKFAST ===
             { category: 'breakfast', name: "Cereals with Hot or Cold Milk", desc: "Choice: Corn Flakes/Choco Flakes/Museli. Served with hot or cold milk", price: 225, kcal: 214, type: 'veg' },
@@ -447,7 +465,6 @@
         const themeIcon = document.getElementById('themeIcon');
         const htmlElement = document.documentElement;
 
-        // Initialize
         function init() {
             renderCategories();
             renderMenu('all');
@@ -455,7 +472,6 @@
             setupThemeToggle();
         }
 
-        // Theme Toggle Logic
         function setupThemeToggle() {
             themeToggle.addEventListener('click', () => {
                 htmlElement.classList.toggle('dark');
@@ -469,7 +485,6 @@
             });
         }
 
-        // Setup Scroll Listener for Back to Top
         function setupScrollListener() {
             window.addEventListener('scroll', () => {
                 if (window.scrollY > 300) {
@@ -486,16 +501,13 @@
             });
         }
 
-        // Render Category Buttons
         function renderCategories() {
             categoryNav.innerHTML = '';
             categories.forEach((cat, index) => {
                 const btn = document.createElement('button');
                 btn.className = `category-btn whitespace-nowrap px-5 py-2.5 rounded-full text-gray-700 dark:text-gray-300 dark:bg-darkcard bg-white border border-[#e5e7eb] dark:border-[#333] text-sm font-semibold shadow-sm mx-1 ${index === 0 ? 'active' : ''}`;
                 btn.innerText = cat.name;
-                btn.onclick = (e) => {
-                    handleCategoryClick(e.target, cat.id);
-                };
+                btn.onclick = (e) => handleCategoryClick(e.target, cat.id);
                 categoryNav.appendChild(btn);
             });
         }
@@ -503,26 +515,16 @@
         function handleCategoryClick(btn, categoryId) {
             document.querySelectorAll('.category-btn').forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
-           
+            
             searchInput.value = '';
             toggleClearBtn(false);
-
             renderMenu(categoryId);
-           
-            const headerOffset = 180;
-            const elementPosition = container.getBoundingClientRect().top;
-            const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
-
-            window.scrollTo({
-                top: 0,
-                behavior: "smooth"
-            });
+            
+            window.scrollTo({ top: 0, behavior: "smooth" });
         }
 
-        // Render Menu Items
         function renderMenu(filter) {
             container.innerHTML = '';
-            
             const isVegOnly = vegToggle.checked;
             const searchTerm = searchInput.value.toLowerCase();
 
@@ -530,7 +532,6 @@
                 const matchesCategory = filter === 'all' || item.category === filter;
                 const matchesSearch = !searchTerm || item.name.toLowerCase().includes(searchTerm) || item.desc.toLowerCase().includes(searchTerm);
                 const matchesVeg = !isVegOnly || item.type === 'veg';
-                
                 return matchesCategory && matchesSearch && matchesVeg;
             });
 
@@ -556,7 +557,6 @@
                         : '';
 
                     const itemsHtml = groups[cat.id].map(item => createCard(item)).join('');
-                   
                     const section = document.createElement('div');
                     section.className = 'mb-10 fade-in';
                     section.innerHTML = `${sectionTitle}<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 pt-2">${itemsHtml}</div>`;
@@ -621,7 +621,6 @@
         });
 
         init();
-
     </script>
 </body>
 </html>
