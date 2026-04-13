@@ -108,9 +108,6 @@
             background-image: radial-gradient(rgba(197, 160, 89, 0.1) 1px, transparent 1px);
             background-size: 20px 20px;
         }
-
-        .toggle-checkbox:checked { right: 0; border-color: #16a34a; }
-        .toggle-checkbox:checked + .toggle-label { background-color: #16a34a; }
     </style>
 </head>
 <body class="antialiased min-h-screen flex flex-col bg-[#fdfbf7] dark:bg-darkbg transition-colors duration-300">
@@ -134,17 +131,8 @@
             <p class="text-[11px] text-gray-400 italic font-serif tracking-wide">In-Room Dining Menu</p>
         </div>
         
-        <!-- Search Bar and Veg Toggle -->
+        <!-- Search Bar -->
         <div class="px-5 mt-6 mb-2 max-w-xl mx-auto w-full relative z-10">
-            <!-- Veg Only Toggle -->
-            <div class="flex items-center justify-end mb-3 mr-2">
-                <span class="text-xs text-gray-300 mr-2 font-semibold tracking-wider uppercase">Veg Only</span>
-                <div class="relative inline-block w-10 mr-2 align-middle select-none transition duration-200 ease-in">
-                    <input type="checkbox" name="toggle" id="vegToggle" class="toggle-checkbox absolute block w-5 h-5 rounded-full bg-white border-4 appearance-none cursor-pointer transition-all duration-300 ease-in-out z-10 top-0 left-0"/>
-                    <label for="vegToggle" class="toggle-label block overflow-hidden h-5 rounded-full bg-gray-600 cursor-pointer transition-colors duration-300 ease-in-out"></label>
-                </div>
-            </div>
-
             <div class="relative group">
                 <span class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
                     <i class="fas fa-search text-gray-400 text-sm group-focus-within:text-gold transition-colors"></i>
@@ -172,7 +160,7 @@
     </main>
 
     <!-- Back to Top Button -->
-    <button id="backToTop" class="fixed bottom-8 right-6 bg-gold text-white w-12 h-12 rounded-full shadow-[0_4px_15px_rgba(197,160,89,0.4)] flex items-center justify-center opacity-0 pointer-events-none transition-all duration-300 z-40 transform translate-y-4 hover:bg-gold-dark hover:scale-110">
+    <button id="backToTop" class="fixed bottom-8 right-6 bg-gold text-white w-12 h-12 rounded-full shadow-[0_4px_15_rgba(197,160,89,0.4)] flex items-center justify-center opacity-0 pointer-events-none transition-all duration-300 z-40 transform translate-y-4 hover:bg-gold-dark hover:scale-110">
         <i class="fas fa-arrow-up text-lg"></i>
     </button>
 
@@ -212,7 +200,8 @@
             { id: 'main-indian', name: 'Indian Mains' },
             { id: 'main-intl', name: 'Global Mains' },
             { id: 'noodles-rice', name: 'Noodles & Rice' },
-            { id: 'pulao-biryani-dal', name: 'Pulao, Biryani & Dal' },
+            { id: 'pulao-biryani', name: 'Pulao & Biryani' },
+            { id: 'dal', name: 'Dal' },
             { id: 'indian-breads', name: 'Indian Breads' },
             { id: 'accompaniments', name: 'Accompaniments' },
             { id: 'dessert', name: 'Desserts' },
@@ -377,18 +366,20 @@
             { category: 'noodles-rice', name: "Chicken Tripple Schezwan Rice", desc: "Rice and noodles cooked with egg, chicken and tossed in schezwan sauce", price: 375, kcal: 1300, type: 'non-veg', spice: 2 },
             { category: 'noodles-rice', name: "Prawns Fried Rice", desc: "Rice stir fried with egg, prawns and seasonings (Schezwan/Golden Garlic)", price: 475, kcal: 1064, type: 'non-veg' },
             
-            // === PULAO, BIRYANI, RICE AND DAL ===
-            { category: 'pulao-biryani-dal', name: "Dal Tadka", desc: "Pigeon peas boiled and tempered with cumin seeds, red chilli and garlic", price: 225, kcal: 684, type: 'veg' },
-            { category: 'pulao-biryani-dal', name: "Dal Makhani", desc: "Whole black lentil and red kidney beans cooked loaded with butter and cream", price: 325, kcal: 794, type: 'veg', isSpecial: true },
-            { category: 'pulao-biryani-dal', name: "Subz Dum Pukht Biryani", desc: "Vegetable cured in hyderabadi spices and cooked with basmati rice", price: 300, kcal: 1089, type: 'veg', spice: 1 },
-            { category: 'pulao-biryani-dal', name: "Jeera Rice", desc: "Steamed rice tempered with cumin seeds", price: 225, kcal: 523, type: 'veg' },
-            { category: 'pulao-biryani-dal', name: "Subz Pulao", desc: "Indian adaptatianaof pilaf where in rice cooked with vegetable", price: 275, kcal: 1047, type: 'veg' },
-            { category: 'pulao-biryani-dal', name: "Steamed Rice", desc: "Flavorful basmati riceboiled and drizzled", price: 225, kcal: 513, type: 'veg' },
-            { category: 'pulao-biryani-dal', name: "Pam Premium Special Khichdi", desc: "To choose from:masala/veg/palak", price: 225, kcal: 1074, type: 'veg' },
-            { category: 'pulao-biryani-dal', name: "All Time Favourite Anda Biryani", desc: "Basmati rice cooked with egg pieces cured in spice, curd and saffron", price: 350, kcal: 783, type: 'egg' },
-            { category: 'pulao-biryani-dal', name: "Gosht Dum Biryani", desc: "Basmati rice cooked with mutton pieces cured in spice, curd and saffron", price: 475, kcal: 674, type: 'non-veg', spice: 1 },
-            { category: 'pulao-biryani-dal', name: "Hydrabadi Murgh Biryani", desc: "Basmati rice cooked with chicken pieces cured in spice, curd and saffron", price: 375, kcal: 1391, type: 'non-veg', spice: 1 },
+            // === PULAO & BIRYANI ===
+            { category: 'pulao-biryani', name: "Subz Dum Pukht Biryani", desc: "Vegetable cured in hyderabadi spices and cooked with basmati rice", price: 300, kcal: 1089, type: 'veg', spice: 1 },
+            { category: 'pulao-biryani', name: "Jeera Rice", desc: "Steamed rice tempered with cumin seeds", price: 225, kcal: 523, type: 'veg' },
+            { category: 'pulao-biryani', name: "Subz Pulao", desc: "Indian adaptatianaof pilaf where in rice cooked with vegetable", price: 275, kcal: 1047, type: 'veg' },
+            { category: 'pulao-biryani', name: "Steamed Rice", desc: "Flavorful basmati riceboiled and drizzled", price: 225, kcal: 513, type: 'veg' },
+            { category: 'pulao-biryani', name: "Pam Premium Special Khichdi", desc: "To choose from:masala/veg/palak", price: 225, kcal: 1074, type: 'veg' },
+            { category: 'pulao-biryani', name: "All Time Favourite Anda Biryani", desc: "Basmati rice cooked with egg pieces cured in spice, curd and saffron", price: 350, kcal: 783, type: 'egg' },
+            { category: 'pulao-biryani', name: "Gosht Dum Biryani", desc: "Basmati rice cooked with mutton pieces cured in spice, curd and saffron", price: 475, kcal: 674, type: 'non-veg', spice: 1 },
+            { category: 'pulao-biryani', name: "Hydrabadi Murgh Biryani", desc: "Basmati rice cooked with chicken pieces cured in spice, curd and saffron", price: 375, kcal: 1391, type: 'non-veg', spice: 1 },
             
+            // === DAL ===
+            { category: 'dal', name: "Dal Tadka", desc: "Pigeon peas boiled and tempered with cumin seeds, red chilli and garlic", price: 225, kcal: 684, type: 'veg' },
+            { category: 'dal', name: "Dal Makhani", desc: "Whole black lentil and red kidney beans cooked loaded with butter and cream", price: 325, kcal: 794, type: 'veg', isSpecial: true },
+
             // === INDIAN BREADS ===
             { category: 'indian-breads', name: "Tandoori Roti (Plain/Butter)", desc: "Whole wheat flour bread made in tandoor", price: 50, kcal: 126, type: 'veg' },
             { category: 'indian-breads', name: "Naan (Plain/Butter)", desc: "Refined flour bread in tandoor", price: 50, kcal: 268, type: 'veg' },
@@ -459,7 +450,6 @@
         const container = document.getElementById('menuContainer');
         const searchInput = document.getElementById('searchInput');
         const clearBtn = document.getElementById('clearSearch');
-        const vegToggle = document.getElementById('vegToggle');
         const backToTopBtn = document.getElementById('backToTop');
         const themeToggle = document.getElementById('themeToggle');
         const themeIcon = document.getElementById('themeIcon');
@@ -525,21 +515,19 @@
 
         function renderMenu(filter) {
             container.innerHTML = '';
-            const isVegOnly = vegToggle.checked;
             const searchTerm = searchInput.value.toLowerCase();
 
             let filteredItems = menuData.filter(item => {
                 const matchesCategory = filter === 'all' || item.category === filter;
                 const matchesSearch = !searchTerm || item.name.toLowerCase().includes(searchTerm) || item.desc.toLowerCase().includes(searchTerm);
-                const matchesVeg = !isVegOnly || item.type === 'veg';
-                return matchesCategory && matchesSearch && matchesVeg;
+                return matchesCategory && matchesSearch;
             });
 
             if (filteredItems.length === 0) {
                 container.innerHTML = `
                     <div class="text-center py-16 text-gray-400 fade-in col-span-full">
                         <i class="fas fa-utensils text-4xl mb-3 opacity-30"></i>
-                        <p>No items found matching your criteria.</p>
+                        <p>No items found matching your search.</p>
                     </div>`;
                 return;
             }
@@ -613,7 +601,6 @@
         }
 
         searchInput.addEventListener('input', updateMenuDisplay);
-        vegToggle.addEventListener('change', updateMenuDisplay);
         clearBtn.addEventListener('click', () => {
             searchInput.value = '';
             toggleClearBtn(false);
