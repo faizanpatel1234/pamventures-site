@@ -3,1123 +3,466 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pam Ventures | Premium Digital Solutions</title>
+    <title>Pam Premium | Luxury Redefined in Vadodara</title>
     
+    <!-- Fonts: Cormorant Garamond for Serif, DM Sans for Sans-Serif -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,600;0,700;1,600&display=swap" rel="stylesheet">
-    
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 
     <style>
-        /* --- CSS VARIABLES --- */
         :root {
-            var(--text-light): #ffffff;
-            --text-light: #ffffff;
-            --text-muted: #94a3b8;
-            --accent-gold: #fbbf24; 
+            --primary-bg: #FFFFFF;
+            --secondary-bg: #F9F8F6;
+            --accent-gold: #C5A059;
+            --accent-gold-dark: #A68340;
+            --text-main: #1A1A1A;
+            --text-muted: #666666;
+            --charcoal: #121212;
+            --white: #FFFFFF;
             
-            --bg-state-1: #0f172a; /* Slate */
-            --bg-state-2: #1e1b4b; /* Indigo */
-            --bg-state-3: #083344; /* Teal */
-            --bg-state-4: #0f172a; /* Slate */
-
-            --section-spacing: 150px; 
+            --serif: 'Cormorant Garamond', serif;
+            --sans: 'DM Sans', sans-serif;
+            
+            --transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         html { scroll-behavior: smooth; }
-
-        body {
-            font-family: 'Outfit', sans-serif; 
-            font-weight: 300;
-            line-height: 1.8;
-            color: var(--text-light);
+        body { 
+            font-family: var(--sans); 
+            color: var(--text-main); 
+            background-color: var(--primary-bg); 
+            line-height: 1.7;
             overflow-x: hidden;
-            background-color: var(--bg-state-1);
-            transition: background-color 2s ease-in-out;
         }
 
-        body.theme-1 { background-color: var(--bg-state-1); }
-        body.theme-2 { background-color: var(--bg-state-2); }
-        body.theme-3 { background-color: var(--bg-state-3); }
-        body.theme-4 { background-color: var(--bg-state-4); }
+        /* --- Global Elements --- */
+        h1, h2, h3, h4 { font-family: var(--serif); font-weight: 400; line-height: 1.2; }
+        a { text-decoration: none; color: inherit; transition: var(--transition); }
+        ul { list-style: none; }
+        img { max-width: 100%; display: block; }
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 40px; }
 
-        h1, h2, h3, .logo-text {
-            font-family: 'Playfair Display', serif;
-            font-weight: 700;
-        }
-
-        /* --- FROSTED GLASS NAVIGATION --- */
+        /* --- Navigation --- */
         nav {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 20px 6%;
-            position: fixed;
-            width: 100%;
-            top: 0;
-            z-index: 1000;
-            background: rgba(15, 23, 42, 0.4);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
+            height: 90px; display: flex; align-items: center;
+            background: transparent;
+            transition: var(--transition);
         }
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Pam Premium Hotel — Vadodara</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
-<style>
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-:root {
-  --black:   #0D0D0D;
-  --black-2: #141414;
-  --off-black: #1E1E1E;
-  --charcoal: #3A3A3A;
-  --mid:     #6B6B6B;
-  --silver:  #ABABAB;
-  --light:   #E8E8E8;
-  --off-white: #F7F6F4;
-  --white:   #FFFFFF;
-  --gold:    #C4972A;
-  --gold-lt: #D4AE5A;
-  --gold-pale: #F0E4C4;
-  --serif: 'Cormorant Garamond', Georgia, serif;
-  --sans:  'DM Sans', system-ui, sans-serif;
-  --nav-h: 70px;
-}
-html { scroll-behavior: smooth; }
-body { font-family: var(--sans); background: var(--white); color: var(--black); line-height: 1.6; overflow-x: hidden; }
-::-webkit-scrollbar { width: 4px; }
-::-webkit-scrollbar-thumb { background: var(--gold); }
-
-/* NAV */
-nav {
-  position: fixed; top: 0; left: 0; right: 0; z-index: 200;
-  height: var(--nav-h); display: flex; align-items: center; justify-content: space-between;
-  padding: 0 56px; background: var(--white); border-bottom: 1px solid var(--light);
-  transition: box-shadow 0.3s;
-}
-nav.scrolled { box-shadow: 0 2px 24px rgba(0,0,0,0.07); }
-.nav-logo { font-family: var(--serif); font-size: 21px; font-weight: 400; color: var(--black); text-decoration: none; letter-spacing: 0.04em; }
-.nav-logo em { font-style: italic; color: var(--gold); }
-.nav-links { display: flex; gap: 36px; list-style: none; }
-.nav-links a { font-size: 12px; font-weight: 400; letter-spacing: 0.12em; text-transform: uppercase; color: var(--charcoal); text-decoration: none; transition: color 0.2s; position: relative; }
-.nav-links a::after { content: ''; position: absolute; bottom: -4px; left: 0; right: 0; height: 1px; background: var(--gold); transform: scaleX(0); transform-origin: left; transition: transform 0.25s; }
-.nav-links a:hover { color: var(--black); }
-.nav-links a:hover::after { transform: scaleX(1); }
-.nav-right { display: flex; align-items: center; gap: 20px; }
-.nav-phone { font-size: 13px; color: var(--mid); text-decoration: none; transition: color 0.2s; }
-.nav-phone:hover { color: var(--gold); }
-.nav-book { background: var(--black); color: var(--white); font-size: 11px; font-weight: 500; letter-spacing: 0.14em; text-transform: uppercase; padding: 11px 26px; text-decoration: none; border: 1px solid var(--black); transition: background 0.2s, color 0.2s; }
-.nav-book:hover { background: var(--gold); border-color: var(--gold); }
-.nav-toggle { display: none; flex-direction: column; gap: 5px; cursor: pointer; background: none; border: none; padding: 4px; }
-.nav-toggle span { display: block; width: 22px; height: 1.5px; background: var(--black); }
-
-/* HERO */
-.hero { height: 100vh; min-height: 620px; display: grid; grid-template-columns: 1fr 1fr; padding-top: var(--nav-h); overflow: hidden; }
-.hero-left { background: var(--black); display: flex; flex-direction: column; justify-content: center; padding: 80px 64px 80px 56px; position: relative; overflow: hidden; }
-.hero-left::before { content: 'PAM'; position: absolute; bottom: -20px; right: -20px; font-family: var(--serif); font-size: 260px; font-weight: 600; font-style: italic; color: rgba(255,255,255,0.03); line-height: 1; pointer-events: none; }
-.hero-tag { display: flex; align-items: center; gap: 12px; font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--gold); margin-bottom: 28px; }
-.hero-tag::before { content: ''; display: block; width: 32px; height: 1px; background: var(--gold); }
-.hero-title { font-family: var(--serif); font-size: clamp(44px, 5.5vw, 80px); font-weight: 300; line-height: 1.06; color: var(--white); margin-bottom: 28px; }
-.hero-title em { font-style: italic; color: var(--gold-lt); }
-.hero-sub { font-size: 15px; line-height: 1.85; color: var(--silver); max-width: 400px; margin-bottom: 48px; }
-.hero-actions { display: flex; gap: 16px; align-items: center; flex-wrap: wrap; }
-.btn-gold { background: var(--gold); color: var(--white); font-size: 11px; font-weight: 500; letter-spacing: 0.14em; text-transform: uppercase; padding: 14px 32px; text-decoration: none; border: 1px solid var(--gold); transition: background 0.2s; display: inline-block; }
-.btn-gold:hover { background: var(--gold-lt); border-color: var(--gold-lt); }
-.btn-outline-white { background: transparent; color: var(--silver); font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; padding: 14px 32px; text-decoration: none; border: 1px solid rgba(255,255,255,0.2); transition: border-color 0.2s, color 0.2s; display: inline-block; }
-.btn-outline-white:hover { border-color: var(--gold); color: var(--gold-lt); }
-.hero-stats { display: flex; margin-top: 64px; border-top: 1px solid rgba(255,255,255,0.08); padding-top: 32px; }
-.stat { flex: 1; padding-right: 24px; border-right: 1px solid rgba(255,255,255,0.08); }
-.stat:last-child { border-right: none; padding-right: 0; padding-left: 24px; }
-.stat:not(:first-child):not(:last-child) { padding: 0 24px; }
-.stat-n { font-family: var(--serif); font-size: 36px; font-weight: 300; color: var(--gold-lt); display: block; line-height: 1; margin-bottom: 6px; }
-.stat-l { font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--silver); }
-.hero-right { position: relative; overflow: hidden; }
-.hero-right img { width: 100%; height: 100%; object-fit: cover; display: block; }
-.hero-badge { position: absolute; bottom: 40px; left: -1px; background: var(--white); padding: 20px 28px; border-left: 3px solid var(--gold); }
-.badge-label { font-size: 10px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--gold); margin-bottom: 4px; }
-.badge-val { font-family: var(--serif); font-size: 20px; color: var(--black); }
-
-/* BOOKING BAR */
-.booking-bar { background: var(--off-white); border-bottom: 1px solid var(--light); }
-.booking-inner { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr auto; min-height: 68px; align-items: stretch; }
-.b-field { padding: 10px 28px; border-right: 1px solid var(--light); display: flex; flex-direction: column; justify-content: center; }
-.b-label { font-size: 10px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--gold); margin-bottom: 4px; }
-.b-input { background: none; border: none; outline: none; color: var(--black); font-family: var(--sans); font-size: 14px; width: 100%; cursor: pointer; }
-.b-btn { background: var(--black); color: var(--white); border: none; font-family: var(--sans); font-size: 11px; font-weight: 500; letter-spacing: 0.14em; text-transform: uppercase; padding: 0 40px; cursor: pointer; transition: background 0.2s; }
-.b-btn:hover { background: var(--gold); }
-
-/* SECTIONS */
-section { padding: 100px 56px; }
-.sec-tag { font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--gold); margin-bottom: 14px; display: flex; align-items: center; gap: 12px; }
-.sec-tag::before { content: ''; display: block; width: 28px; height: 1px; background: var(--gold); }
-.sec-title { font-family: var(--serif); font-size: clamp(34px, 4vw, 58px); font-weight: 300; line-height: 1.1; color: var(--black); margin-bottom: 20px; }
-.sec-title em { font-style: italic; }
-.sec-title.white { color: var(--white); }
-
-/* ABOUT */
-.about { background: var(--white); }
-.about-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 96px; align-items: center; }
-.about-text p { font-size: 16px; color: var(--charcoal); line-height: 1.9; margin-bottom: 16px; }
-.about-text p:last-of-type { margin-bottom: 36px; }
-.about-visual { display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: 240px 200px; gap: 8px; }
-.about-visual img { width: 100%; height: 100%; object-fit: cover; display: block; }
-.about-visual img:first-child { grid-row: 1 / 3; }
-.about-quote { background: var(--black); display: flex; align-items: center; justify-content: center; padding: 28px; }
-.about-quote-text { font-family: var(--serif); font-size: 20px; font-style: italic; font-weight: 300; color: var(--gold-lt); line-height: 1.5; text-align: center; }
-
-/* EXPERIENCE STRIP */
-.experience { display: grid; grid-template-columns: repeat(4,1fr); height: 420px; }
-.exp-item { position: relative; overflow: hidden; cursor: pointer; }
-.exp-item img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.7s ease; filter: brightness(0.7); }
-.exp-item:hover img { transform: scale(1.07); filter: brightness(0.55); }
-.exp-overlay { position: absolute; inset: 0; background: linear-gradient(to top, rgba(0,0,0,0.7) 0%, transparent 60%); }
-.exp-label { position: absolute; bottom: 0; left: 0; right: 0; padding: 28px 24px; }
-.exp-num { font-size: 10px; letter-spacing: 0.18em; color: var(--gold); text-transform: uppercase; margin-bottom: 6px; display: block; }
-.exp-name { font-family: var(--serif); font-size: 30px; font-weight: 300; font-style: italic; color: var(--white); line-height: 1; }
-.exp-border { position: absolute; bottom: 0; left: 0; right: 0; height: 3px; background: var(--gold); transform: scaleX(0); transform-origin: left; transition: transform 0.4s ease; }
-.exp-item:hover .exp-border { transform: scaleX(1); }
-
-/* ROOMS */
-.rooms { background: var(--off-white); padding: 100px 0; }
-.rooms-head { padding: 0 56px; display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 48px; }
-.btn-outline-black { background: transparent; color: var(--black); font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; padding: 12px 28px; text-decoration: none; border: 1px solid var(--charcoal); transition: background 0.2s, color 0.2s; display: inline-block; }
-.btn-outline-black:hover { background: var(--black); color: var(--white); }
-.rooms-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 1px; background: var(--light); padding: 0 56px; }
-.room-card { background: var(--white); overflow: hidden; transition: box-shadow 0.3s; }
-.room-card:hover { box-shadow: 0 8px 40px rgba(0,0,0,0.1); z-index: 1; position: relative; }
-.room-img { height: 240px; overflow: hidden; position: relative; }
-.room-img img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.6s; }
-.room-card:hover .room-img img { transform: scale(1.05); }
-.room-tag { position: absolute; top: 16px; left: 16px; background: var(--white); padding: 5px 12px; font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--gold); }
-.room-body { padding: 28px 28px 32px; }
-.room-price { font-size: 13px; color: var(--mid); margin-bottom: 8px; }
-.room-price strong { font-family: var(--serif); font-size: 22px; color: var(--black); font-weight: 400; }
-.room-name { font-family: var(--serif); font-size: 27px; font-weight: 300; color: var(--black); margin-bottom: 16px; line-height: 1.2; }
-.room-divider { height: 1px; background: var(--light); margin-bottom: 16px; }
-.room-feats { display: flex; gap: 20px; margin-bottom: 24px; flex-wrap: wrap; }
-.room-feat { font-size: 12px; color: var(--mid); display: flex; align-items: center; gap: 6px; }
-.feat-dot { width: 4px; height: 4px; background: var(--gold); border-radius: 50%; flex-shrink: 0; }
-.room-link { font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--black); text-decoration: none; display: inline-flex; align-items: center; gap: 8px; border-bottom: 1px solid var(--black); padding-bottom: 2px; transition: color 0.2s, border-color 0.2s; }
-.room-link:hover { color: var(--gold); border-color: var(--gold); }
-.room-link::after { content: '→'; }
-
-/* AMENITIES */
-.amenities { background: var(--black); }
-.amen-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 1px; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.06); margin-top: 60px; }
-.amen-item { background: var(--black); padding: 36px 28px; border-bottom: 2px solid transparent; transition: border-color 0.25s, background 0.25s; }
-.amen-item:hover { background: var(--off-black); border-bottom-color: var(--gold); }
-.amen-icon { font-size: 20px; margin-bottom: 18px; display: block; }
-.amen-name { font-family: var(--serif); font-size: 19px; font-weight: 400; color: var(--white); margin-bottom: 8px; }
-.amen-desc { font-size: 13px; color: var(--silver); line-height: 1.7; }
-
-/* REVIEWS */
-.reviews { background: var(--off-white); }
-.reviews-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 2px; margin-top: 60px; background: var(--light); }
-.rev-card { background: var(--white); padding: 40px 32px; position: relative; transition: background 0.25s; }
-.rev-card:hover { background: var(--off-white); }
-.rev-card::before { content: '\201C'; position: absolute; top: 24px; right: 28px; font-family: var(--serif); font-size: 80px; font-weight: 600; color: var(--gold-pale); line-height: 1; }
-.rev-stars { display: flex; gap: 3px; margin-bottom: 20px; }
-.star { width: 11px; height: 11px; background: var(--gold); clip-path: polygon(50% 0%,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%); }
-.rev-text { font-family: var(--serif); font-size: 18px; font-style: italic; font-weight: 300; color: var(--charcoal); line-height: 1.8; margin-bottom: 28px; }
-.rev-author { font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--gold); }
-.rev-via { font-size: 11px; color: var(--silver); margin-top: 4px; }
-
-/* LOCATION */
-.location { background: var(--white); }
-.location-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: start; }
-.loc-map { height: 420px; overflow: hidden; border: 1px solid var(--light); }
-.loc-map iframe { width: 100%; height: 100%; border: none; display: block; }
-.loc-points { padding-top: 8px; }
-.loc-point { display: flex; gap: 20px; padding: 24px 0; border-bottom: 1px solid var(--light); align-items: flex-start; }
-.loc-point:first-child { padding-top: 0; }
-.loc-point:last-child { border-bottom: none; }
-.loc-icon-box { width: 40px; height: 40px; background: var(--gold-pale); display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 16px; margin-top: 2px; }
-.loc-name { font-family: var(--serif); font-size: 19px; font-weight: 400; color: var(--black); margin-bottom: 4px; }
-.loc-desc { font-size: 13px; color: var(--mid); line-height: 1.7; }
-.loc-desc a { color: var(--gold); text-decoration: none; }
-
-/* CTA */
-.cta { background: var(--black); padding: 120px 56px; display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center; }
-.cta-title { font-family: var(--serif); font-size: clamp(38px, 4.5vw, 68px); font-weight: 300; color: var(--white); line-height: 1.08; margin-bottom: 16px; }
-.cta-title em { font-style: italic; color: var(--gold-lt); }
-.cta-sub { font-size: 15px; color: var(--silver); line-height: 1.8; }
-.cta-right { display: flex; flex-direction: column; gap: 16px; align-items: flex-start; }
-.cta-detail { display: flex; align-items: center; gap: 14px; padding: 18px 20px; border: 1px solid rgba(255,255,255,0.08); width: 100%; }
-.cta-detail-icon { font-size: 18px; flex-shrink: 0; }
-.cta-detail-label { font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--gold); margin-bottom: 2px; }
-.cta-detail-val { font-size: 14px; color: var(--silver); }
-.cta-detail-val a { color: var(--silver); text-decoration: none; }
-.cta-actions { display: flex; gap: 12px; margin-top: 8px; }
-
-/* FOOTER */
-footer { background: var(--off-white); border-top: 1px solid var(--light); padding: 72px 56px 36px; }
-.footer-top { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 64px; margin-bottom: 56px; padding-bottom: 56px; border-bottom: 1px solid var(--light); }
-.footer-brand-name { font-family: var(--serif); font-size: 26px; font-weight: 300; font-style: italic; color: var(--black); margin-bottom: 14px; }
-.footer-brand-name em { color: var(--gold); font-style: normal; }
-.footer-brand-desc { font-size: 13px; color: var(--mid); line-height: 1.85; margin-bottom: 24px; }
-.footer-social { display: flex; gap: 10px; }
-.soc-btn { width: 36px; height: 36px; border: 1px solid var(--light); display: flex; align-items: center; justify-content: center; color: var(--charcoal); font-size: 13px; text-decoration: none; font-weight: 500; transition: background 0.2s, border-color 0.2s, color 0.2s; }
-.soc-btn:hover { background: var(--gold); border-color: var(--gold); color: var(--white); }
-.footer-col h4 { font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--black); margin-bottom: 20px; font-weight: 500; }
-.footer-col ul { list-style: none; }
-.footer-col li { margin-bottom: 12px; }
-.footer-col a { font-size: 14px; color: var(--mid); text-decoration: none; transition: color 0.2s; }
-.footer-col a:hover { color: var(--gold); }
-.footer-col p { font-size: 14px; color: var(--mid); line-height: 1.9; }
-.ft-phone { display: block; font-size: 16px; font-weight: 500; color: var(--black); text-decoration: none; margin-bottom: 8px; transition: color 0.2s; }
-.ft-phone:hover { color: var(--gold); }
-.footer-bottom { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; }
-.footer-copy { font-size: 12px; color: var(--silver); }
-.footer-policy { display: flex; gap: 24px; list-style: none; }
-.footer-policy a { font-size: 12px; color: var(--silver); text-decoration: none; transition: color 0.2s; }
-.footer-policy a:hover { color: var(--gold); }
-
-/* ANIMATIONS */
-.reveal { opacity: 0; transform: translateY(28px); transition: opacity 0.7s ease, transform 0.7s ease; }
-.reveal.visible { opacity: 1; transform: translateY(0); }
-.reveal-d1 { transition-delay: 0.15s; }
-
-/* MOBILE MENU */
-.mob-menu { display: none; position: fixed; top: var(--nav-h); left: 0; right: 0; bottom: 0; background: var(--white); z-index: 199; padding: 32px 28px; overflow-y: auto; border-top: 2px solid var(--gold); }
-.mob-menu.open { display: block; }
-.mob-menu ul { list-style: none; }
-.mob-menu li { border-bottom: 1px solid var(--light); }
-.mob-menu a { display: block; padding: 16px 0; font-size: 15px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--charcoal); text-decoration: none; }
-.mob-phone { display: block; margin-top: 28px; font-family: var(--serif); font-size: 24px; color: var(--gold); text-decoration: none; }
-.mob-book-btn { display: block; margin-top: 16px; background: var(--black); color: var(--white); text-align: center; padding: 14px; font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; text-decoration: none; }
-
-/* RESPONSIVE */
-@media (max-width: 1100px) {
-  nav { padding: 0 28px; }
-  .nav-links { display: none; }
-  .nav-toggle { display: flex; }
-  section { padding: 72px 28px; }
-  .hero { grid-template-columns: 1fr; height: auto; }
-  .hero-left { padding: 64px 28px; min-height: 80vh; }
-  .hero-right { height: 340px; }
-  .about-grid { grid-template-columns: 1fr; gap: 48px; }
-  .location-grid { grid-template-columns: 1fr; gap: 48px; }
-  .cta { grid-template-columns: 1fr; gap: 48px; padding: 80px 28px; }
-  .rooms-head { padding: 0 28px; }
-  .rooms-grid { padding: 0 28px; grid-template-columns: 1fr 1fr; }
-  .amen-grid { grid-template-columns: 1fr 1fr; }
-  .reviews-grid { grid-template-columns: 1fr; }
-  .footer-top { grid-template-columns: 1fr 1fr; gap: 36px; }
-  footer { padding: 56px 28px 28px; }
-  .experience { grid-template-columns: 1fr 1fr; height: auto; }
-  .exp-item { height: 240px; }
-  .booking-inner { grid-template-columns: 1fr 1fr; }
-}
-@media (max-width: 640px) {
-  nav { padding: 0 20px; }
-  section { padding: 60px 20px; }
-  .hero-left { padding: 52px 20px; }
-  .hero-right { height: 260px; }
-  .rooms-head { padding: 0 20px; }
-  .rooms-grid { padding: 0 20px; grid-template-columns: 1fr; }
-  .amen-grid { grid-template-columns: 1fr; }
-  .experience { grid-template-columns: 1fr; }
-  .exp-item { height: 200px; }
-  .footer-top { grid-template-columns: 1fr; gap: 28px; }
-  footer { padding: 48px 20px 24px; }
-  .cta { padding: 72px 20px; }
-  .booking-inner { grid-template-columns: 1fr; }
-  .b-field:nth-child(3) { display: none; }
-}
-</style>
-</head>
-<body>
-
-<!-- NAV -->
-<nav id="navbar">
-  <a class="nav-logo" href="#">Pam <em>Premium</em> Hotel</a>
-  <ul class="nav-links">
-    <li><a href="#about">About</a></li>
-    <li><a href="#rooms">Rooms</a></li>
-    <li><a href="#amenities">Amenities</a></li>
-    <li><a href="#reviews">Reviews</a></li>
-    <li><a href="#location">Location</a></li>
-    <li><a href="https://pampremiumhotel.com/faqs/">FAQs</a></li>
-  </ul>
-  <div class="nav-right">
-    <a class="nav-phone" href="tel:+916357496707">+91 63574 96707</a>
-    <a class="nav-book" href="#booking">Book Now</a>
-    <button class="nav-toggle" id="menuToggle" aria-label="Menu">
-      <span></span><span></span><span></span>
-    </button>
-  </div>
-</nav>
-
-<div class="mob-menu" id="mobMenu">
-  <ul>
-    <li><a href="#about" onclick="closeMenu()">About</a></li>
-    <li><a href="#rooms" onclick="closeMenu()">Rooms</a></li>
-    <li><a href="#amenities" onclick="closeMenu()">Amenities</a></li>
-    <li><a href="#reviews" onclick="closeMenu()">Reviews</a></li>
-    <li><a href="#location" onclick="closeMenu()">Location</a></li>
-    <li><a href="https://pampremiumhotel.com/faqs/" onclick="closeMenu()">FAQs</a></li>
-  </ul>
-  <a class="mob-phone" href="tel:+916357496707">+91 63574 96707</a>
-  <a class="mob-book-btn" href="https://pampremiumhotel.com/rooms/" onclick="closeMenu()">Book Your Stay</a>
-</div>
-
-<!-- HERO -->
-<div class="hero" id="home">
-  <div class="hero-left">
-    <div class="hero-tag">Vadodara, Gujarat · Since 2025</div>
-    <h1 class="hero-title">Luxury in the<br><em>Heart of</em><br>Vadodara</h1>
-    <p class="hero-sub">60 premium rooms, world-class dining, and warm hospitality — steps from Vadodara Railway Station.</p>
-    <div class="hero-actions">
-      <a class="btn-gold" href="#booking">Reserve Your Stay</a>
-      <a class="btn-outline-white" href="#rooms">Explore Rooms</a>
-    </div>
-    <div class="hero-stats">
-      <div class="stat"><span class="stat-n">60</span><span class="stat-l">Rooms</span></div>
-      <div class="stat"><span class="stat-n">200+</span><span class="stat-l">Guest Capacity</span></div>
-      <div class="stat"><span class="stat-n">250</span><span class="stat-l">Banquet Pax</span></div>
-    </div>
-  </div>
-  <div class="hero-right">
-    <img src="https://pampremiumhotel.com/wp-content/uploads/2026/02/DSC02311-1-scaled.jpg" alt="Pam Premium Hotel Vadodara">
-    <div class="hero-badge">
-      <div class="badge-label">Starting from</div>
-      <div class="badge-val">₹3,000 / night</div>
-    </div>
-  </div>
-</div>
-
-<!-- BOOKING BAR -->
-<div class="booking-bar" id="booking">
-  <div class="booking-inner">
-    <div class="b-field"><span class="b-label">Check In</span><input class="b-input" type="date" name="checkin"></div>
-    <div class="b-field"><span class="b-label">Check Out</span><input class="b-input" type="date" name="checkout"></div>
-    <div class="b-field">
-      <span class="b-label">Adults</span>
-      <select class="b-input"><option>1 Adult</option><option>2 Adults</option><option>3 Adults</option><option>4 Adults</option></select>
-    </div>
-    <div class="b-field">
-      <span class="b-label">Room Type</span>
-      <select class="b-input"><option>Any Room</option><option>Premium Single</option><option>Premium Twin</option><option>Premium Family</option></select>
-    </div>
-    <button class="b-btn" onclick="window.location.href='https://pampremiumhotel.com/rooms/'">Check Availability</button>
-  </div>
-</div>
-
-<!-- ABOUT -->
-<section class="about" id="about">
-  <div class="about-grid">
-    <div class="about-text reveal">
-      <div class="sec-tag">About Us</div>
-      <h2 class="sec-title">A <em>Legacy</em> of Luxury</h2>
-      <p>At Pam Premium Hotel, we believe that travel should be more than just a change of scenery — it should be an elevation of lifestyle. Since opening our doors, we have committed to delivering a premium experience that truly lives up to our name.</p>
-      <p>Nestled in the cultural heart of Vadodara, just 5 minutes from the railway station and 2 minutes from MSU, our hotel combines prime location with uncompromising comfort.</p>
-      <a class="btn-gold" href="https://pampremiumhotel.com/rooms/">View Our Rooms</a>
-    </div>
-    <div class="about-visual reveal reveal-d1">
-      <img src="https://pampremiumhotel.com/wp-content/uploads/2026/02/DSC02289.JPG-scaled.jpg" alt="Hotel lobby">
-      <img src="https://pampremiumhotel.com/wp-content/uploads/2026/02/DSC02334.JPG-scaled.jpg" alt="Hotel room">
-      <div class="about-quote"><div class="about-quote-text">"An elevation<br>of lifestyle"</div></div>
-    </div>
-  </div>
-</section>
-
-<!-- EXPERIENCE STRIP -->
-<div class="experience">
-  <div class="exp-item"><img src="https://pampremiumhotel.com/wp-content/uploads/2026/02/DSC02417-1-scaled.jpg" alt="Stay"><div class="exp-overlay"></div><div class="exp-label"><span class="exp-num">01</span><div class="exp-name">Stay</div></div><div class="exp-border"></div></div>
-  <div class="exp-item"><img src="https://pampremiumhotel.com/wp-content/uploads/2026/02/DSC02499-1-1-scaled.jpg" alt="Dine"><div class="exp-overlay"></div><div class="exp-label"><span class="exp-num">02</span><div class="exp-name">Dine</div></div><div class="exp-border"></div></div>
-  <div class="exp-item"><img src="https://pampremiumhotel.com/wp-content/uploads/2026/02/DSC02485-1-scaled.jpg" alt="Work"><div class="exp-overlay"></div><div class="exp-label"><span class="exp-num">03</span><div class="exp-name">Work</div></div><div class="exp-border"></div></div>
-  <div class="exp-item"><img src="https://pampremiumhotel.com/wp-content/uploads/2026/02/DSC02570-1-scaled.jpg" alt="Celebrate"><div class="exp-overlay"></div><div class="exp-label"><span class="exp-num">04</span><div class="exp-name">Celebrate</div></div><div class="exp-border"></div></div>
-</div>
-
-<!-- ROOMS -->
-<section class="rooms" id="rooms">
-  <div class="rooms-head reveal">
-    <div><div class="sec-tag">Premium Rooms</div><h2 class="sec-title" style="margin-bottom:0;">Rooms &amp; <em>Suites</em></h2></div>
-    <a class="btn-outline-black" href="https://pampremiumhotel.com/rooms/">All Rooms</a>
-  </div>
-  <div class="rooms-grid reveal">
-    <div class="room-card">
-      <div class="room-img"><img src="https://pampremiumhotel.com/wp-content/uploads/2026/02/DSC02334.JPG-scaled.jpg" alt="Premium Family"><div class="room-tag">Most Popular</div></div>
-      <div class="room-body">
-        <div class="room-price"><strong>₹3,000</strong> / night</div>
-        <div class="room-name">Premium Family</div>
-        <div class="room-divider"></div>
-        <div class="room-feats"><span class="room-feat"><span class="feat-dot"></span>King Bed</span><span class="room-feat"><span class="feat-dot"></span>Private Bath</span><span class="room-feat"><span class="feat-dot"></span>Breakfast</span></div>
-        <a class="room-link" href="https://pampremiumhotel.com/product/premium-family/">Book This Room</a>
-      </div>
-    </div>
-    <div class="room-card">
-      <div class="room-img"><img src="https://pampremiumhotel.com/wp-content/uploads/2025/04/DSC02423.webp" alt="Premium Twin"></div>
-      <div class="room-body">
-        <div class="room-price"><strong>₹3,000</strong> / night</div>
-        <div class="room-name">Premium Twin</div>
-        <div class="room-divider"></div>
-        <div class="room-feats"><span class="room-feat"><span class="feat-dot"></span>Twin Beds</span><span class="room-feat"><span class="feat-dot"></span>Private Bath</span><span class="room-feat"><span class="feat-dot"></span>Breakfast</span></div>
-        <a class="room-link" href="https://pampremiumhotel.com/product/premium-twin/">Book This Room</a>
-      </div>
-    </div>
-    <div class="room-card">
-      <div class="room-img"><img src="https://pampremiumhotel.com/wp-content/uploads/2025/04/DSC02426.webp" alt="Premium Single"></div>
-      <div class="room-body">
-        <div class="room-price"><strong>₹3,000</strong> / night</div>
-        <div class="room-name">Premium Single</div>
-        <div class="room-divider"></div>
-        <div class="room-feats"><span class="room-feat"><span class="feat-dot"></span>Single Bed</span><span class="room-feat"><span class="feat-dot"></span>Private Bath</span><span class="room-feat"><span class="feat-dot"></span>Breakfast</span></div>
-        <a class="room-link" href="https://pampremiumhotel.com/product/premium-single/">Book This Room</a>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- AMENITIES -->
-<section class="amenities" id="amenities">
-  <div class="reveal"><div class="sec-tag">Hotel Services</div><h2 class="sec-title white">Everything You <em>Need</em></h2></div>
-  <div class="amen-grid reveal">
-    <div class="amen-item"><span class="amen-icon">❄</span><div class="amen-name">Air Conditioning</div><div class="amen-desc">Stay cool and comfortable in every season.</div></div>
-    <div class="amen-item"><span class="amen-icon">⚡</span><div class="amen-name">Free High-Speed WiFi</div><div class="amen-desc">Seamless connectivity for work or leisure.</div></div>
-    <div class="amen-item"><span class="amen-icon">🅿</span><div class="amen-name">Free Parking</div><div class="amen-desc">Secure underground parking at no extra cost.</div></div>
-    <div class="amen-item"><span class="amen-icon">☕</span><div class="amen-name">Breakfast Included</div><div class="amen-desc">Start your day with a delicious nutritious meal.</div></div>
-    <div class="amen-item"><span class="amen-icon">♿</span><div class="amen-name">Disabled Access</div><div class="amen-desc">Accessible features for a seamless stay.</div></div>
-    <div class="amen-item"><span class="amen-icon">🔒</span><div class="amen-name">Smart Security</div><div class="amen-desc">Advanced 24/7 security for total peace of mind.</div></div>
-    <div class="amen-item"><span class="amen-icon">🏋</span><div class="amen-name">Gym</div><div class="amen-desc">World-class fitness facilities for all guests.</div></div>
-    <div class="amen-item"><span class="amen-icon">🍽</span><div class="amen-name">Restaurant: Arab Ino</div><div class="amen-desc">Best Veg &amp; Non-Veg buffet, capacity 60 pax.</div></div>
-    <div class="amen-item"><span class="amen-icon">🎉</span><div class="amen-name">Ocean Banquet Hall</div><div class="amen-desc">Grand event space for up to 250 guests.</div></div>
-    <div class="amen-item"><span class="amen-icon">💼</span><div class="amen-name">Corporate Board Room</div><div class="amen-desc">Professional meeting space for 30 people.</div></div>
-    <div class="amen-item"><span class="amen-icon">🥂</span><div class="amen-name">PDR Private Dining</div><div class="amen-desc">Exclusive private dining for up to 15 guests.</div></div>
-    <div class="amen-item"><span class="amen-icon">🚌</span><div class="amen-name">Airport Shuttle</div><div class="amen-desc">Hassle-free transfers to and from the airport.</div></div>
-  </div>
-</section>
-
-<!-- REVIEWS -->
-<section class="reviews" id="reviews">
-  <div class="reveal"><div class="sec-tag">Guest Experiences</div><h2 class="sec-title">Trusted by Our <em>Happy Guests</em></h2></div>
-  <div class="reviews-grid reveal">
-    <div class="rev-card">
-      <div class="rev-stars"><div class="star"></div><div class="star"></div><div class="star"></div><div class="star"></div><div class="star"></div></div>
-      <div class="rev-text">"The service was genuinely good and the staff was very polite throughout. The buffet food system was the best — unlimited food with great taste, totally worth it. Rooms were clean and well-maintained."</div>
-      <div class="rev-author">Verified Guest</div><div class="rev-via">Google Review</div>
-    </div>
-    <div class="rev-card">
-      <div class="rev-stars"><div class="star"></div><div class="star"></div><div class="star"></div><div class="star"></div><div class="star"></div></div>
-      <div class="rev-text">"The room was spotless and beautifully decorated. Staff were very friendly and helpful. Breakfast was fresh and delicious. A perfect place for a honeymoon — you get both privacy and comfort. Highly recommended!"</div>
-      <div class="rev-author">Verified Guest</div><div class="rev-via">Google Review</div>
-    </div>
-    <div class="rev-card">
-      <div class="rev-stars"><div class="star"></div><div class="star"></div><div class="star"></div><div class="star"></div><div class="star"></div></div>
-      <div class="rev-text">"Very clean rooms, cozy bed and leather furniture. The breakfast was superb with so many yummy items. The manager and staff made our stay very comfortable. I would call this a 5-star budget hotel."</div>
-      <div class="rev-author">Dr. Ganesh Raikar</div><div class="rev-via">Google Review</div>
-    </div>
-  </div>
-</section>
-
-<!-- LOCATION -->
-<section class="location" id="location">
-  <div class="location-grid">
-    <div class="reveal">
-      <div class="sec-tag">Find Us</div>
-      <h2 class="sec-title">Prime <em>Location</em></h2>
-      <div class="loc-points">
-        <div class="loc-point"><div class="loc-icon-box">📍</div><div><div class="loc-name">Near MSU Vadodara</div><div class="loc-desc">Just a 2-minute walk from Maharaja Sayajirao University.</div></div></div>
-        <div class="loc-point"><div class="loc-icon-box">🚉</div><div><div class="loc-name">Vadodara Railway Station</div><div class="loc-desc">Only 5 minutes away — ideal for all travellers.</div></div></div>
-        <div class="loc-point"><div class="loc-icon-box">✈</div><div><div class="loc-name">Vadodara Airport</div><div class="loc-desc">15 minutes by car with our complimentary airport shuttle.</div></div></div>
-        <div class="loc-point"><div class="loc-icon-box">📞</div><div><div class="loc-name">Contact Us</div><div class="loc-desc"><a href="tel:+916357496707">+91 63574 96707</a><br><a href="mailto:info@pampremiumhotel.com" style="color:var(--mid);">info@pampremiumhotel.com</a></div></div></div>
-      </div>
-    </div>
-    <div class="loc-map reveal reveal-d1">
-      <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3691.5!2d73.1820!3d22.3003!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x395fc5f67bbd4291%3A0x41b8ee7cac8c09f8!2sPam%20Premium%20Hotel!5e0!3m2!1sen!2sin!4v1680000000000!5m2!1sen!2sin" allowfullscreen loading="lazy" referrerpolicy="no-referrer-when-downgrade" title="Pam Premium Hotel Map"></iframe>
-    </div>
-  </div>
-</section>
-
-<!-- CTA -->
-<section class="cta">
-  <div class="cta-text reveal">
-    <h2 class="cta-title">Ready for a<br><em>Premium</em> Stay?</h2>
-    <p class="cta-sub">Reserve your room today and experience luxury, comfort, and warm hospitality in the heart of Vadodara.</p>
-  </div>
-  <div class="cta-right reveal reveal-d1">
-    <div class="cta-detail"><span class="cta-detail-icon">📞</span><div><div class="cta-detail-label">Call Us Directly</div><div class="cta-detail-val"><a href="tel:+916357496707">+91 63574 96707</a></div></div></div>
-    <div class="cta-detail"><span class="cta-detail-icon">📍</span><div><div class="cta-detail-label">Our Location</div><div class="cta-detail-val">Vadodara, Gujarat — Near MSU &amp; Railway Station</div></div></div>
-    <div class="cta-actions">
-      <a class="btn-gold" href="https://pampremiumhotel.com/rooms/">Book Your Stay</a>
-      <a class="btn-outline-white" href="https://pampremiumhotel.com/contact/">Contact Us</a>
-    </div>
-  </div>
-</section>
-
-<!-- FOOTER -->
-<footer>
-  <div class="footer-top">
-    <div>
-      <div class="footer-brand-name">Pam <em>Premium</em> Hotel</div>
-      <div class="footer-brand-desc">We believe that travel should be more than just a change of scenery — it should be an elevation of lifestyle. Located in the heart of Vadodara.</div>
-      <div class="footer-social">
-        <a class="soc-btn" href="https://www.facebook.com/profile.php?id=61585695811772" target="_blank" rel="noopener">f</a>
-        <a class="soc-btn" href="https://www.instagram.com/pam.premium/" target="_blank" rel="noopener">ig</a>
-      </div>
-    </div>
-    <div class="footer-col">
-      <h4>Navigate</h4>
-      <ul>
-        <li><a href="#about">About</a></li>
-        <li><a href="https://pampremiumhotel.com/rooms/">Rooms</a></li>
-        <li><a href="https://pampremiumhotel.com/image-gallery/">Gallery</a></li>
-        <li><a href="https://pampremiumhotel.com/faqs/">FAQs</a></li>
-        <li><a href="https://pampremiumhotel.com/contact/">Contact</a></li>
-      </ul>
-    </div>
-    <div class="footer-col">
-      <h4>Rooms</h4>
-      <ul>
-        <li><a href="https://pampremiumhotel.com/product/premium-single/">Premium Single</a></li>
-        <li><a href="https://pampremiumhotel.com/product/premium-twin/">Premium Twin</a></li>
-        <li><a href="https://pampremiumhotel.com/product/premium-family/">Premium Family</a></li>
-      </ul>
-    </div>
-    <div class="footer-col">
-      <h4>Get In Touch</h4>
-      <a class="ft-phone" href="tel:+916357496707">+91 63574 96707</a>
-      <p>2-min walk from MSU<br>5-min from Railway Station<br>15-min from Airport<br>Vadodara, Gujarat</p>
-    </div>
-  </div>
-  <div class="footer-bottom">
-    <span class="footer-copy">© 2026 Pam Hotels India. All rights reserved.</span>
-    <ul class="footer-policy">
-      <li><a href="https://pampremiumhotel.com/privacy-policy/">Privacy Policy</a></li>
-      <li><a href="https://pampremiumhotel.com/terms-conditions/">Terms &amp; Conditions</a></li>
-      <li><a href="https://pampremiumhotel.com/refund-cancellation-policy/">Refund Policy</a></li>
-    </ul>
-  </div>
-</footer>
-
-<script>
-  document.getElementById('menuToggle').addEventListener('click', () => {
-    document.getElementById('mobMenu').classList.toggle('open');
-  });
-  function closeMenu() { document.getElementById('mobMenu').classList.remove('open'); }
-
-  window.addEventListener('scroll', () => {
-    document.getElementById('navbar').classList.toggle('scrolled', window.scrollY > 20);
-  });
-
-  const obs = new IntersectionObserver(entries => {
-    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); obs.unobserve(e.target); } });
-  }, { threshold: 0.1 });
-  document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
-
-  const today = new Date().toISOString().split('T')[0];
-  const tmrw  = new Date(Date.now() + 86400000).toISOString().split('T')[0];
-  const ci = document.querySelector('[name="checkin"]');
-  const co = document.querySelector('[name="checkout"]');
-  if (ci) { ci.value = today; ci.min = today; }
-  if (co) { co.value = tmrw; co.min = tmrw; }
-  if (ci) ci.addEventListener('change', () => {
-    if (co && ci.value >= co.value) {
-      const d = new Date(ci.value); d.setDate(d.getDate() + 1);
-      co.value = d.toISOString().split('T')[0];
-    }
-  });
-</script>
-</body>
-</html>
-        .logo-text {
-            font-size: 1.5rem;
-            letter-spacing: 1px;
-            color: white;
-            text-decoration: none;
+        nav.scrolled {
+            height: 70px;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 4px 30px rgba(0,0,0,0.03);
         }
-        .logo-text span {
-            color: var(--accent-gold);
-            font-style: italic;
+        .nav-inner {
+            width: 100%; max-width: 1400px; margin: 0 auto; padding: 0 40px;
+            display: flex; justify-content: space-between; align-items: center;
         }
-
-        .nav-links a {
-            color: var(--text-light);
-            text-decoration: none;
-            margin-left: 35px;
-            font-size: 0.85rem;
-            font-weight: 500;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            transition: all 0.3s ease;
-        }
+        .logo { font-family: var(--serif); font-size: 24px; letter-spacing: 1px; font-weight: 600; text-transform: uppercase; }
+        .logo span { color: var(--accent-gold); font-style: italic; }
         
+        .nav-links { display: flex; gap: 40px; }
+        .nav-links a { 
+            font-size: 13px; font-weight: 500; letter-spacing: 1.5px; 
+            text-transform: uppercase; color: var(--text-main); 
+        }
         .nav-links a:hover { color: var(--accent-gold); }
-        
-        /* THE GLOWING ACTIVE NAV STATE */
-        .nav-links a.active {
-            color: var(--accent-gold);
-            text-shadow: 0 0 12px rgba(251, 191, 36, 0.5);
-        }
 
-        /* --- SCROLL ANIMATIONS --- */
-        .reveal {
-            opacity: 0;
-            transform: translateY(40px);
-            transition: all 1s cubic-bezier(0.25, 1, 0.5, 1);
-        }
-        .reveal.active {
-            opacity: 1;
-            transform: translateY(0);
-        }
-        .delay-1 { transition-delay: 0.2s; }
-        .delay-2 { transition-delay: 0.4s; }
-
-        /* --- COMMON SECTION STYLES --- */
-        section {
-            padding: var(--section-spacing) 8%;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-        }
-
-        .section-tag {
-            display: inline-block;
-            padding: 8px 16px;
-            background: rgba(251, 191, 36, 0.1);
-            color: var(--accent-gold);
-            border-radius: 50px;
-            font-size: 0.8rem;
-            font-weight: 600;
-            letter-spacing: 2px;
-            text-transform: uppercase;
-            margin-bottom: 25px;
-            border: 1px solid rgba(251, 191, 36, 0.2);
-        }
-
-        .section-title {
-            font-size: 3.5rem;
-            margin-bottom: 20px;
-            line-height: 1.1;
-        }
-
-        /* --- HERO SECTION --- */
-        .hero {
-            align-items: center;
-            text-align: center;
-            padding-top: 150px;
-            min-height: 80vh; /* Reduced to make room for marquee */
-        }
-
-        .hero h1 {
-            font-size: 6rem;
-            letter-spacing: -2px;
-            margin-bottom: 30px;
-        }
-        .hero h1 span {
-            background: linear-gradient(to right, #fbbf24, #fde68a);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            font-style: italic;
-        }
-
-        .hero p {
-            font-size: 1.4rem;
-            color: var(--text-muted);
-            max-width: 600px;
-            margin: 0 auto 50px auto;
-        }
-
-        .btn-primary {
-            background: var(--text-light);
-            color: #000;
-            padding: 18px 50px;
-            border-radius: 50px;
-            text-decoration: none;
-            font-weight: 600;
-            font-size: 0.9rem;
-            letter-spacing: 2px;
-            text-transform: uppercase;
-            transition: all 0.4s ease;
-            display: inline-block;
-            border: none;
+        .btn-book {
+            background: var(--charcoal); color: var(--white);
+            padding: 12px 28px; font-size: 12px; font-weight: 500;
+            letter-spacing: 2px; text-transform: uppercase;
+            border: 1px solid var(--charcoal);
             cursor: pointer;
         }
-        .btn-primary:hover {
-            background: var(--accent-gold);
-            transform: translateY(-3px);
-            box-shadow: 0 15px 30px rgba(251, 191, 36, 0.3);
-        }
+        .btn-book:hover { background: var(--accent-gold); border-color: var(--accent-gold); }
 
-        /* --- TECH STACK MARQUEE --- */
-        .marquee-container {
-            width: 100%;
+        /* --- Hero Section --- */
+        .hero {
+            height: 100vh; min-height: 750px;
+            display: flex; align-items: center; position: relative;
+            background: var(--charcoal); color: var(--white);
             overflow: hidden;
-            background: rgba(255, 255, 255, 0.02);
-            border-top: 1px solid rgba(255, 255, 255, 0.05);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-            padding: 25px 0;
-            white-space: nowrap;
-            display: flex;
-            align-items: center;
+        }
+        .hero-bg {
+            position: absolute; inset: 0;
+            background: linear-gradient(to right, rgba(0,0,0,0.7) 20%, transparent 80%), 
+                        url('https://pampremiumhotel.com/wp-content/uploads/2026/02/DSC02311-1-scaled.jpg') center/cover no-repeat;
+            opacity: 0.8;
+        }
+        .hero-content { position: relative; z-index: 10; max-width: 700px; }
+        .hero-tag { 
+            display: inline-block; font-size: 11px; letter-spacing: 3px; 
+            text-transform: uppercase; color: var(--accent-gold); 
+            margin-bottom: 20px; 
+        }
+        .hero h1 { font-size: clamp(48px, 8vw, 84px); margin-bottom: 24px; }
+        .hero h1 em { color: var(--accent-gold); font-style: italic; }
+        .hero p { font-size: 18px; color: rgba(255,255,255,0.7); max-width: 500px; margin-bottom: 40px; font-weight: 300; }
+
+        /* --- Booking Strip --- */
+        .booking-strip {
+            position: absolute; bottom: 0; left: 0; right: 0;
+            background: var(--white); color: var(--text-main);
+            padding: 30px 40px; transform: translateY(50%);
+            box-shadow: 0 15px 45px rgba(0,0,0,0.1);
+            z-index: 20;
+        }
+        .booking-form {
+            display: grid; grid-template-columns: repeat(4, 1fr) auto; gap: 20px; align-items: flex-end;
+        }
+        .field-group label { 
+            display: block; font-size: 10px; text-transform: uppercase; 
+            letter-spacing: 1px; color: var(--accent-gold); margin-bottom: 8px; font-weight: 500;
+        }
+        .field-group input, .field-group select {
+            width: 100%; border: none; border-bottom: 1px solid #E0E0E0;
+            padding: 10px 0; font-family: var(--sans); font-size: 14px; outline: none;
+            cursor: pointer; background: transparent;
         }
 
-        .marquee-content {
-            display: inline-block;
-            animation: marquee 25s linear infinite;
+        /* --- Intro Section --- */
+        .intro { padding: 180px 0 120px; text-align: center; }
+        .section-tag { color: var(--accent-gold); font-size: 12px; letter-spacing: 4px; text-transform: uppercase; margin-bottom: 20px; display: block; }
+        .section-title { font-size: clamp(32px, 5vw, 56px); margin-bottom: 30px; max-width: 800px; margin-inline: auto; }
+        .intro-text { max-width: 600px; margin: 0 auto; color: var(--text-muted); font-size: 17px; }
+
+        /* --- Room Cards --- */
+        .rooms-section { padding-bottom: 120px; }
+        .rooms-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 30px; }
+        .room-card { overflow: hidden; position: relative; }
+        .room-image { height: 450px; overflow: hidden; }
+        .room-image img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.8s; }
+        .room-card:hover .room-image img { transform: scale(1.05); }
+        .room-info { padding: 30px 0; }
+        .room-price { font-size: 13px; color: var(--accent-gold); margin-bottom: 10px; font-weight: 500; }
+        .room-title { font-size: 28px; margin-bottom: 15px; }
+        .room-meta { display: flex; gap: 20px; font-size: 13px; color: var(--text-muted); }
+        .room-link { 
+            display: inline-block; margin-top: 25px; font-size: 11px; 
+            letter-spacing: 2px; text-transform: uppercase; font-weight: 500;
+            border-bottom: 1px solid var(--accent-gold); padding-bottom: 4px;
         }
 
-        .marquee-item {
-            display: inline-flex;
-            align-items: center;
-            gap: 12px;
-            font-size: 1.2rem;
-            color: var(--text-muted);
-            margin: 0 40px;
-            font-weight: 500;
-            letter-spacing: 1px;
-        }
+        /* --- Gallery Section --- */
+        .experience-strip { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; padding: 100px 40px; background: var(--secondary-bg); }
+        .exp-item { height: 600px; position: relative; overflow: hidden; }
+        .exp-item img { width: 100%; height: 100%; object-fit: cover; transition: var(--transition); }
+        .exp-item:hover img { transform: scale(1.03); filter: brightness(0.9); }
+        .exp-content { position: absolute; bottom: 40px; left: 40px; color: white; z-index: 5; }
+        .exp-item::after { content: ''; position: absolute; inset: 0; background: linear-gradient(to top, rgba(0,0,0,0.6), transparent); }
 
-        .marquee-item i {
-            color: var(--accent-gold);
-            font-size: 1.6rem;
-        }
+        /* --- Amenities Section --- */
+        .amenities { padding: 120px 0; }
+        .amenities-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 40px; margin-top: 60px; }
+        .amen-item { text-align: left; }
+        .amen-icon { font-size: 24px; color: var(--accent-gold); margin-bottom: 20px; display: block; }
+        .amen-item h4 { font-size: 20px; margin-bottom: 12px; }
+        .amen-item p { font-size: 14px; color: var(--text-muted); line-height: 1.6; }
 
-        @keyframes marquee {
-            0% { transform: translateX(0); }
-            100% { transform: translateX(-50%); }
-        }
+        /* --- Footer --- */
+        footer { background: var(--charcoal); color: var(--white); padding: 100px 0 40px; }
+        .footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1.5fr; gap: 60px; margin-bottom: 80px; }
+        .footer-logo { font-size: 32px; margin-bottom: 20px; }
+        .footer-logo span { color: var(--accent-gold); font-style: italic; }
+        .footer-col h5 { font-size: 12px; letter-spacing: 3px; text-transform: uppercase; color: var(--accent-gold); margin-bottom: 30px; }
+        .footer-col ul li { margin-bottom: 15px; }
+        .footer-col ul li a { color: rgba(255,255,255,0.6); font-size: 14px; }
+        .footer-bottom { border-top: 1px solid rgba(255,255,255,0.05); padding-top: 40px; display: flex; justify-content: space-between; font-size: 12px; color: rgba(255,255,255,0.4); letter-spacing: 1px; }
 
-        /* --- SERVICES (GLASS CARDS) --- */
-        .grid-3 {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 30px;
-            margin-top: 50px;
-        }
+        /* --- Animations --- */
+        .reveal { opacity: 0; transform: translateY(30px); transition: var(--transition); }
+        .reveal.visible { opacity: 1; transform: translateY(0); }
 
-        .glass-card {
-            background: rgba(255, 255, 255, 0.02);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            padding: 50px 40px;
-            border-radius: 16px;
-            transition: all 0.4s ease;
+        /* --- Mobile Responsive --- */
+        @media (max-width: 1024px) {
+            .booking-form { grid-template-columns: repeat(2, 1fr); }
+            .rooms-grid { grid-template-columns: repeat(2, 1fr); }
+            .footer-grid { grid-template-columns: 1fr 1fr; }
+            .experience-strip { grid-template-columns: 1fr; }
         }
-        .glass-card:hover {
-            background: rgba(255, 255, 255, 0.04);
-            border-color: rgba(251, 191, 36, 0.4);
-            transform: translateY(-10px);
-        }
-        .glass-card h3 { font-size: 1.8rem; margin-bottom: 15px; }
-        .glass-card p { color: var(--text-muted); font-size: 1.05rem; }
-
-        /* --- WORK PORTFOLIO --- */
-        .portfolio-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-            gap: 40px;
-            margin-top: 50px;
-        }
-
-        .portfolio-card {
-            background: rgba(0, 0, 0, 0.2);
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            border-radius: 16px;
-            padding: 40px;
-            transition: all 0.4s ease;
-        }
-        .portfolio-card:hover { border-color: var(--accent-gold); }
-        .icon-box {
-            font-size: 2.5rem;
-            margin-bottom: 25px;
-            display: inline-block;
-            background: rgba(255, 255, 255, 0.05);
-            padding: 15px 20px;
-            border-radius: 12px;
-        }
-        
-        .btn-link {
-            color: var(--accent-gold);
-            text-decoration: none;
-            font-weight: 500;
-            font-size: 0.9rem;
-            letter-spacing: 1px;
-            text-transform: uppercase;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            margin-top: 25px;
-            transition: gap 0.3s;
-        }
-        .btn-link:hover { gap: 15px; }
-
-        /* --- CONTACT FORM --- */
-        .contact-wrapper {
-            max-width: 600px;
-            margin: 0 auto;
-            width: 100%;
-            text-align: center;
-        }
-        
-        .form-glass {
-            background: rgba(255, 255, 255, 0.02);
-            padding: 50px;
-            border-radius: 20px;
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            backdrop-filter: blur(20px);
-        }
-
-        input, textarea {
-            width: 100%;
-            padding: 18px 25px;
-            background: rgba(0, 0, 0, 0.2);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 8px;
-            color: var(--text-light);
-            font-family: 'Outfit', sans-serif;
-            font-size: 1rem;
-            outline: none;
-            margin-bottom: 25px;
-            transition: all 0.3s ease;
-        }
-        input:focus, textarea:focus {
-            border-color: var(--accent-gold);
-            background: rgba(0, 0, 0, 0.4);
-        }
-
-        /* --- FLOATING WHATSAPP BUTTON --- */
-        .whatsapp-float {
-            position: fixed;
-            bottom: 40px;
-            right: 40px;
-            background-color: #25d366;
-            color: white;
-            border-radius: 50px;
-            padding: 15px 20px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            font-size: 1.1rem;
-            font-weight: 600;
-            text-decoration: none;
-            box-shadow: 0 10px 20px rgba(37, 211, 102, 0.3);
-            z-index: 1000;
-            transition: all 0.3s ease;
-        }
-        
-        .whatsapp-float i { font-size: 1.5rem; }
-        
-        .whatsapp-float:hover {
-            transform: scale(1.05) translateY(-5px);
-            box-shadow: 0 15px 30px rgba(37, 211, 102, 0.5);
-            color: white;
-        }
-
-        /* --- FOOTER --- */
-        footer {
-            text-align: center;
-            padding: 40px;
-            border-top: 1px solid rgba(255, 255, 255, 0.05);
-            color: var(--text-muted);
-            font-size: 0.8rem;
-            letter-spacing: 2px;
-            text-transform: uppercase;
-        }
-
-        /* --- RESPONSIVE --- */
         @media (max-width: 768px) {
-            .hero h1 { font-size: 4rem; }
-            .section-title { font-size: 2.5rem; }
-            section { padding: 100px 5%; }
             .nav-links { display: none; }
-            .form-glass { padding: 30px 20px; }
-            /* Make WhatsApp button smaller on mobile */
-            .whatsapp-float {
-                bottom: 20px;
-                right: 20px;
-                padding: 12px;
-                border-radius: 50%;
-            }
-            .whatsapp-float span { display: none; } /* Hide text, just show icon */
+            .hero-content { text-align: center; }
+            .hero p { margin-inline: auto; }
+            .booking-strip { position: static; transform: none; padding: 40px 20px; }
+            .booking-form { grid-template-columns: 1fr; }
+            .rooms-grid { grid-template-columns: 1fr; }
+            .intro { padding: 80px 0 60px; }
+            .amenities-grid { grid-template-columns: 1fr 1fr; }
+            .footer-grid { grid-template-columns: 1fr; }
         }
     </style>
 </head>
 <body>
 
-    <nav>
-        <a href="#home" class="logo-text">Pam <span>Ventures</span></a>
-        <div class="nav-links">
-            <a href="#services" class="nav-item">Expertise</a>
-            <a href="#work" class="nav-item">Portfolio</a>
-            <a href="#contact" class="nav-item">Contact</a>
+    <!-- Navigation -->
+    <nav id="navbar">
+        <div class="nav-inner">
+            <a href="#" class="logo">Pam <span>Premium</span></a>
+            <div class="nav-links">
+                <a href="#about">The Hotel</a>
+                <a href="#rooms">Rooms</a>
+                <a href="#experiences">Dining</a>
+                <a href="#contact">Contact</a>
+            </div>
+            <a href="#rooms" class="btn-book">Book Now</a>
         </div>
     </nav>
 
-    <section class="hero" id="home" data-theme="theme-1">
-        <div class="section-tag reveal">Digital Agency</div>
-        <h1 class="reveal delay-1">
-            Engineering <br> <span>Gold Standard</span> Tech.
-        </h1>
-        <p class="reveal delay-2">
-            Pam Ventures architects high-performance Java systems and premium digital experiences for forward-thinking businesses.
-        </p>
-        <div class="reveal delay-2">
-            <a href="#contact" class="btn-primary">Initiate Project</a>
+    <!-- Hero Section -->
+    <header class="hero">
+        <div class="hero-bg"></div>
+        <div class="container">
+            <div class="hero-content">
+                <span class="hero-tag reveal">Luxury in Vadodara</span>
+                <h1 class="reveal">The <em>Luxury</em> of Being Yourself</h1>
+                <p class="reveal">Minutes from the Railway Station and MSU, Pam Premium offers curated hospitality for the refined traveler.</p>
+                <div class="reveal">
+                    <a href="#rooms" class="btn-book" style="padding: 16px 40px;">Explore Our Rooms</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Floating Booking Strip -->
+        <div class="booking-strip container">
+            <form class="booking-form">
+                <div class="field-group">
+                    <label>Check In</label>
+                    <input type="date" value="2026-04-14">
+                </div>
+                <div class="field-group">
+                    <label>Check Out</label>
+                    <input type="date" value="2026-04-15">
+                </div>
+                <div class="field-group">
+                    <label>Adults</label>
+                    <select>
+                        <option>1 Adult</option>
+                        <option selected>2 Adults</option>
+                        <option>3 Adults</option>
+                    </select>
+                </div>
+                <div class="field-group">
+                    <label>Preference</label>
+                    <select>
+                        <option>Any Room</option>
+                        <option>Premium Single</option>
+                        <option>Premium Twin</option>
+                        <option>Premium Family</option>
+                    </select>
+                </div>
+                <button type="button" class="btn-book">Check Availability</button>
+            </form>
+        </div>
+    </header>
+
+    <!-- Intro / About Section -->
+    <section class="intro container" id="about">
+        <span class="section-tag reveal">Hospitality Excellence</span>
+        <h2 class="section-title reveal">Where sophistication meets modern urban convenience.</h2>
+        <p class="intro-text reveal">Pam Premium Hotel is strategically located to offer peace amidst the city's pulse. Whether for business or leisure, our 60 rooms provide the perfect sanctuary.</p>
+    </section>
+
+    <!-- Rooms Section -->
+    <section class="rooms-section container" id="rooms">
+        <div class="rooms-grid">
+            <!-- Room 1 -->
+            <div class="room-card reveal">
+                <div class="room-image">
+                    <img src="https://pampremiumhotel.com/wp-content/uploads/2026/02/DSC02334.JPG-scaled.jpg" alt="Premium Family">
+                </div>
+                <div class="room-info">
+                    <div class="room-price">Starting from ₹3,000</div>
+                    <h3 class="room-title">Premium Family</h3>
+                    <div class="room-meta">
+                        <span>King Bed</span>
+                        <span>•</span>
+                        <span>Private Bath</span>
+                        <span>•</span>
+                        <span>Breakfast Incl.</span>
+                    </div>
+                    <a href="https://pampremiumhotel.com/product/premium-family/" class="room-link">Book This Room</a>
+                </div>
+            </div>
+            <!-- Room 2 -->
+            <div class="room-card reveal">
+                <div class="room-image">
+                    <img src="https://pampremiumhotel.com/wp-content/uploads/2025/04/DSC02423.webp" alt="Premium Twin">
+                </div>
+                <div class="room-info">
+                    <div class="room-price">Starting from ₹3,000</div>
+                    <h3 class="room-title">Premium Twin</h3>
+                    <div class="room-meta">
+                        <span>Twin Beds</span>
+                        <span>•</span>
+                        <span>City View</span>
+                        <span>•</span>
+                        <span>Breakfast Incl.</span>
+                    </div>
+                    <a href="https://pampremiumhotel.com/product/premium-twin/" class="room-link">Book This Room</a>
+                </div>
+            </div>
+            <!-- Room 3 -->
+            <div class="room-card reveal">
+                <div class="room-image">
+                    <img src="https://pampremiumhotel.com/wp-content/uploads/2025/04/DSC02426.webp" alt="Premium Single">
+                </div>
+                <div class="room-info">
+                    <div class="room-price">Starting from ₹3,000</div>
+                    <h3 class="room-title">Premium Single</h3>
+                    <div class="room-meta">
+                        <span>Single Bed</span>
+                        <span>•</span>
+                        <span>Cozy Suite</span>
+                        <span>•</span>
+                        <span>Breakfast Incl.</span>
+                    </div>
+                    <a href="https://pampremiumhotel.com/product/premium-single/" class="room-link">Book This Room</a>
+                </div>
+            </div>
         </div>
     </section>
 
-    <div class="marquee-container reveal">
-        <div class="marquee-content">
-            <span class="marquee-item"><i class="fab fa-java"></i> Enterprise Java</span>
-            <span class="marquee-item"><i class="fab fa-html5"></i> HTML5 Core</span>
-            <span class="marquee-item"><i class="fab fa-css3-alt"></i> Modern CSS</span>
-            <span class="marquee-item"><i class="fas fa-server"></i> API Architecture</span>
-            <span class="marquee-item"><i class="fas fa-database"></i> Database Logic</span>
-            <span class="marquee-item"><i class="fas fa-mobile-alt"></i> Responsive UI</span>
-            
-            <span class="marquee-item"><i class="fab fa-java"></i> Enterprise Java</span>
-            <span class="marquee-item"><i class="fab fa-html5"></i> HTML5 Core</span>
-            <span class="marquee-item"><i class="fab fa-css3-alt"></i> Modern CSS</span>
-            <span class="marquee-item"><i class="fas fa-server"></i> API Architecture</span>
-            <span class="marquee-item"><i class="fas fa-database"></i> Database Logic</span>
-            <span class="marquee-item"><i class="fas fa-mobile-alt"></i> Responsive UI</span>
-        </div>
-    </div>
-
-    <section id="services" data-theme="theme-2">
-        <div class="reveal">
-            <div class="section-tag">Our Capabilities</div>
-            <h2 class="section-title">Architecting the Future.</h2>
-            <p style="color: var(--text-muted); max-width: 500px;">We do not just write code. We build scalable, legacy-grade infrastructure designed to grow.</p>
-        </div>
-
-        <div class="grid-3">
-            <div class="glass-card reveal delay-1">
-                <h3 style="color: var(--accent-gold);">Java Enterprise</h3>
-                <p>Secure, hyper-scalable back-end systems designed for high-volume transactions and banking-grade security.</p>
+    <!-- Culinary & Events Strip -->
+    <section class="experience-strip" id="experiences">
+        <div class="exp-item reveal">
+            <img src="https://pampremiumhotel.com/wp-content/uploads/2026/02/DSC02499-1-1-scaled.jpg" alt="Dining">
+            <div class="exp-content">
+                <span class="hero-tag">Arab Ino Restaurant</span>
+                <h2>Gourmet Buffet Dining</h2>
             </div>
-            <div class="glass-card reveal delay-2">
-                <h3 style="color: var(--accent-gold);">Web Architecture</h3>
-                <p>Lightning-fast, responsive front-end applications built with modern frameworks and premium aesthetics.</p>
-            </div>
-            <div class="glass-card reveal delay-3">
-                <h3 style="color: var(--accent-gold);">System Strategy</h3>
-                <p>Technical consulting to transform complex business requirements into streamlined, automated digital logic.</p>
+        </div>
+        <div class="exp-item reveal">
+            <img src="https://pampremiumhotel.com/wp-content/uploads/2026/02/DSC02570-1-scaled.jpg" alt="Events">
+            <div class="exp-content">
+                <span class="hero-tag">Ocean Banquet Hall</span>
+                <h2>Celebrations Redefined</h2>
             </div>
         </div>
     </section>
 
-    <section id="work" data-theme="theme-3">
-        <div class="reveal">
-            <div class="section-tag">Selected Portfolio</div>
-            <h2 class="section-title">Recent Deployments.</h2>
-        </div>
-
-        <div class="portfolio-grid">
-            <div class="portfolio-card reveal delay-1">
-                <div class="icon-box">🏦</div>
-                <h3>FinTech Logic Core</h3>
-                <p>A highly secure Java-based banking prototype handling complex user authentication and instantaneous transaction processing.</p>
-                <a href="#" class="btn-link">Review Logic <span>&rarr;</span></a>
+    <!-- Amenities Section -->
+    <section class="amenities container" id="amenities">
+        <span class="section-tag reveal">Experiences</span>
+        <h2 class="section-title reveal" style="margin-left:0;">Curated for your comfort.</h2>
+        
+        <div class="amenities-grid">
+            <div class="amen-item reveal">
+                <span class="amen-icon">❄</span>
+                <h4>Climate Control</h4>
+                <p>Advanced AC systems in every room to ensure your comfort regardless of the season.</p>
             </div>
-
-            <div class="portfolio-card reveal delay-2">
-                <div class="icon-box">🧮</div>
-                <h3>Algorithmic Engine</h3>
-                <p>A precision calculation module engineered for rapid data processing, designed to integrate into larger enterprise applications.</p>
-                <a href="#" class="btn-link">Review Logic <span>&rarr;</span></a>
+            <div class="amen-item reveal">
+                <span class="amen-icon">⚡</span>
+                <h4>High-Speed Fiber</h4>
+                <p>Seamless connectivity throughout the hotel for business travelers and leisure guests.</p>
             </div>
-
-            <div class="portfolio-card reveal delay-3" style="border-color: rgba(251, 191, 36, 0.3);">
-                <div class="icon-box">📱</div>
-                <h3>Restaurant Ecosystem</h3>
-                <p>A premium contactless QR menu built for Arab Ino. Features a live Google Sheets database architecture for instant updates.</p>
-                <a href="menu.html" target="_blank" class="btn-link">View Live Demo <span>&rarr;</span></a>
+            <div class="amen-item reveal">
+                <span class="amen-icon">🅿</span>
+                <h4>Valet & Parking</h4>
+                <p>Complimentary secure parking and valet services for all our staying guests.</p>
+            </div>
+            <div class="amen-item reveal">
+                <span class="amen-icon">🍽</span>
+                <h4>Chef's Breakfast</h4>
+                <p>Start your mornings with our curated healthy breakfast options included in your stay.</p>
             </div>
         </div>
     </section>
 
-    <section id="contact" data-theme="theme-4">
-        <div class="contact-wrapper">
+    <!-- Location / CTA -->
+    <section class="container" id="contact" style="padding: 120px 0;">
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center;">
             <div class="reveal">
-                <div class="section-tag">Connect</div>
-                <h2 class="section-title">Request Consultation.</h2>
-                <p style="color: var(--text-muted); margin-bottom: 40px;">Ready to elevate your digital infrastructure? Send us your brief.</p>
+                <span class="section-tag">Prime Location</span>
+                <h2 class="section-title" style="margin-left:0;">The heart of Vadodara.</h2>
+                <div style="margin-bottom: 30px;">
+                    <p style="font-weight: 500; margin-bottom: 5px;">Pam Premium Hotel</p>
+                    <p style="color: var(--text-muted);">2-min walk from MSU<br>5-min from Railway Station<br>15-min from Vadodara Airport</p>
+                </div>
+                <div style="margin-bottom: 30px;">
+                    <p style="font-weight: 500; margin-bottom: 5px;">Call Reservations</p>
+                    <a href="tel:+916357496707" style="font-size: 20px; font-family: var(--serif); color: var(--accent-gold);">+91 63574 96707</a>
+                </div>
+                <a href="mailto:info@pampremiumhotel.com" class="room-link">Send an Inquiry</a>
             </div>
-
-            <div class="form-glass reveal delay-1">
-                <form action="https://formspree.io/f/mbddjznr" method="POST">
-                    <input type="text" name="name" placeholder="Your Name / Company" required>
-                    <input type="email" name="email" placeholder="Official Email Address" required>
-                    <textarea name="message" placeholder="Tell us about your project requirements..." rows="4" required></textarea>
-                    <button type="submit" class="btn-primary" style="width: 100%;">Submit Inquiry</button>
-                </form>
+            <div class="reveal" style="height: 400px; background: #EEE; overflow: hidden; border-radius: 4px;">
+                <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3691.5!2d73.1820!3d22.3003!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x395fc5f67bbd4291%3A0x41b8ee7cac8c09f8!2sPam%20Premium%20Hotel!5e0!3m2!1sen!2sin!4v1680000000000!5m2!1sen!2sin" width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
             </div>
         </div>
     </section>
 
+    <!-- Footer -->
     <footer>
-        <p>&copy; 2026 Pam Ventures. Designed for the Future.</p>
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-col">
+                    <div class="footer-logo logo" style="color:white;">Pam <span>Premium</span></div>
+                    <p style="color: rgba(255,255,255,0.5); font-size: 14px; line-height: 1.8;">
+                        Experience an elevation of lifestyle in the cultural capital of Gujarat. Luxury redefined for the modern traveler.
+                    </p>
+                </div>
+                <div class="footer-col">
+                    <h5>Navigation</h5>
+                    <ul>
+                        <li><a href="#about">The Hotel</a></li>
+                        <li><a href="#rooms">Rooms & Suites</a></li>
+                        <li><a href="#experiences">Dining</a></li>
+                        <li><a href="https://pampremiumhotel.com/faqs/">FAQs</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h5>Legal</h5>
+                    <ul>
+                        <li><a href="https://pampremiumhotel.com/privacy-policy/">Privacy Policy</a></li>
+                        <li><a href="https://pampremiumhotel.com/terms-conditions/">Terms & Conditions</a></li>
+                        <li><a href="https://pampremiumhotel.com/refund-cancellation-policy/">Refund Policy</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h5>Social</h5>
+                    <div style="display: flex; gap: 20px;">
+                        <a href="https://www.instagram.com/pam.premium/" style="color: var(--accent-gold);">Instagram</a>
+                        <a href="https://www.facebook.com/profile.php?id=61585695811772" style="color: var(--accent-gold);">Facebook</a>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <span>© 2026 PAM HOTELS INDIA. ALL RIGHTS RESERVED.</span>
+                <span>CULTURAL CAPITAL OF GUJARAT</span>
+            </div>
+        </div>
     </footer>
 
-    <a href="https://wa.me/91XXXXXXXXXX?text=Hi%20Pam%20Ventures,%20I%20would%20like%20to%20discuss%20a%20project." 
-       class="whatsapp-float" 
-       target="_blank" 
-       rel="noopener noreferrer">
-        <i class="fab fa-whatsapp"></i>
-        <span>Chat with us</span>
-    </a>
-
     <script>
-        if (history.scrollRestoration) { history.scrollRestoration = 'manual'; } 
-        else { window.onbeforeunload = function () { window.scrollTo(0, 0); } }
-
-        document.addEventListener("DOMContentLoaded", () => {
-            
-            // 1. SCROLL REVEAL ANIMATIONS
-            const reveals = document.querySelectorAll('.reveal');
-            const revealObserver = new IntersectionObserver((entries, observer) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        entry.target.classList.add('active');
-                        observer.unobserve(entry.target); 
-                    }
-                });
-            }, { threshold: 0.15, rootMargin: "0px 0px -50px 0px" });
-
-            reveals.forEach(el => revealObserver.observe(el));
-
-            // 2. AURORA BACKGROUND & SCROLL-SPY NAVIGATION
-            const sections = document.querySelectorAll('section');
-            const navLinks = document.querySelectorAll('.nav-item');
-
-            const sectionObserver = new IntersectionObserver((entries) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        
-                        // A: Change the Background Color
-                        const theme = entry.target.getAttribute('data-theme');
-                        document.body.classList.remove('theme-1', 'theme-2', 'theme-3', 'theme-4');
-                        document.body.classList.add(theme);
-
-                        // B: Glowing Navigation (Scroll-Spy)
-                        const id = entry.target.getAttribute('id');
-                        navLinks.forEach(link => {
-                            link.classList.remove('active');
-                            if (link.getAttribute('href') === `#${id}`) {
-                                link.classList.add('active');
-                            }
-                        });
-                    }
-                });
-            }, { threshold: 0.4 }); // Triggers when 40% of the section is visible
-
-            sections.forEach(section => sectionObserver.observe(section));
+        // Navbar scroll effect
+        window.addEventListener('scroll', () => {
+            const nav = document.getElementById('navbar');
+            if (window.scrollY > 50) {
+                nav.classList.add('scrolled');
+            } else {
+                nav.classList.remove('scrolled');
+            }
         });
+
+        // Intersection Observer for reveal animations
+        const observerOptions = {
+            threshold: 0.1
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
     </script>
 </body>
 </html>
