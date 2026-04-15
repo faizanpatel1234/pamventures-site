@@ -1,0 +1,348 @@
+import React, { useState, useMemo } from 'react';
+import { 
+  LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, PieChart, Pie, Cell 
+} from 'recharts';
+import { 
+  UploadCloud, FileSpreadsheet, Wallet, Users, Receipt, CreditCard, LayoutDashboard, Table as TableIcon 
+} from 'lucide-react';
+
+const COLORS = ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#06b6d4', '#f97316', '#ec4899'];
+
+// Helper to reliably parse CSV including quoted fields with commas
+const parseCSV = (csvText) => {
+  const lines = csvText.split(/\r?\n/).filter(line => line.trim() !== '');
+  if (lines.length === 0) return { headers: [], data: [] };
+
+  const parseLine = (line) => {
+    const result = [];
+    let current = '';
+    let inQuotes = false;
+    for (let i = 0; i < line.length; i++) {
+      const char = line[i];
+      if (char === '"') {
+        inQuotes = !inQuotes;
+      } else if (char === ',' && !inQuotes) {
+        result.push(current);
+        current = '';
+      } else {
+        current += char;
+      }
+    }
+    result.push(current);
+    return result.map(v => v.trim().replace(/^"|"$/g, ''));
+  };
+
+  const headers = parseLine(lines[0]);
+  const data = [];
+  
+  for (let i = 1; i < lines.length; i++) {
+    const values = parseLine(lines[i]);
+    const row = {};
+    headers.forEach((h, index) => {
+      row[h] = values[index] || '';
+    });
+    data.push(row);
+  }
+  
+  return { headers, data };
+};
+
+// Standardize date strings to YYYY-MM-DD for grouping
+const normalizeDateStr = (dateStr) => {
+  if (!dateStr) return 'Unknown';
+  // Handles DD/MM/YYYY format
+  if (dateStr.includes('/')) {
+    const parts = dateStr.split('/');
+    if (parts.length >= 3) {
+      const day = parts[0].padStart(2, '0');
+      const month = parts[1].padStart(2, '0');
+      const year = parts[2].substring(0, 4);
+      return `${year}-${month}-${day}`;
+    }
+  }
+  // Handles YYYY-MM-DD format
+  return dateStr.split(' ')[0];
+};
+
+export default function HotelDashboard() {
+  const [dataset, setDataset] = useState({ headers: [], data: [] });
+  const [activeTab, setActiveTab] = useState('dashboard');
+  const [isDragging, setIsDragging] = useState(false);
+
+  const handleFileUpload = (event) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const text = e.target.result;
+        const parsed = parseCSV(text);
+        setDataset(parsed);
+      };
+      reader.readAsText(file);
+    }
+  };
+
+  const handleDrop = (e) => {
+    e.preventDefault();
+    setIsDragging(false);
+    const file = e.dataTransfer.files?.[0];
+    if (file && file.name.endsWith('.csv')) {
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        setDataset(parseCSV(event.target.result));
+      };
+      reader.readAsText(file);
+    } else {
+      alert("Please upload a valid CSV file.");
+    }
+  };
+
+  // Process data for KPIs and Charts
+  const analytics = useMemo(() => {
+    const { headers, data } = dataset;
+    if (!data.length) return null;
+
+    // Dynamically find relevant columns in case of trailing spaces or slight variations
+    const billAmtKey = headers.find(h => h.toLowerCase().includes('bill amount')) || headers[10] || '';
+    const roomChgKey = headers.find(h => h.toLowerCase().includes('rm chg')) || '';
+    const checkOutKey = headers.find(h => h.toLowerCase().includes('check out')) || headers[5] || '';
+    const refKey = headers.find(h => h.toLowerCase().includes('reference')) || headers[9] || '';
+    const cgstKey = headers.find(h => h.toLowerCase() === 'cgst') || '';
+    const sgstKey = headers.find(h => h.toLowerCase().includes('sgst')) || '';
+
+    let totalRevenue = 0;
+    let totalRoomRevenue = 0;
+    let totalTax = 0;
+    const revenueByDate = {};
+    const sourceCount = {};
+
+    data.forEach(row => {
+      const billVal = parseFloat(row[billAmtKey]) || 0;
+      const roomVal = parseFloat(row[roomChgKey]) || 0;
+      const taxVal = (parseFloat(row[cgstKey]) || 0) + (parseFloat(row[sgstKey]) || 0);
+      
+      totalRevenue += billVal;
+      totalRoomRevenue += roomVal;
+      totalTax += taxVal;
+
+      // Group by Date for Trend
+      const date = normalizeDateStr(row[checkOutKey]);
+      if (date !== 'Unknown') {
+        if (!revenueByDate[date]) revenueByDate[date] = { date, revenue: 0, bookings: 0 };
+        revenueByDate[date].revenue += billVal;
+        revenueByDate[date].bookings += 1;
+      }
+
+      // Group by Source (Reference/OTA)
+      let source = row[refKey]?.trim() || 'Direct / Walk-in';
+      // Clean up common source names
+      if (source.includes('AGODA')) source = 'Agoda';
+      else if (source.includes('BOOKING')) source = 'Booking.com';
+      else if (source.includes('MAKEMYTRIP')) source = 'MakeMyTrip';
+      else if (source.length > 20) source = 'Corporate / Other';
+      
+      sourceCount[source] = (sourceCount[source] || 0) + 1;
+    });
+
+    const chartTrendData = Object.values(revenueByDate).sort((a, b) => a.date.localeCompare(b.date));
+    const chartSourceData = Object.entries(sourceCount)
+      .map(([name, value]) => ({ name, value }))
+      .sort((a, b) => b.value - a.value);
+
+    return {
+      totalBookings: data.length,
+      totalRevenue,
+      arr: data.length ? totalRoomRevenue / data.length : 0,
+      totalTax,
+      chartTrendData,
+      chartSourceData
+    };
+  }, [dataset]);
+
+  const formatCurrency = (val) => new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 0 }).format(val);
+
+  // Render Upload Screen
+  if (dataset.data.length === 0) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex flex-col items-center justify-center p-6 text-gray-800">
+        <div className="max-w-md w-full bg-white rounded-2xl shadow-xl p-10 text-center border border-gray-100">
+          <div className="bg-blue-50 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6">
+            <LayoutDashboard className="w-10 h-10 text-blue-600" />
+          </div>
+          <h1 className="text-2xl font-bold text-gray-900 mb-2">Hotel Analytics Dashboard</h1>
+          <p className="text-gray-500 mb-8">Upload your Excel/CSV export to generate beautiful, insightful charts and a complete data table.</p>
+          
+          <div 
+            className={`border-2 border-dashed rounded-xl p-8 transition-colors ${isDragging ? 'border-blue-500 bg-blue-50' : 'border-gray-300 hover:border-blue-400'}`}
+            onDragOver={(e) => { e.preventDefault(); setIsDragging(true); }}
+            onDragLeave={() => setIsDragging(false)}
+            onDrop={handleDrop}
+          >
+            <UploadCloud className="w-12 h-12 text-gray-400 mx-auto mb-4" />
+            <p className="font-medium mb-1">Drag & drop your CSV file here</p>
+            <p className="text-sm text-gray-500 mb-4">or</p>
+            <label className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2.5 rounded-lg cursor-pointer font-medium transition-colors shadow-sm">
+              Browse Files
+              <input type="file" accept=".csv" className="hidden" onChange={handleFileUpload} />
+            </label>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen bg-gray-100 font-sans text-gray-800 flex flex-col">
+      {/* Header */}
+      <header className="bg-white border-b border-gray-200 px-6 py-4 shadow-sm sticky top-0 z-20 flex justify-between items-center">
+        <div className="flex items-center gap-3">
+          <div className="bg-blue-600 p-2 rounded-lg shadow-sm">
+            <LayoutDashboard className="w-6 h-6 text-white" />
+          </div>
+          <h1 className="text-xl font-bold text-gray-900">Operations Dashboard</h1>
+        </div>
+        <div className="flex bg-gray-100 p-1 rounded-lg">
+          <button 
+            onClick={() => setActiveTab('dashboard')}
+            className={`px-4 py-2 text-sm font-medium rounded-md flex items-center gap-2 transition-colors ${activeTab === 'dashboard' ? 'bg-white shadow-sm text-blue-600' : 'text-gray-600 hover:text-gray-900'}`}
+          >
+            <LayoutDashboard className="w-4 h-4" /> Summary
+          </button>
+          <button 
+            onClick={() => setActiveTab('data')}
+            className={`px-4 py-2 text-sm font-medium rounded-md flex items-center gap-2 transition-colors ${activeTab === 'data' ? 'bg-white shadow-sm text-blue-600' : 'text-gray-600 hover:text-gray-900'}`}
+          >
+            <TableIcon className="w-4 h-4" /> Full Data Sheet
+          </button>
+        </div>
+      </header>
+
+      <main className="p-6 flex-1 max-w-[1600px] w-full mx-auto">
+        {activeTab === 'dashboard' && analytics && (
+          <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
+            {/* KPIs */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+              <KPICard title="Total Revenue" value={formatCurrency(analytics.totalRevenue)} icon={Wallet} color="text-emerald-600" bg="bg-emerald-50" />
+              <KPICard title="Total Bookings" value={analytics.totalBookings} icon={Users} color="text-blue-600" bg="bg-blue-50" />
+              <KPICard title="Avg Daily Rate (ADR)" value={formatCurrency(analytics.arr)} icon={CreditCard} color="text-indigo-600" bg="bg-indigo-50" />
+              <KPICard title="Total Taxes (GST)" value={formatCurrency(analytics.totalTax)} icon={Receipt} color="text-orange-600" bg="bg-orange-50" />
+            </div>
+
+            {/* Charts Row */}
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+              
+              {/* Revenue Trend Line Chart */}
+              <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 lg:col-span-2">
+                <h2 className="text-lg font-bold text-gray-800 mb-6 flex items-center gap-2">
+                  <TrendingUp className="w-5 h-5 text-gray-400" /> Revenue Trend (by Checkout)
+                </h2>
+                <div className="h-80 w-full">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <LineChart data={analytics.chartTrendData} margin={{ top: 5, right: 20, left: 20, bottom: 5 }}>
+                      <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f3f4f6" />
+                      <XAxis dataKey="date" tick={{fontSize: 12}} tickMargin={10} stroke="#9ca3af" />
+                      <YAxis tickFormatter={(val) => `₹${val/1000}k`} tick={{fontSize: 12}} stroke="#9ca3af" axisLine={false} tickLine={false} />
+                      <Tooltip 
+                        formatter={(value) => formatCurrency(value)}
+                        contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }}
+                      />
+                      <Line type="monotone" dataKey="revenue" name="Revenue" stroke="#3b82f6" strokeWidth={3} dot={{r: 4, strokeWidth: 2}} activeDot={{r: 6}} />
+                    </LineChart>
+                  </ResponsiveContainer>
+                </div>
+              </div>
+
+              {/* Booking Sources Pie Chart */}
+              <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+                <h2 className="text-lg font-bold text-gray-800 mb-6 flex items-center gap-2">
+                  <FileSpreadsheet className="w-5 h-5 text-gray-400" /> Bookings by Source
+                </h2>
+                <div className="h-80 w-full">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <PieChart>
+                      <Pie
+                        data={analytics.chartSourceData}
+                        cx="50%"
+                        cy="50%"
+                        innerRadius={60}
+                        outerRadius={100}
+                        paddingAngle={2}
+                        dataKey="value"
+                        nameKey="name"
+                      >
+                        {analytics.chartSourceData.map((entry, index) => (
+                          <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                        ))}
+                      </Pie>
+                      <Tooltip 
+                        contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }}
+                      />
+                      <Legend verticalAlign="bottom" height={36} iconType="circle" />
+                    </PieChart>
+                  </ResponsiveContainer>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Complete Data Table View */}
+        {activeTab === 'data' && (
+          <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden flex flex-col h-[calc(100vh-140px)] animate-in fade-in slide-in-from-bottom-4 duration-500">
+            <div className="p-4 border-b border-gray-200 bg-gray-50 flex justify-between items-center shrink-0">
+              <h2 className="text-lg font-bold text-gray-800">Complete Master Data</h2>
+              <span className="text-sm text-gray-500 bg-gray-200 px-3 py-1 rounded-full">{dataset.data.length} Records found</span>
+            </div>
+            
+            <div className="overflow-auto flex-1 custom-scrollbar">
+              <table className="w-full text-sm text-left whitespace-nowrap">
+                <thead className="text-xs text-gray-500 bg-gray-50 uppercase sticky top-0 z-10 shadow-sm">
+                  <tr>
+                    {dataset.headers.map((header, idx) => (
+                      <th key={idx} className="px-4 py-3 font-semibold tracking-wider">
+                        {header}
+                      </th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-gray-100">
+                  {dataset.data.map((row, rowIdx) => (
+                    <tr key={rowIdx} className="hover:bg-blue-50/50 transition-colors">
+                      {dataset.headers.map((header, colIdx) => (
+                        <td key={colIdx} className="px-4 py-3 text-gray-700">
+                          {row[header] !== undefined && row[header] !== '' ? row[header] : <span className="text-gray-300">-</span>}
+                        </td>
+                      ))}
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        )}
+      </main>
+
+      <style dangerouslySetInnerHTML={{__html: `
+        .custom-scrollbar::-webkit-scrollbar { width: 8px; height: 8px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: #f1f5f9; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+      `}} />
+    </div>
+  );
+}
+
+// Reusable component for the KPI cards
+function KPICard({ title, value, icon: Icon, color, bg }) {
+  return (
+    <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100 flex items-center gap-4 transition-transform hover:-translate-y-1 hover:shadow-md">
+      <div className={`p-4 rounded-xl ${bg}`}>
+        <Icon className={`w-8 h-8 ${color}`} />
+      </div>
+      <div>
+        <p className="text-sm font-medium text-gray-500 mb-1">{title}</p>
+        <h3 className="text-2xl font-bold text-gray-900">{value}</h3>
+      </div>
+    </div>
+  );
+}
