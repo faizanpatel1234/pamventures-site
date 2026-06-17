@@ -9,7 +9,7 @@ in Vadodara. It is a static site hosted on **GitHub Pages** (the custom domain i
 
 | File | Purpose | Audience |
 | --- | --- | --- |
-| [`index.html`](index.html) | Cinematic hotel landing page — hero, heritage, gallery, suites, booking and contact. | Public |
+| [`index.html`](index.html) | Hotel landing page — hero with booking enquiry, about, suites, dining, amenities, gallery, guest review, and contact/map. | Public |
 | [`menu.html`](menu.html) | Arab Ino restaurant in-room dining menu, with search, categories and dietary indicators. | Public |
 | [`404.html`](404.html) | Branded "page not found" page, served automatically by GitHub Pages. | Public |
 | [`dashboard.html`](dashboard.html) | Hotel operations / analytics dashboard. | Internal staff |
@@ -35,7 +35,14 @@ Pushing to the default branch publishes the site through GitHub Pages. The custo
 
 ## Conventions
 
-- Brand colour is gold `#C5A059` on charcoal `#0D0D0D`.
+- Brand colour is gold (`#b08d4f`) with charcoal ink (`#1c1b19`) on a warm cream base.
 - Fonts: Cormorant Garamond (display/serif) and DM Sans (body) on the landing page;
   Playfair Display and Lato on the menu.
 - Keep filenames lowercase and without spaces so they map cleanly to URLs.
+- **Images:** do not hotlink from `pampremiumhotel.com` — that host returns `403` to
+  other domains, so its images render broken on `pamventures.in`. The landing page uses
+  reliable hosted imagery and every `<img>` degrades to a warm gradient (`.img-wrap` +
+  `onerror`) so a failed photo never shows a broken-image box. Replace the placeholder
+  photos with the property's own once they're hosted somewhere that allows embedding.
+- The hero booking form sends a pre-filled enquiry to the hotel's WhatsApp
+  (`wa.me/916357496707`); there is no server-side booking backend.
