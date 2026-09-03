@@ -1,0 +1,581 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Faizan Patel Rice Trade Playbook</title>
+<meta name="description" content="A plain-English, step-by-step guide to importing and exporting rice from India to the United States.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Zilla+Slab:wght@500;600;700&family=Public+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<style>
+  :root{
+    color-scheme: light;
+    --bg:#F4F2EA; --surface:#FCFBF6; --surface-2:#EFEDE2;
+    --ink:#1C231B; --muted:#5C6357; --faint:#8A9080;
+    --line:#DEDCCE; --line-strong:#CBC9B8;
+    --primary:#356839; --primary-ink:#274E2A;
+    --gold:#9C7016; --gold-soft:#F4EAD0;
+    --warn:#B0492F; --warn-soft:#F6E3DA;
+    --good:#3F7A44; --good-soft:#E5EFDF;
+    --shadow:0 1px 2px rgba(28,35,27,.05), 0 4px 16px rgba(28,35,27,.05);
+    --measure:66ch; --wrap:1040px;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      color-scheme: dark;
+      --bg:#14170F; --surface:#1D2116; --surface-2:#242A1B;
+      --ink:#ECEBDF; --muted:#A2A892; --faint:#767C69;
+      --line:#2C3122; --line-strong:#3A4030;
+      --primary:#86BE83; --primary-ink:#A6D6A2;
+      --gold:#D9AC53; --gold-soft:#2E2A18;
+      --warn:#E48468; --warn-soft:#33211A;
+      --good:#84C088; --good-soft:#1E2A1B;
+      --shadow:0 1px 2px rgba(0,0,0,.3), 0 6px 20px rgba(0,0,0,.28);
+    }
+  }
+  :root[data-theme="dark"]{
+    color-scheme: dark;
+    --bg:#14170F; --surface:#1D2116; --surface-2:#242A1B;
+    --ink:#ECEBDF; --muted:#A2A892; --faint:#767C69;
+    --line:#2C3122; --line-strong:#3A4030;
+    --primary:#86BE83; --primary-ink:#A6D6A2;
+    --gold:#D9AC53; --gold-soft:#2E2A18;
+    --warn:#E48468; --warn-soft:#33211A;
+    --good:#84C088; --good-soft:#1E2A1B;
+    --shadow:0 1px 2px rgba(0,0,0,.3), 0 6px 20px rgba(0,0,0,.28);
+  }
+
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  @media (prefers-reduced-motion: reduce){html{scroll-behavior:auto}}
+  body{
+    margin:0;background:var(--bg);color:var(--ink);
+    font-family:"Public Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+    font-size:17px;line-height:1.62;-webkit-font-smoothing:antialiased;
+  }
+  ::selection{background:var(--gold-soft);color:var(--ink)}
+  a:focus-visible,button:focus-visible,input:focus-visible{outline:2px solid var(--primary);outline-offset:2px}
+
+  /* Top bar */
+  .topbar{position:sticky;top:0;z-index:50;background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:saturate(1.4) blur(10px);border-bottom:1px solid var(--line)}
+  .topbar-inner{max-width:var(--wrap);margin:0 auto;padding:9px 22px;display:flex;align-items:center;gap:16px}
+  .brand{display:flex;align-items:center;gap:9px;font-weight:700;font-size:15px;white-space:nowrap}
+  .brand .seed{width:22px;height:22px;flex:none}
+  .navlinks{display:flex;gap:2px;margin-left:auto;overflow-x:auto;scrollbar-width:none}
+  .navlinks::-webkit-scrollbar{display:none}
+  .navlinks a{color:var(--muted);text-decoration:none;font-size:13px;font-weight:600;padding:6px 10px;border-radius:7px;white-space:nowrap}
+  .navlinks a:hover{color:var(--ink);background:var(--surface-2)}
+  .themebtn{flex:none;border:1px solid var(--line-strong);background:var(--surface);color:var(--muted);width:34px;height:32px;border-radius:8px;cursor:pointer;display:grid;place-items:center;font-size:15px}
+  .themebtn:hover{color:var(--ink);border-color:var(--primary)}
+
+  main{max-width:var(--wrap);margin:0 auto;padding:0 22px 100px}
+  .prose{max-width:var(--measure)}
+  section{padding-top:52px}
+
+  /* Hero */
+  header.hero{padding:52px 0 24px;border-bottom:1px solid var(--line)}
+  .eyebrow{font-family:"IBM Plex Mono",monospace;font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--gold);font-weight:600;margin:0 0 14px}
+  h1{font-family:"Zilla Slab",Georgia,serif;font-weight:700;font-size:clamp(2.1rem,5.2vw,3.3rem);line-height:1.05;letter-spacing:-.015em;margin:0 0 18px;text-wrap:balance}
+  h1 .em{color:var(--primary)}
+  .lede{font-size:1.16rem;color:var(--muted);max-width:58ch;margin:0}
+  .stamp{display:inline-flex;align-items:center;gap:8px;margin-top:20px;font-family:"IBM Plex Mono",monospace;font-size:12.5px;color:var(--muted)}
+  .dot{width:7px;height:7px;border-radius:50%;background:var(--good)}
+
+  /* Tiles */
+  .tiles{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin:30px 0 4px}
+  .tile{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:16px;box-shadow:var(--shadow)}
+  .tile .k{font-family:"IBM Plex Mono",monospace;font-size:11.5px;letter-spacing:.05em;text-transform:uppercase;color:var(--faint);margin:0 0 7px}
+  .tile .v{font-family:"Zilla Slab",serif;font-weight:700;font-size:1.5rem;line-height:1.05}
+  .tile .s{font-size:12.5px;color:var(--muted);margin-top:4px}
+  .tile.warn{border-color:color-mix(in srgb,var(--warn) 40%,var(--line))}
+  .tile.warn .v{color:var(--warn)}
+
+  h2{font-family:"Zilla Slab",serif;font-weight:700;font-size:clamp(1.5rem,3vw,2rem);line-height:1.12;letter-spacing:-.01em;margin:0 0 8px;text-wrap:balance}
+  .section-kicker{font-family:"IBM Plex Mono",monospace;font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--primary);font-weight:600;margin:0 0 10px}
+  .sec-intro{color:var(--muted);max-width:64ch;margin:0 0 4px;font-size:1.02rem}
+  h3{font-family:"Zilla Slab",serif;font-weight:600;font-size:1.2rem;margin:28px 0 10px}
+
+  /* Roadmap overview */
+  .roadmap{display:flex;flex-direction:column;gap:0;margin:22px 0 0;border:1px solid var(--line);border-radius:14px;overflow:hidden;box-shadow:var(--shadow)}
+  .rm{display:flex;align-items:center;gap:15px;padding:14px 18px;background:var(--surface);text-decoration:none;color:inherit;border-top:1px solid var(--line)}
+  .rm:first-child{border-top:none}
+  .rm:hover{background:var(--surface-2)}
+  .rm .rn{flex:none;width:30px;height:30px;border-radius:8px;background:var(--surface-2);border:1px solid var(--line-strong);display:grid;place-items:center;font-family:"IBM Plex Mono",monospace;font-weight:600;font-size:.95rem;color:var(--primary-ink)}
+  .rm .rt{font-weight:700;font-size:.98rem}
+  .rm .rd{font-size:.85rem;color:var(--muted);margin-top:1px}
+  .rm .arr{margin-left:auto;color:var(--faint);flex:none}
+
+  /* Journey timeline */
+  .journey{position:relative;margin:8px 0 0;padding-left:8px}
+  .step{position:relative;padding:0 0 12px 62px}
+  .step::before{content:"";position:absolute;left:22px;top:6px;bottom:-16px;width:2px;background:var(--line-strong)}
+  .step:last-child::before{display:none}
+  .node{position:absolute;left:0;top:0;width:46px;height:46px;border-radius:12px;background:var(--primary);color:#fff;display:grid;place-items:center;font-family:"Zilla Slab",serif;font-weight:700;font-size:1.3rem;box-shadow:var(--shadow);z-index:1}
+  :root[data-theme="dark"] .node,:root:not([data-theme="light"]) .node{color:#14170F}
+  .step > h3.st{font-family:"Zilla Slab",serif;font-weight:700;font-size:1.32rem;margin:6px 0 12px;letter-spacing:-.01em;padding-top:4px}
+
+  .plain{background:var(--gold-soft);border-radius:10px;padding:13px 16px;margin:0 0 14px}
+  .plain .pl{font-family:"IBM Plex Mono",monospace;font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;font-weight:600;color:var(--gold);margin:0 0 4px}
+  .plain p{margin:0;font-size:.98rem}
+
+  .do{margin:0 0 15px;padding:0;list-style:none}
+  .do li{position:relative;padding:5px 0 5px 26px;font-size:.96rem}
+  .do li::before{content:"";position:absolute;left:2px;top:12px;width:8px;height:8px;border-radius:50%;border:2px solid var(--primary);background:transparent}
+  .do li b{color:var(--ink)}
+
+  .facts{display:flex;flex-wrap:wrap;gap:10px;margin:0 0 8px}
+  .fact{flex:1 1 150px;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:10px 13px}
+  .fact .fl{font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.07em;text-transform:uppercase;color:var(--faint);margin:0 0 3px}
+  .fact .fv{font-size:.9rem;font-weight:600;line-height:1.3}
+
+  /* Callouts */
+  .note{border-radius:12px;padding:15px 18px;margin:16px 0;font-size:.95rem;border:1px solid var(--line);background:var(--surface);box-shadow:var(--shadow)}
+  .note .lab{font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.07em;text-transform:uppercase;font-weight:600;margin:0 0 5px;color:var(--gold)}
+  .note p{margin:0}
+  .note.alert{background:var(--warn-soft);border-color:color-mix(in srgb,var(--warn) 35%,var(--line))}
+  .note.alert .lab{color:var(--warn)}
+  .note.tip{background:var(--good-soft);border-color:color-mix(in srgb,var(--good) 32%,var(--line))}
+  .note.tip .lab{color:var(--good)}
+
+  /* Tables */
+  .tablewrap{overflow-x:auto;margin:18px 0;border:1px solid var(--line);border-radius:12px;box-shadow:var(--shadow)}
+  table{border-collapse:collapse;width:100%;font-size:.92rem;background:var(--surface);min-width:520px}
+  thead th{text-align:left;font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.05em;text-transform:uppercase;color:var(--faint);font-weight:600;padding:11px 14px;border-bottom:1px solid var(--line-strong);background:var(--surface-2)}
+  tbody td{padding:11px 14px;border-bottom:1px solid var(--line);vertical-align:top}
+  tbody tr:last-child td{border-bottom:none}
+  td.num,.num{font-family:"IBM Plex Mono",monospace;font-variant-numeric:tabular-nums;text-align:right;white-space:nowrap}
+  th.num{text-align:right}
+  tbody tr.total td{background:var(--surface-2);font-weight:700;border-top:1px solid var(--line-strong)}
+  caption{caption-side:bottom;text-align:left;font-size:12.5px;color:var(--muted);padding:10px 4px 0}
+
+  /* License checklists */
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin:18px 0}
+  .panel{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:20px 20px 8px;box-shadow:var(--shadow)}
+  .panel > h3{margin:0 0 3px;font-size:1.1rem;display:flex;align-items:center;gap:9px}
+  .tag{font-family:"IBM Plex Mono",monospace;font-size:10.5px;font-weight:600;letter-spacing:.04em;padding:2px 8px;border-radius:6px;background:var(--surface-2);border:1px solid var(--line-strong);color:var(--primary-ink)}
+  .panel .sub{font-size:12.5px;color:var(--muted);margin:0 0 12px}
+  .check{list-style:none;padding:0;margin:0}
+  .check li{display:flex;gap:11px;padding:12px 0;border-top:1px solid var(--line)}
+  .check li:first-child{border-top:none}
+  .box{flex:none;width:17px;height:17px;margin-top:3px;border:1.5px solid var(--line-strong);border-radius:5px}
+  .check .t{font-weight:600;font-size:.94rem}
+  .check .d{font-size:.84rem;color:var(--muted);margin-top:2px}
+  .check .meta{font-family:"IBM Plex Mono",monospace;font-size:11px;color:var(--gold);margin-top:5px}
+
+  .terms{display:flex;flex-direction:column;gap:9px;margin:16px 0}
+  .term{display:grid;grid-template-columns:76px 1fr;gap:14px;align-items:start;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:12px 15px}
+  .term .code{font-family:"IBM Plex Mono",monospace;font-weight:600;color:var(--primary);font-size:.92rem}
+  .term .desc{font-size:.9rem;color:var(--muted)}
+  .term .desc b{color:var(--ink)}
+
+  ul.clean{margin:0 0 14px;padding-left:20px}
+  ul.clean li{margin:6px 0}
+  p.prose, .prose p{margin:0 0 14px}
+  hr.soft{border:none;border-top:1px solid var(--line);margin:0}
+  footer{max-width:var(--wrap);margin:0 auto;padding:26px 22px 60px;color:var(--muted);font-size:13px}
+  footer a{color:var(--primary-ink)}
+
+  @media (max-width:820px){
+    .tiles{grid-template-columns:repeat(2,1fr)}
+    .grid2{grid-template-columns:1fr}
+  }
+  @media (max-width:560px){
+    body{font-size:16px}
+    .brand{font-size:12.5px}
+    .brand .seed{width:18px;height:18px}
+    .topbar-inner{gap:10px}
+    .tiles{grid-template-columns:1fr 1fr;gap:10px}
+    .step{padding-left:54px}
+    .node{width:40px;height:40px;font-size:1.1rem}
+    .step::before{left:19px}
+    .term{grid-template-columns:60px 1fr}
+  }
+</style>
+</head>
+<body>
+<div class="topbar">
+  <div class="topbar-inner">
+    <span class="brand">
+      <svg class="seed" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 2c3.6 3 5 6.4 5 10 0 4.2-2.6 8-5 10-2.4-2-5-5.8-5-10 0-3.6 1.4-7 5-10Z" fill="var(--primary)" opacity=".9"/><path d="M12 3.5V21.5" stroke="var(--bg)" stroke-width="1.1"/></svg>
+      Faizan Patel Rice Trade Playbook
+    </span>
+    <nav class="navlinks" aria-label="Sections">
+      <a href="#start">Start</a>
+      <a href="#steps">The 8 steps</a>
+      <a href="#money">The money</a>
+      <a href="#docs">Documents</a>
+      <a href="#risks">Risks</a>
+      <a href="#glossary">Word list</a>
+    </nav>
+    <button class="themebtn" id="themeToggle" type="button" aria-label="Toggle light and dark theme" title="Toggle theme">◐</button>
+  </div>
+</div>
+
+<main>
+  <header class="hero" id="start">
+    <p class="eyebrow">Prepared for Faizan Patel &middot; India &rarr; United States</p>
+    <h1>How to move <span class="em">rice</span> from India to America &mdash; one clear step at a time.</h1>
+    <p class="lede">No jargon, no gaps. This walks you through the whole business in <strong>8 plain steps</strong> &mdash; from getting your licenses, to buying the rice, to clearing US customs and getting paid. Read it top to bottom, or jump to any step.</p>
+    <span class="stamp"><span class="dot"></span> Figures checked Sep 2026 &middot; tariffs &amp; rules change &mdash; re-check the flagged numbers before you commit money.</span>
+
+    <div class="tiles">
+      <div class="tile"><p class="k">Money to start</p><div class="v">$35k&ndash;60k</div><p class="s">One container, landed, plus fees &amp; a safety buffer</p></div>
+      <div class="tile"><p class="k">First order size</p><div class="v">~25 tons</div><p class="s">One 20ft container = 500 bags of 50&nbsp;kg</p></div>
+      <div class="tile"><p class="k">Start-to-finish time</p><div class="v">30&ndash;45 days</div><p class="s">Ocean journey plus customs on both ends</p></div>
+      <div class="tile warn"><p class="k">US tariff on rice</p><div class="v">~10&ndash;18%</div><p class="s">Hit 50% in 2025 &middot; always check today's rate</p></div>
+    </div>
+  </header>
+
+  <!-- ROADMAP -->
+  <section id="steps">
+    <p class="section-kicker">The whole journey</p>
+    <h2>The 8 steps, at a glance</h2>
+    <p class="sec-intro">This is the entire business in order. Each step below links to the full detail &mdash; what it means, what you do, what it costs, and who does it.</p>
+    <div class="roadmap">
+      <a class="rm" href="#s1"><span class="rn">1</span><span><span class="rt">Decide your role</span><span class="rd">Are you the seller in India, the buyer in the US, or both?</span></span><span class="arr">&rarr;</span></a>
+      <a class="rm" href="#s2"><span class="rn">2</span><span><span class="rt">Register &amp; get licenses</span><span class="rd">Set up your company and the permits you can't trade without</span></span><span class="arr">&rarr;</span></a>
+      <a class="rm" href="#s3"><span class="rn">3</span><span><span class="rt">Find a buyer &amp; agree the price</span><span class="rd">Sell first, then buy. Learn the price terms (FOB / CIF)</span></span><span class="arr">&rarr;</span></a>
+      <a class="rm" href="#s4"><span class="rn">4</span><span><span class="rt">Buy the rice</span><span class="rd">Pick the grade, get the price, check the quality</span></span><span class="arr">&rarr;</span></a>
+      <a class="rm" href="#s5"><span class="rn">5</span><span><span class="rt">Pack &amp; clear it out of India</span><span class="rd">Load the container, treat for pests, get export clearance</span></span><span class="arr">&rarr;</span></a>
+      <a class="rm" href="#s6"><span class="rn">6</span><span><span class="rt">Ship across the ocean</span><span class="rd">Container onto the vessel; ~30&ndash;35 days at sea</span></span><span class="arr">&rarr;</span></a>
+      <a class="rm" href="#s7"><span class="rn">7</span><span><span class="rt">Clear US customs &amp; pay</span><span class="rd">FDA, USDA and Customs check it; you pay duty + tariff</span></span><span class="arr">&rarr;</span></a>
+      <a class="rm" href="#s8"><span class="rn">8</span><span><span class="rt">Receive &amp; sell</span><span class="rd">Truck it to your warehouse, deliver to your buyer, get paid</span></span><span class="arr">&rarr;</span></a>
+    </div>
+
+    <!-- DETAIL TIMELINE -->
+    <div class="journey" style="margin-top:36px">
+
+      <!-- STEP 1 -->
+      <div class="step" id="s1">
+        <div class="node">1</div>
+        <h3 class="st">Decide your role in the deal</h3>
+        <div class="plain"><p class="pl">In plain words</p><p>Rice going from India to the US has two sides: the <strong>India side</strong> (selling and exporting) and the <strong>US side</strong> (buying and importing). Your very first choice is which side you're on. It decides which licenses you need and where your risk sits.</p></div>
+        <ul class="do">
+          <li><b>Exporter (India side)</b> — you buy from Indian mills and sell to a US buyer. You need the Indian licenses.</li>
+          <li><b>Importer (US side)</b> — you open a US company and buy from an Indian exporter. You need the US licenses.</li>
+          <li><b>Both</b> — you own an Indian company <em>and</em> a US company and run the whole chain. Best margin, but every cost and risk on this page is yours.</li>
+        </ul>
+        <div class="note tip"><p class="lab">Best first move</p><p>Start on <strong>one side only</strong>. The gentlest way in is to be the <strong>US importer buying from an experienced Indian exporter</strong> (or the reverse) &mdash; let a seasoned partner carry the other half while you learn one side well.</p></div>
+        <div class="facts">
+          <div class="fact"><p class="fl">Cost</p><p class="fv">$0 &mdash; it's a decision</p></div>
+          <div class="fact"><p class="fl">Time</p><p class="fv">Think it through</p></div>
+          <div class="fact"><p class="fl">Who does it</p><p class="fv">You</p></div>
+        </div>
+      </div>
+
+      <!-- STEP 2 -->
+      <div class="step" id="s2">
+        <div class="node">2</div>
+        <h3 class="st">Register your company &amp; get your licenses</h3>
+        <div class="plain"><p class="pl">In plain words</p><p>Before you can legally buy or move rice, you need a registered company and a set of licenses. Most are cheap and one-time. Skip one and your container can get stuck at a port. Here is every license &mdash; you only need the column for the side you chose in Step 1.</p></div>
+
+        <div class="grid2">
+          <div class="panel">
+            <h3><span class="tag">INDIA</span> Export side</h3>
+            <p class="sub">To legally buy, process and export rice out of India</p>
+            <ul class="check">
+              <li><span class="box"></span><div><div class="t">Company + PAN</div><div class="d">A registered business (proprietorship, LLP or Pvt Ltd) and its tax PAN. Everything else needs this first.</div><div class="meta">₹0–15,000 · 1–15 days</div></div></li>
+              <li><span class="box"></span><div><div class="t">IEC — Import Export Code</div><div class="d">The master key. Nothing leaves India without it. One-time and lifetime (free yearly online confirmation keeps it active).</div><div class="meta">DGFT · ₹500 · 1–3 days</div></div></li>
+              <li><span class="box"></span><div><div class="t">GST number + LUT</div><div class="d">Tax registration to trade; a "LUT" letter lets you export without paying GST upfront.</div><div class="meta">GST portal · free · ~7 days</div></div></li>
+              <li><span class="box"></span><div><div class="t">FSSAI Central License</div><div class="d">Food-safety license, required for anyone handling or exporting food.</div><div class="meta">FSSAI · ₹7,500/yr · 15–30 days</div></div></li>
+              <li><span class="box"></span><div><div class="t">APEDA Registration (RCMC)</div><div class="d">Farm-export body membership. Mandatory to export rice.</div><div class="meta">APEDA · ₹5,900 · 5-yr validity</div></div></li>
+              <li><span class="box"></span><div><div class="t">AD Code (from your bank)</div><div class="d">Your bank's code, registered at the port online. Export paperwork can't be filed without it.</div><div class="meta">Bank + port · small · 3–7 days</div></div></li>
+              <li><span class="box"></span><div><div class="t">Export bank account</div><div class="d">A current account set up to receive foreign payments the legal way.</div><div class="meta">Any bank · free · 2–7 days</div></div></li>
+            </ul>
+          </div>
+          <div class="panel">
+            <h3><span class="tag">USA</span> Import side</h3>
+            <p class="sub">To legally bring the rice in and clear it as food</p>
+            <ul class="check">
+              <li><span class="box"></span><div><div class="t">US company + EIN</div><div class="d">An LLC to be the official importer and hold a bank account. EIN is the company's tax number.</div><div class="meta">State + IRS · $50–500 · EIN free</div></div></li>
+              <li><span class="box"></span><div><div class="t">FDA facility registration <em>(your supplier does this)</em></div><div class="d">The Indian mill registers with the FDA and names a "US Agent." If they haven't, your shipment is refused. Get their number in writing.</div><div class="meta">FDA · free · supplier's job</div></div></li>
+              <li><span class="box"></span><div><div class="t">FSVP + DUNS number</div><div class="d">A file proving you checked your supplier meets US food-safety rules. DUNS is a free company ID used at the border.</div><div class="meta">You keep it · free</div></div></li>
+              <li><span class="box"></span><div><div class="t">FDA Prior Notice</div><div class="d">A heads-up to the FDA before <em>every</em> shipment arrives. Your broker files it.</div><div class="meta">per shipment</div></div></li>
+              <li><span class="box"></span><div><div class="t">USDA plant permit (PPQ 587)</div><div class="d">Permit to import a plant product. Apply about a month ahead.</div><div class="meta">USDA-APHIS · low/no fee · ~30 days</div></div></li>
+              <li><span class="box"></span><div><div class="t">Customs bond + Importer number</div><div class="d">Registers you with Customs and guarantees the duties. Buy per-shipment or a yearly bond.</div><div class="meta">CBP · $100–700</div></div></li>
+              <li><span class="box"></span><div><div class="t">A customs broker</div><div class="d">Not legally required, but you'll want one. They file everything and clear the goods for you.</div><div class="meta">~$150 per shipment</div></div></li>
+            </ul>
+          </div>
+        </div>
+        <div class="note"><p class="lab">Don't miss this</p><p>The one first-timers forget: the <strong>FDA registration is on the Indian mill, not on you</strong> &mdash; but if your mill isn't FDA-registered with a valid US Agent, your rice is turned away at the US port. Confirm their FDA number <em>before</em> you pay any deposit.</p></div>
+        <div class="facts">
+          <div class="fact"><p class="fl">Cost</p><p class="fv">India ~₹15–25k · US ~$200–800</p></div>
+          <div class="fact"><p class="fl">Time</p><p class="fv">About 3–6 weeks</p></div>
+          <div class="fact"><p class="fl">Who does it</p><p class="fv">You, with a CA (India) / broker (US)</p></div>
+        </div>
+      </div>
+
+      <!-- STEP 3 -->
+      <div class="step" id="s3">
+        <div class="node">3</div>
+        <h3 class="st">Find a buyer &amp; agree the price</h3>
+        <div class="plain"><p class="pl">In plain words</p><p>Don't buy a container of rice and hope to sell it. Get the buyer <em>first</em>. Then agree the price &mdash; and pay attention to the <strong>Incoterm</strong>, the one short word that decides exactly who pays for what, and where one person's job ends and the other's begins.</p></div>
+        <h4 style="margin:0 0 8px;font-size:.95rem">The four price terms you'll hear</h4>
+        <div class="terms">
+          <div class="term"><span class="code">EXW</span><span class="desc"><b>Ex-Works.</b> Price is just the rice at the mill gate. You pay for everything after that. Cheapest sticker, most work.</span></div>
+          <div class="term"><span class="code">FOB</span><span class="desc"><b>Free On Board.</b> Seller delivers, clears export, and loads it onto the ship at an Indian port. You take over from there. <em>The most common way rice is quoted.</em></span></div>
+          <div class="term"><span class="code">CIF</span><span class="desc"><b>Cost, Insurance &amp; Freight.</b> Seller pays the rice + shipping + insurance to the US port. You handle US customs onward.</span></div>
+          <div class="term"><span class="code">DDP</span><span class="desc"><b>Delivered Duty Paid.</b> Seller delivers to your US door, everything paid. Easiest for you, most expensive, and rare from Indian mills.</span></div>
+        </div>
+        <div class="note tip"><p class="lab">The golden rule</p><p>Get a <strong>signed order</strong> &mdash; ideally backed by a Letter of Credit (a bank payment guarantee) or a deposit &mdash; <em>before</em> you spend on rice. Then you're filling a real order, not gambling on inventory. It also tells you the exact grade, packing and price to buy.</p></div>
+        <div class="facts">
+          <div class="fact"><p class="fl">Cost</p><p class="fv">Small (samples, outreach)</p></div>
+          <div class="fact"><p class="fl">Time</p><p class="fv">Ongoing — start early</p></div>
+          <div class="fact"><p class="fl">Who does it</p><p class="fv">You</p></div>
+        </div>
+      </div>
+
+      <!-- STEP 4 -->
+      <div class="step" id="s4">
+        <div class="node">4</div>
+        <h3 class="st">Buy the rice</h3>
+        <div class="plain"><p class="pl">In plain words</p><p>Now buy the rice that matches your buyer's order. US buyers mostly want <strong>basmati</strong> (long, aromatic rice). Rice is sold by <strong>grade</strong> (the variety + how it's milled) and priced <strong>per metric ton</strong> (1 ton = 1,000&nbsp;kg). These are the grades a US buyer will name:</p></div>
+        <div class="tablewrap">
+          <table>
+            <caption>Rough export prices, FOB an Indian port, USD per ton (2024–25 crop). Prices move with the harvest and the rupee &mdash; always get a live quote.</caption>
+            <thead><tr><th>Grade</th><th>Type</th><th class="num">Price / ton</th></tr></thead>
+            <tbody>
+              <tr><td>1121 Basmati</td><td>Premium, longest grain</td><td class="num">~$1,060</td></tr>
+              <tr><td>1718 Basmati</td><td>Premium</td><td class="num">~$955</td></tr>
+              <tr><td>1509 Basmati</td><td>Mid, early crop</td><td class="num">~$840</td></tr>
+              <tr><td>Sugandha</td><td>Value aromatic</td><td class="num">~$755</td></tr>
+              <tr><td>PR-11 / PR-14</td><td>Non-basmati long grain</td><td class="num">~$560</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <ul class="do">
+          <li><b>Test the quality</b> — moisture, broken-grain %, grain length, and (very important for the US) <b>pesticide residue</b>. Ask for a lab report.</li>
+          <li><b>Get a sample first</b> — smell it, cook it, measure it before you commit to a container.</li>
+          <li><b>Choose packing</b> — standard is 50&nbsp;kg bags; or printed 1/5/10&nbsp;kg retail bags if you're selling your own brand.</li>
+          <li><b>Pay a premium</b> of about $60–120/ton for certified pesticide-residue-free rice &mdash; serious US buyers expect it.</li>
+        </ul>
+        <div class="note alert"><p class="lab">Check the rules first</p><p>India controls rice exports for food security, and the rules change fast. Right now (late 2024 through 2026) basmati and white rice export freely &mdash; <strong>no minimum price, no export tax</strong>. But <strong>broken rice is still restricted</strong>, and any grade can change with one government notice. Confirm your grade's status on the DGFT website before you sign.</p></div>
+        <div class="facts">
+          <div class="fact"><p class="fl">Cost</p><p class="fv">~$26,500 for one 20ft container of 1121</p></div>
+          <div class="fact"><p class="fl">Time</p><p class="fv">Days once terms agreed</p></div>
+          <div class="fact"><p class="fl">Who does it</p><p class="fv">You buy from a mill or exporter</p></div>
+        </div>
+      </div>
+
+      <!-- STEP 5 -->
+      <div class="step" id="s5">
+        <div class="node">5</div>
+        <h3 class="st">Pack it, treat it &amp; clear it out of India</h3>
+        <div class="plain"><p class="pl">In plain words</p><p>The rice is bagged, loaded into a steel shipping container, treated against pests, inspected, and officially cleared by Indian customs to leave. A local shipping agent (called a <strong>CHA</strong> or freight forwarder) does most of the hands-on work &mdash; you supply documents and money.</p></div>
+        <ul class="do">
+          <li><b>Load &amp; seal</b> — the mill fills the container with bags; note the container and seal numbers.</li>
+          <li><b>Fumigation</b> — a pest treatment; you get a <em>fumigation certificate</em>.</li>
+          <li><b>Phytosanitary certificate</b> — a government plant inspection. For the US it <b>must</b> state the rice is "free of Khapra beetle" &mdash; without those exact words, the US can refuse it.</li>
+          <li><b>Shipping bill</b> — the export declaration filed online; customs clears the rice to leave.</li>
+          <li><b>Bill of Lading</b> — once the ship sails, the shipping line issues this. It's your proof of ownership of the cargo.</li>
+        </ul>
+        <div class="facts">
+          <div class="fact"><p class="fl">Cost</p><p class="fv">A few hundred $ in fees</p></div>
+          <div class="fact"><p class="fl">Time</p><p class="fv">About 1–2 weeks</p></div>
+          <div class="fact"><p class="fl">Who does it</p><p class="fv">Your CHA / forwarder + inspectors</p></div>
+        </div>
+      </div>
+
+      <!-- STEP 6 -->
+      <div class="step" id="s6">
+        <div class="node">6</div>
+        <h3 class="st">Ship it across the ocean</h3>
+        <div class="plain"><p class="pl">In plain words</p><p>Your container goes on a ship from an Indian port to a US port. Because rice is heavy, one small 20ft container already holds about <strong>25 tons</strong> &mdash; and that's the smart size to start with. A bigger 40ft box barely holds more rice but costs a lot more to ship.</p></div>
+        <div class="tablewrap">
+          <table>
+            <thead><tr><th>Container</th><th class="num">Rice it holds</th><th class="num">50 kg bags</th><th>Why</th></tr></thead>
+            <tbody>
+              <tr><td>20ft</td><td class="num">~25 tons</td><td class="num">500</td><td>Fills up by weight — the practical choice for rice</td></tr>
+              <tr><td>40ft</td><td class="num">~27 tons</td><td class="num">540</td><td>Only slightly more rice; extra space goes empty</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <ul class="do">
+          <li><b>Ocean freight:</b> about <b>$2,300–3,000</b> for a 20ft box, port to port (2026 rates on the main India&ndash;US routes).</li>
+          <li><b>Time at sea:</b> roughly <b>30–35 days</b> for a direct route.</li>
+          <li><b>Marine insurance</b> (about 0.3–0.5% of the cargo value) is cheap and non-negotiable &mdash; a lost or wet container is a total loss otherwise.</li>
+          <li><b>Extra charges</b> to expect: fuel surcharges, port handling both ends, and truck delivery at the US port (budget $600–1,000 US-side).</li>
+        </ul>
+        <div class="note tip"><p class="lab">First-shipment tip</p><p>Ship <strong>one 20ft full container</strong> to start. It keeps your money at risk small, keeps the per-ton shipping cost sensible, and is enough to prove the whole chain works before you scale up.</p></div>
+        <div class="facts">
+          <div class="fact"><p class="fl">Cost</p><p class="fv">~$2,500 freight + ~$120 insurance</p></div>
+          <div class="fact"><p class="fl">Time</p><p class="fv">~30–35 days at sea</p></div>
+          <div class="fact"><p class="fl">Who does it</p><p class="fv">Shipping line, via your forwarder</p></div>
+        </div>
+      </div>
+
+      <!-- STEP 7 -->
+      <div class="step" id="s7">
+        <div class="node">7</div>
+        <h3 class="st">Clear US customs &amp; pay duty + tariff</h3>
+        <div class="plain"><p class="pl">In plain words</p><p>When the ship arrives, three US agencies check your rice before it's allowed in. Your <strong>US customs broker</strong> handles all the paperwork. Then you pay a small fixed <strong>duty</strong> plus a bigger <strong>tariff</strong> &mdash; and that tariff is the number that changes most and matters most.</p></div>
+        <ul class="do">
+          <li><b>FDA</b> (food safety) — wants your supplier's registration, the Prior Notice, and your FSVP file. Can inspect any food.</li>
+          <li><b>USDA</b> (plants &amp; pests) — wants the import permit and the "Khapra-beetle-free" phytosanitary certificate.</li>
+          <li><b>Customs / CBP</b> (border &amp; tax) — wants the entry form, your bond, the correct product code, and the money.</li>
+        </ul>
+        <p class="prose">The product code for milled basmati is <strong>HTS 1006.30.90.59</strong>. The base duty is tiny &mdash; about <strong>1.4&cent; per kg</strong> (~$350 on a 25-ton load). The number that really moves your cost is the <strong>country tariff on India</strong>, added on top.</p>
+        <div class="note alert"><p class="lab">The number that changes — check it every single time</p><p>The US tariff on Indian goods has swung wildly: <strong>0% before 2025 &rarr; 50% in Aug 2025 &rarr; ~18% under a Feb 2026 deal &rarr; reported ~10% by mid-2026</strong>, with rice left out of some of the relief. This one percentage can add hundreds of dollars per ton and kill a deal. <strong>Never price a shipment without confirming today's exact rate with your customs broker.</strong></p></div>
+        <div class="facts">
+          <div class="fact"><p class="fl">Cost</p><p class="fv">Duty + tariff, + ~$250 broker/bond, + ~$800 port &amp; delivery</p></div>
+          <div class="fact"><p class="fl">Time</p><p class="fv">A few days to clear</p></div>
+          <div class="fact"><p class="fl">Who does it</p><p class="fv">Your US customs broker</p></div>
+        </div>
+      </div>
+
+      <!-- STEP 8 -->
+      <div class="step" id="s8">
+        <div class="node">8</div>
+        <h3 class="st">Receive it &amp; sell it</h3>
+        <div class="plain"><p class="pl">In plain words</p><p>Once cleared, a truck takes the container to your warehouse. Now you hand it to your buyer, or store, repack and sell it yourself. You get paid &mdash; and if you used a Letter of Credit, the bank releases the money once your documents check out.</p></div>
+        <ul class="do">
+          <li><b>Delivery</b> — a short truck move from the port ("drayage") to your warehouse or your buyer's door.</li>
+          <li><b>Get paid</b> — against the shipping documents (via the Letter of Credit) or on your agreed terms.</li>
+          <li><b>Then repeat</b> — with a proven supplier, buyer and route, the second shipment is far easier than the first.</li>
+        </ul>
+        <div class="facts">
+          <div class="fact"><p class="fl">Cost</p><p class="fv">Trucking (part of Step 7 budget)</p></div>
+          <div class="fact"><p class="fl">Time</p><p class="fv">Days</p></div>
+          <div class="fact"><p class="fl">Who does it</p><p class="fv">You + a local trucker</p></div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- MONEY -->
+  <section id="money">
+    <p class="section-kicker">The money</p>
+    <h2>What one container really costs</h2>
+    <p class="sec-intro">Here's every number above added up for <strong>one 20ft container of 1121 basmati (25 tons)</strong>, walked from the mill price to your warehouse door. Swap in your own quotes and today's tariff.</p>
+    <div class="tablewrap">
+      <table>
+        <caption>Example only, in USD. Assumes 1121 basmati at $1,060/ton, 25 tons, a US East-Coast port. The tariff is shown separately below because it's the number that moves.</caption>
+        <thead><tr><th>What you pay for</th><th>How it's worked out</th><th class="num">Amount</th></tr></thead>
+        <tbody>
+          <tr><td>The rice (at the Indian port)</td><td>25 tons &times; $1,060</td><td class="num">$26,500</td></tr>
+          <tr><td>Ocean shipping (20ft)</td><td>port to port</td><td class="num">$2,500</td></tr>
+          <tr><td>Marine insurance</td><td>~0.4% of value</td><td class="num">$120</td></tr>
+          <tr class="total"><td>Value landed at US port</td><td>subtotal</td><td class="num">$29,120</td></tr>
+          <tr><td>US base duty</td><td>1.4&cent;/kg</td><td class="num">$350</td></tr>
+          <tr><td>Customs fees (processing + harbor)</td><td>~0.5% of value</td><td class="num">$125</td></tr>
+          <tr><td>Customs broker + bond</td><td>per shipment</td><td class="num">$250</td></tr>
+          <tr><td>US port handling + truck to warehouse</td><td>&mdash;</td><td class="num">$800</td></tr>
+          <tr class="total"><td>Total <em>before</em> the tariff</td><td>subtotal</td><td class="num">$30,645</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <h3>Now add the tariff &mdash; and watch it move everything</h3>
+    <p class="prose">The tariff is charged on the $26,500 rice value. Because the rate has ranged from 0% to 50%, here's the same container at each level, so you can see how much it swings your real cost:</p>
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th>Tariff rate</th><th class="num">Tariff $</th><th class="num">Total cost</th><th class="num">Per ton</th><th class="num">Per lb</th></tr></thead>
+        <tbody>
+          <tr><td>0% <span style="color:var(--faint)">(pre-2025)</span></td><td class="num">$0</td><td class="num">$30,645</td><td class="num">$1,226</td><td class="num">$0.56</td></tr>
+          <tr><td>10% <span style="color:var(--faint)">(mid-2026)</span></td><td class="num">$2,650</td><td class="num">$33,295</td><td class="num">$1,332</td><td class="num">$0.60</td></tr>
+          <tr><td>18% <span style="color:var(--faint)">(Feb 2026)</span></td><td class="num">$4,770</td><td class="num">$35,415</td><td class="num">$1,417</td><td class="num">$0.64</td></tr>
+          <tr><td>50% <span style="color:var(--warn)">(2025 peak)</span></td><td class="num">$13,250</td><td class="num">$43,895</td><td class="num">$1,756</td><td class="num">$0.80</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="prose">That's the heart of the business: <strong>the tariff alone moves your cost from about $0.56 to $0.80 a pound</strong> &mdash; before you've added any profit. Your job is to sell above the cost that applies <em>on your shipping date</em>, not the one that looked good when you started planning.</p>
+    <div class="note"><p class="lab">The honest test</p><p>Before spending on any license, get four real numbers: one FOB quote from an exporter, one freight quote, one tariff figure from a broker, and one wholesale price from a US buyer. If those leave you a margin you're happy with &mdash; <em>then</em> start. If they don't, you just saved yourself the whole setup cost.</p></div>
+  </section>
+
+  <!-- DOCS -->
+  <section id="docs">
+    <p class="section-kicker">Paperwork</p>
+    <h2>The documents for each shipment</h2>
+    <p class="sec-intro">Your forwarder and broker prepare most of these. Your job is to make sure each one exists and that they all match &mdash; a mismatch (say, the invoice says 500 bags but the bill of lading says 480) is a classic reason a container gets held.</p>
+    <div class="grid2">
+      <div class="panel">
+        <h3><span class="tag">OUT</span> Leaving India</h3>
+        <p class="sub">Created as the shipment leaves port</p>
+        <ul class="check">
+          <li><span class="box"></span><div><div class="t">Commercial invoice</div><div class="d">Price, grade, quantity, terms, parties.</div></div></li>
+          <li><span class="box"></span><div><div class="t">Packing list</div><div class="d">Bags, weights, container &amp; seal numbers.</div></div></li>
+          <li><span class="box"></span><div><div class="t">Shipping bill</div><div class="d">The export declaration filed with customs.</div></div></li>
+          <li><span class="box"></span><div><div class="t">Bill of Lading</div><div class="d">The shipping line's ownership document.</div></div></li>
+          <li><span class="box"></span><div><div class="t">Certificate of Origin</div><div class="d">Confirms the rice is from India.</div></div></li>
+          <li><span class="box"></span><div><div class="t">Phytosanitary certificate</div><div class="d">Plant inspection, with the Khapra-beetle wording.</div></div></li>
+          <li><span class="box"></span><div><div class="t">Fumigation certificate</div><div class="d">Proof of pest treatment.</div></div></li>
+          <li><span class="box"></span><div><div class="t">Lab / quality report</div><div class="d">Moisture, broken %, pesticide residue.</div></div></li>
+        </ul>
+      </div>
+      <div class="panel">
+        <h3><span class="tag">IN</span> Entering the US</h3>
+        <p class="sub">Filed to clear the goods in</p>
+        <ul class="check">
+          <li><span class="box"></span><div><div class="t">FDA Prior Notice</div><div class="d">Filed before arrival; gets a PN number.</div></div></li>
+          <li><span class="box"></span><div><div class="t">Customs entry (form 7501)</div><div class="d">The customs filing, done by your broker.</div></div></li>
+          <li><span class="box"></span><div><div class="t">USDA import permit</div><div class="d">Referenced at entry.</div></div></li>
+          <li><span class="box"></span><div><div class="t">Customs bond</div><div class="d">On file with Customs.</div></div></li>
+          <li><span class="box"></span><div><div class="t">FSVP records</div><div class="d">Your supplier-check file, ready if asked.</div></div></li>
+          <li><span class="box"></span><div><div class="t">Invoice + packing list</div><div class="d">Same set as export, used to value the goods.</div></div></li>
+          <li><span class="box"></span><div><div class="t">Bill of Lading</div><div class="d">To collect the cargo from the carrier.</div></div></li>
+          <li><span class="box"></span><div><div class="t">Insurance certificate</div><div class="d">Cover for the voyage.</div></div></li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- RISKS -->
+  <section id="risks">
+    <p class="section-kicker">Before you commit</p>
+    <h2>The 5 things that sink first-timers</h2>
+    <div class="prose" style="max-width:var(--measure)">
+      <p><strong>1. Tariff &amp; policy surprises.</strong> US tariffs and India's export rules both change on short notice. A deal that works at 10% dies at 50%. <em>Fix it:</em> confirm today's US rate and India's current policy, in writing, before every contract.</p>
+      <p><strong>2. Quality rejection at the port.</strong> The FDA can hold rice for pesticide residue or filth; USDA for pests. A refused container is nearly a total loss. <em>Fix it:</em> test before shipping, use a clean supplier, and get a third-party inspection before the container is sealed.</p>
+      <p><strong>3. Getting cheated on payment.</strong> New suppliers and buyers are both unproven. <em>Fix it:</em> use a Letter of Credit or a deposit, verify the other side (see the vetting checklist), and start small.</p>
+      <p><strong>4. Port delays.</strong> Slow clearance racks up expensive storage fees ("demurrage"). <em>Fix it:</em> a good broker, complete documents filed early, and a few days' buffer in your budget.</p>
+      <p><strong>5. Running out of money.</strong> People budget the rice price and forget freight, tariff, fees, and the weeks your cash is tied up in transit. <em>Fix it:</em> use the full cost model above, add 15–20% buffer, and make sure you can float one whole container plus the ~6–8 weeks before you're paid.</p>
+    </div>
+  </section>
+
+  <!-- GLOSSARY -->
+  <section id="glossary">
+    <p class="section-kicker">Plain-English word list</p>
+    <h2>Every term on this page, decoded</h2>
+    <div class="terms">
+      <div class="term"><span class="code">Ton (MT)</span><span class="desc">A metric ton = 1,000&nbsp;kg. Rice is priced per ton.</span></div>
+      <div class="term"><span class="code">FCL / LCL</span><span class="desc"><b>Full</b> Container Load (you fill a whole box) vs <b>Less than</b> (you share one). Rice ships FCL.</span></div>
+      <div class="term"><span class="code">FOB / CIF</span><span class="desc">Price terms — where the seller's job ends. FOB = loaded on the ship in India; CIF = shipping + insurance to the US port included.</span></div>
+      <div class="term"><span class="code">Incoterm</span><span class="desc">The standard word (FOB, CIF&hellip;) that splits costs and responsibility between seller and buyer.</span></div>
+      <div class="term"><span class="code">IEC</span><span class="desc">Import Export Code — your licence to trade across India's border.</span></div>
+      <div class="term"><span class="code">APEDA / RCMC</span><span class="desc">The Indian farm-export authority and its membership certificate, required to export rice.</span></div>
+      <div class="term"><span class="code">FSSAI</span><span class="desc">India's food-safety authority; you need its licence to handle food.</span></div>
+      <div class="term"><span class="code">FDA</span><span class="desc">The US food regulator. Checks imported food is safe and properly registered.</span></div>
+      <div class="term"><span class="code">FSVP</span><span class="desc">Foreign Supplier Verification Program — your file proving your supplier meets US rules.</span></div>
+      <div class="term"><span class="code">CBP</span><span class="desc">US Customs and Border Protection — the border and tax agency.</span></div>
+      <div class="term"><span class="code">HTS code</span><span class="desc">The product number customs uses to set the duty. Milled basmati = 1006.30.90.59.</span></div>
+      <div class="term"><span class="code">Duty vs Tariff</span><span class="desc">Duty = the small standing tax on the product. Tariff = the extra, country-specific charge that's been changing fast for India.</span></div>
+      <div class="term"><span class="code">Phytosanitary</span><span class="desc">A plant-health certificate from a government inspector. For the US it must say "free of Khapra beetle."</span></div>
+      <div class="term"><span class="code">Fumigation</span><span class="desc">Pest treatment of the cargo, with a certificate to prove it.</span></div>
+      <div class="term"><span class="code">CHA / Forwarder</span><span class="desc">Your shipping agent in India who handles loading, customs and booking the vessel.</span></div>
+      <div class="term"><span class="code">Bill of Lading</span><span class="desc">The shipping line's document that proves ownership of the cargo.</span></div>
+      <div class="term"><span class="code">LC</span><span class="desc">Letter of Credit — a bank guarantee that the seller gets paid once shipping documents are in order. The safest way to pay/get paid.</span></div>
+      <div class="term"><span class="code">Drayage</span><span class="desc">The short truck move from the port to a warehouse.</span></div>
+      <div class="term"><span class="code">Demurrage</span><span class="desc">Penalty fees when a container sits at the port too long.</span></div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <hr class="soft" style="margin-bottom:20px">
+  <p><strong>How to use this &amp; where to check.</strong> This is a plain-English orientation guide, not legal, tax or customs advice &mdash; food trade is regulated and the flagged numbers move. Verify the live details at the source before you act: <a href="https://www.dgft.gov.in">DGFT</a> and <a href="https://apeda.gov.in">APEDA</a> (India export rules &amp; registration), <a href="https://www.fda.gov/food/food-imports-exports/importing-food-products-united-states">FDA</a> (US food-import rules), <a href="https://www.cbp.gov">US Customs</a> and the <a href="https://hts.usitc.gov">USITC HTS</a> (product codes &amp; duty), and <a href="https://www.aphis.usda.gov">USDA-APHIS</a> (plant permit). For the exact tariff on your shipment, a licensed <strong>customs broker</strong> is the authoritative, up-to-date source.</p>
+</footer>
+
+<script>
+  (function(){
+    var root=document.documentElement, btn=document.getElementById('themeToggle');
+    var stored=null; try{stored=localStorage.getItem('rice-theme');}catch(e){}
+    if(stored==='dark'||stored==='light')root.setAttribute('data-theme',stored);
+    function cur(){var t=root.getAttribute('data-theme');if(t)return t;return window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';}
+    btn.addEventListener('click',function(){var n=cur()==='dark'?'light':'dark';root.setAttribute('data-theme',n);try{localStorage.setItem('rice-theme',n);}catch(e){}});
+  })();
+</script>
+
+</body>
+</html>
