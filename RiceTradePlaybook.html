@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -169,6 +170,13 @@
   .term .desc{font-size:.9rem;color:var(--muted)}
   .term .desc b{color:var(--ink)}
 
+  .linklist{list-style:none;padding:0;margin:0}
+  .linklist li{padding:11px 0;border-top:1px solid var(--line)}
+  .linklist li:first-child{border-top:none}
+  .linklist a{font-weight:600;color:var(--primary-ink);text-decoration:none;font-size:.95rem;text-underline-offset:2px}
+  .linklist a:hover{text-decoration:underline}
+  .linklist .sub2{display:block;font-size:.82rem;color:var(--muted);margin-top:2px;font-weight:400}
+
   ul.clean{margin:0 0 14px;padding-left:20px}
   ul.clean li{margin:6px 0}
   p.prose, .prose p{margin:0 0 14px}
@@ -207,6 +215,7 @@
       <a href="#docs">Documents</a>
       <a href="#risks">Risks</a>
       <a href="#glossary">Word list</a>
+      <a href="#links">Links</a>
     </nav>
     <button class="themebtn" id="themeToggle" type="button" aria-label="Toggle light and dark theme" title="Toggle theme">◐</button>
   </div>
@@ -268,7 +277,7 @@
       <div class="step" id="s2">
         <div class="node">2</div>
         <h3 class="st">Register your company &amp; get your licenses</h3>
-        <div class="plain"><p class="pl">In plain words</p><p>Before you can legally buy or move rice, you need a registered company and a set of licenses. Most are cheap and one-time. Skip one and your container can get stuck at a port. Here is every license &mdash; you only need the column for the side you chose in Step 1.</p></div>
+        <div class="plain"><p class="pl">In plain words</p><p>Before you can legally buy or move rice, you need a registered company and a set of licenses. Most are cheap and one-time. Skip one and your container can get stuck at a port. Here is every license &mdash; you only need the column for the side you chose in Step 1. The official &ldquo;apply here&rdquo; link for each one is in the <a href="#links">Links</a> section at the bottom.</p></div>
 
         <div class="grid2">
           <div class="panel">
@@ -558,6 +567,52 @@
       <div class="term"><span class="code">Drayage</span><span class="desc">The short truck move from the port to a warehouse.</span></div>
       <div class="term"><span class="code">Demurrage</span><span class="desc">Penalty fees when a container sits at the port too long.</span></div>
     </div>
+  </section>
+
+  <!-- LINKS -->
+  <section id="links">
+    <p class="section-kicker">Where to apply</p>
+    <h2>Official links &amp; resources</h2>
+    <p class="sec-intro">Every registration links to the real government portal. Apply at these directly &mdash; IEC, GST, EIN and DUNS are free or nearly free, and many private "consultant" sites re-sell them at a big markup. Links open in a new tab.</p>
+    <div class="grid2">
+      <div class="panel">
+        <h3><span class="tag">INDIA</span> Register &amp; export</h3>
+        <ul class="linklist">
+          <li><a href="https://www.mca.gov.in" target="_blank" rel="noopener">Company registration &mdash; MCA</a><span class="sub2">Set up your business entity (LLP / Pvt Ltd)</span></li>
+          <li><a href="https://www.incometax.gov.in" target="_blank" rel="noopener">PAN &mdash; Income Tax Dept</a><span class="sub2">Your business tax ID</span></li>
+          <li><a href="https://www.dgft.gov.in/CP/" target="_blank" rel="noopener">IEC &mdash; DGFT</a><span class="sub2">Import Export Code, the master licence (₹500)</span></li>
+          <li><a href="https://www.gst.gov.in" target="_blank" rel="noopener">GST registration + LUT</a><span class="sub2">Tax registration; LUT enables zero-rated export</span></li>
+          <li><a href="https://foscos.fssai.gov.in" target="_blank" rel="noopener">FSSAI licence &mdash; FoSCoS</a><span class="sub2">Food-safety licence portal (₹7,500/yr)</span></li>
+          <li><a href="https://apeda.gov.in/RCMC" target="_blank" rel="noopener">APEDA RCMC</a><span class="sub2">Mandatory rice-export registration (₹5,900)</span></li>
+          <li><a href="https://www.icegate.gov.in" target="_blank" rel="noopener">ICEGATE</a><span class="sub2">Customs e-filing &amp; AD Code registration</span></li>
+          <li><a href="https://apeda.gov.in" target="_blank" rel="noopener">APEDA &mdash; exporter directory</a><span class="sub2">Find &amp; verify mills and exporters</span></li>
+        </ul>
+      </div>
+      <div class="panel">
+        <h3><span class="tag">USA</span> Import &amp; clear</h3>
+        <ul class="linklist">
+          <li><a href="https://www.sba.gov/business-guide/launch-your-business/register-your-business" target="_blank" rel="noopener">Register a US business &mdash; SBA guide</a><span class="sub2">Form your LLC (rules vary by state)</span></li>
+          <li><a href="https://www.irs.gov/businesses/small-businesses-self-employed/apply-for-an-employer-identification-number-ein-online" target="_blank" rel="noopener">EIN &mdash; IRS</a><span class="sub2">Free federal tax ID (never pay for this)</span></li>
+          <li><a href="https://www.fda.gov/food/registration-food-facilities-and-other-submissions/online-registration-food-facilities" target="_blank" rel="noopener">FDA Food Facility Registration</a><span class="sub2">Your supplier registers here (free)</span></li>
+          <li><a href="https://www.access.fda.gov/" target="_blank" rel="noopener">FDA Industry Systems (FURLS)</a><span class="sub2">Portal for registration &amp; Prior Notice</span></li>
+          <li><a href="https://www.fda.gov/food/food-imports-exports/importing-food-products-united-states" target="_blank" rel="noopener">Importing Food + FSVP &mdash; FDA</a><span class="sub2">Your importer duties, FSVP, prior notice</span></li>
+          <li><a href="https://www.aphis.usda.gov/efile" target="_blank" rel="noopener">USDA APHIS eFile</a><span class="sub2">Apply for the plant import permit</span></li>
+          <li><a href="https://www.cbp.gov/trade/programs-administration/customs-brokers" target="_blank" rel="noopener">Find a Customs Broker &mdash; CBP</a><span class="sub2">Licensed brokers to clear your shipment</span></li>
+          <li><a href="https://www.dnb.com/duns-number.html" target="_blank" rel="noopener">DUNS number &mdash; D&amp;B</a><span class="sub2">Free facility ID needed for FSVP</span></li>
+        </ul>
+      </div>
+    </div>
+    <div class="panel" style="margin-top:2px">
+      <h3><span class="tag">TOOLS</span> Duty, checks &amp; suppliers</h3>
+      <ul class="linklist">
+        <li><a href="https://hts.usitc.gov" target="_blank" rel="noopener">HTS tariff lookup &mdash; USITC</a><span class="sub2">Look up the duty for your code (1006.30.90.59) &mdash; but confirm the live India tariff with your broker</span></li>
+        <li><a href="https://datadashboard.fda.gov/oii/index.htm" target="_blank" rel="noopener">FDA Import Refusals dashboard</a><span class="sub2">Check whether a supplier has been refused before</span></li>
+        <li><a href="https://www.aphis.usda.gov/plant-imports/how-to-import" target="_blank" rel="noopener">APHIS: how to import plant products</a><span class="sub2">Official steps &amp; the Khapra-beetle rule</span></li>
+        <li><a href="https://www.indiamart.com" target="_blank" rel="noopener">IndiaMART</a> &middot; <a href="https://www.tradeindia.com" target="_blank" rel="noopener">TradeIndia</a> &middot; <a href="https://www.alibaba.com" target="_blank" rel="noopener">Alibaba</a><span class="sub2">B2B marketplaces to source &amp; compare suppliers</span></li>
+        <li><a href="https://www.sgs.com" target="_blank" rel="noopener">SGS</a> &middot; <a href="https://www.bureauveritas.com" target="_blank" rel="noopener">Bureau Veritas</a> &middot; <a href="https://www.intertek.com" target="_blank" rel="noopener">Intertek</a><span class="sub2">Third-party pre-shipment inspection</span></li>
+      </ul>
+    </div>
+    <div class="note alert"><p class="lab">Watch for markup</p><p>The government registrations above are free or cheap at the official portals. Private agents often re-sell them for many times the real fee. Paying a CA or customs broker for <em>advice</em> is worth it &mdash; but the registrations themselves you can do yourself at these links.</p></div>
   </section>
 </main>
 
